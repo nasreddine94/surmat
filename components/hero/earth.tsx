@@ -13,12 +13,15 @@ const R = 3.5;
 const CENTER = { lat: 6, lon: 10 };
 /** Largest tilt away from rest, in any direction. The globe never turns further. */
 const MAX_TILT = THREE.MathUtils.degToRad(15);
-/** Sun from the upper left and slightly in front: Africa in daylight, the terminator and city lights on the eastern limb. */
-const SUN = new THREE.Vector3(-0.8, 0.22, 0.56).normalize();
-const ATMOSPHERE = new THREE.Color("#5f97ff");
+/** Sun from above and slightly in front: the northern half catches the light, the south falls away into the background. */
+const SUN = new THREE.Vector3(-0.3, 0.72, 0.62).normalize();
+const ATMOSPHERE = new THREE.Color("#71819c");
+/** The globe is a backdrop, not the subject: mostly grey, low contrast, dim. */
+const SATURATION = 0.28;
+const EXPOSURE = 0.32;
 /** HDR stroke colours (above 1.0) so the borders catch the bloom pass. */
-const STROKE = new THREE.Color(1.5, 1.05, 0.55);
-const SPARK = new THREE.Color(2.6, 2.0, 1.2);
+const STROKE = new THREE.Color(1.25, 0.9, 0.5);
+const SPARK = new THREE.Color(2.2, 1.7, 1.0);
 
 /** NASA Blue Marble, Black Marble and topography (public domain), served from /public. */
 const TEXTURES = {
@@ -77,6 +80,7 @@ const earthVertex = /* glsl */ `
 const earthFragment = /* glsl */ `
   uniform sampler2D day; uniform sampler2D night; uniform sampler2D relief; uniform sampler2D water; uniform sampler2D clouds;
   uniform vec3 sun; uniform vec3 atmosphere; uniform float cloudShift; uniform float fade;
+  uniform float saturation; uniform float exposure;
   varying vec2 vUv; varying vec3 vN; varying vec3 vNorth; varying vec3 vPos;
   void main() {
     vec3 n = normalize(vN);
@@ -96,35 +100,36 @@ const earthFragment = /* glsl */ `
     float light = smoothstep(-0.18, 0.3, ndl);
 
     vec3 albedo = texture2D(day, vUv).rgb;
-    albedo = mix(vec3(dot(albedo, vec3(0.2126, 0.7152, 0.0722))), albedo, 1.12); // a touch of saturation
+    albedo = mix(vec3(dot(albedo, vec3(0.2126, 0.7152, 0.0722))), albedo, saturation);
     float shadow = 1.0 - 0.38 * texture2D(clouds, vUv + vec2(cloudShift - 0.0015, 0.001)).r;
     vec3 col = albedo * (max(dot(nb, sun), 0.0) * 1.35 + 0.025) * shadow;
 
     // Oceans: tight sun glint plus a broad sheen.
     vec3 H = normalize(sun + V);
     float nh = max(dot(n, H), 0.0);
-    col += vec3(1.0, 0.84, 0.62) * sea * (pow(nh, 60.0) * 0.2 + pow(nh, 8.0) * 0.04) * light;
+    col += vec3(1.0, 0.84, 0.62) * sea * (pow(nh, 60.0) * 0.1 + pow(nh, 8.0) * 0.03) * light;
 
     // City lights on the night side.
     vec3 lights = texture2D(night, vUv).rgb;
-    col += lights * lights * vec3(1.0, 0.72, 0.42) * 2.2 * (1.0 - smoothstep(-0.25, 0.08, ndl));
+    col += lights * lights * vec3(1.0, 0.72, 0.42) * 0.9 * (1.0 - smoothstep(-0.25, 0.08, ndl));
 
     // Atmospheric scattering towards the limb.
     float fres = pow(1.0 - max(dot(n, V), 0.0), 3.0);
-    col += atmosphere * fres * (0.08 + 0.9 * smoothstep(-0.35, 0.6, ndl));
+    col += atmosphere * fres * (0.04 + 0.45 * smoothstep(-0.35, 0.6, ndl));
+    col *= exposure;
 
     gl_FragColor = vec4(col * fade, 1.0);
     #include <colorspace_fragment>
   }`;
 
 const cloudFragment = /* glsl */ `
-  uniform sampler2D clouds; uniform vec3 sun; uniform float cloudShift; uniform float fade;
+  uniform sampler2D clouds; uniform vec3 sun; uniform float cloudShift; uniform float fade; uniform float exposure;
   varying vec2 vUv; varying vec3 vN; varying vec3 vNorth; varying vec3 vPos;
   void main() {
     vec3 n = normalize(vN);
     float a = texture2D(clouds, vUv + vec2(cloudShift, 0.0)).r;
     float lit = max(dot(n, sun), 0.0);
-    gl_FragColor = vec4(vec3(0.78) * (lit * 0.95 + 0.02), a * 0.82 * fade * smoothstep(-0.2, 0.15, dot(n, sun) + 0.1));
+    gl_FragColor = vec4(vec3(0.78) * (lit * 0.95 + 0.02) * exposure, a * 0.55 * fade * smoothstep(-0.2, 0.15, dot(n, sun) + 0.1));
     #include <colorspace_fragment>
   }`;
 
@@ -136,7 +141,7 @@ const haloFragment = /* glsl */ `
     // Back faces of a larger shell: 0 at its silhouette, 1 where it meets the planet's limb.
     float g = pow(clamp(-dot(normalize(vN), V) / 0.47, 0.0, 1.0), 2.4);
     float day = smoothstep(-0.45, 0.7, dot(normalize(vPos - center), sun));
-    gl_FragColor = vec4(atmosphere * g * (0.12 + 1.35 * day) * fade, 1.0);
+    gl_FragColor = vec4(atmosphere * g * (0.04 + 0.32 * day) * fade, 1.0);
     #include <colorspace_fragment>
   }`;
 
@@ -189,6 +194,8 @@ export default function Earth({ drag }: { drag: React.RefObject<{ offset: number
       center: { value: new THREE.Vector3() },
       cloudShift: { value: 0 },
       fade: { value: 0 },
+      saturation: { value: SATURATION },
+      exposure: { value: EXPOSURE },
     }),
     [tex],
   );
