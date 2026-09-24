@@ -6,7 +6,7 @@ import { useFrame } from "@react-three/fiber";
 import { Line, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import type { Line2 } from "three-stdlib";
-import { borders } from "@/lib/borders";
+import { africa } from "@/lib/africa";
 
 const R = 3.5;
 /** The point of Africa that faces the camera at rest. */
@@ -19,7 +19,7 @@ const ATMOSPHERE = new THREE.Color("#71819c");
 /** The globe is a backdrop, not the subject: mostly grey, low contrast, dim. */
 const SATURATION = 0.28;
 const EXPOSURE = 0.32;
-/** HDR stroke colours (above 1.0) so the borders catch the bloom pass. */
+/** HDR stroke colours (above 1.0) so the coastline catches the bloom pass. */
 const STROKE = new THREE.Color(1.25, 0.9, 0.5);
 const SPARK = new THREE.Color(2.2, 1.7, 1.0);
 
@@ -167,8 +167,8 @@ function Border({ ring, sparks, phase }: { ring: number[]; sparks: number; phase
         color={SPARK}
         lineWidth={2}
         dashed
-        dashSize={Math.min(0.32, period * 0.3)}
-        gapSize={period - Math.min(0.32, period * 0.3)}
+        dashSize={Math.min(0.5, period * 0.3)}
+        gapSize={period - Math.min(0.5, period * 0.3)}
         dashOffset={phase}
         transparent
         depthWrite={false}
@@ -181,7 +181,7 @@ function Border({ ring, sparks, phase }: { ring: number[]; sparks: number; phase
 /**
  * The SURMAT globe: Africa faces the viewer and stays there. The planet leans up to
  * MAX_TILT towards the cursor, a drag or a slow idle drift, and springs back — it never spins.
- * Algeria and Senegal, the two editions, are traced in light.
+ * The outline of Africa is traced in light.
  */
 export default function Earth({ drag }: { drag: React.RefObject<{ offset: number; moved: number; tilt: number }> }) {
   const tex = useTexture(TEXTURES, prepare);
@@ -256,11 +256,9 @@ export default function Earth({ drag }: { drag: React.RefObject<{ offset: number
           <mesh material={materials.clouds} scale={1.006}>
             <sphereGeometry args={[R, 128, 128]} />
           </mesh>
-          {borders.dz.map((ring, i) => (
-            <Border key={`dz${i}`} ring={ring} sparks={2} phase={0} />
-          ))}
-          {borders.sn.map((ring, i) => (
-            <Border key={`sn${i}`} ring={ring} sparks={1} phase={1.7} />
+          {africa.map((ring, i) => (
+            // Mainland first (several sparks chase round it), then Madagascar.
+            <Border key={i} ring={ring} sparks={i === 0 ? 4 : 1} phase={i * 1.7} />
           ))}
         </group>
       </group>
