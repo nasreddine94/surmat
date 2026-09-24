@@ -237,7 +237,7 @@ export function Hero() {
       )}
 
       {/* Readability vignette */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(34%_34%_at_50%_42%,rgba(11,12,13,0.78),rgba(11,12,13,0.35)_60%,transparent_85%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(34%_34%_at_50%_42%,rgba(11,12,13,0.5),rgba(11,12,13,0.2)_60%,transparent_85%)]" />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-basalt to-transparent" />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-basalt/90 to-transparent" />
 

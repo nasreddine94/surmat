@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable react-hooks/refs -- a map of three.js vectors (autofocus targets) are mutated imperatively in the frame loop, which is the intended react-three-fiber pattern. */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Environment, Html, Lightformer, PerformanceMonitor, RoundedBox } from "@react-three/drei";
 import { Bloom, DepthOfField, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
@@ -9,6 +9,7 @@ import { ToneMappingMode, type DepthOfFieldEffect } from "postprocessing";
 import * as THREE from "three";
 import type { TexKind } from "@/lib/textures";
 import { matKey, physicalProps, usePBRMaps } from "@/lib/three-pbr";
+import Earth from "./earth";
 
 export type Shape = "tile" | "slab" | "panel" | "plank";
 export type OrbitItem = { key: string; slug: string; tex: TexKind; seed: number; shape: Shape; label: string; sub: string };
@@ -181,56 +182,6 @@ function Slab({
   );
 }
 
-/** The SURMAT core: a basalt planet with an atmospheric rim. */
-function Core({ quality }: { quality: number }) {
-  const maps = usePBRMaps("sintered", 9, quality > 0 ? 512 : 256);
-  const ref = useRef<THREE.Mesh>(null);
-  const tiled = useMemo(() => {
-    if (!maps) return null;
-    const rep = (t: THREE.Texture) => {
-      const c = t.clone();
-      c.repeat.set(3, 1.5);
-      c.needsUpdate = true;
-      return c;
-    };
-    return { map: rep(maps.map), normalMap: rep(maps.normalMap), roughnessMap: rep(maps.roughnessMap) };
-  }, [maps]);
-  const rim = useMemo(
-    () =>
-      new THREE.ShaderMaterial({
-        uniforms: { c: { value: new THREE.Color("#d9a869") } },
-        vertexShader: `varying vec3 vN; varying vec3 vV;
-          void main(){ vec4 wp = modelMatrix * vec4(position,1.); vN = normalize(mat3(modelMatrix) * normal); vV = normalize(cameraPosition - wp.xyz); gl_Position = projectionMatrix * viewMatrix * wp; }`,
-        fragmentShader: `uniform vec3 c; varying vec3 vN; varying vec3 vV;
-          void main(){ float f = pow(1. - max(dot(vN, vV), 0.), 4.); gl_FragColor = vec4(c * f * 1.6, f); }`,
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      }),
-    [],
-  );
-  useFrame((_, dt) => ref.current && (ref.current.rotation.y += dt * 0.012));
-  return (
-    <group position={[0, -0.4, -4]}>
-      <mesh ref={ref}>
-        <sphereGeometry args={[3.5, 128, 128]} />
-        <meshPhysicalMaterial
-          key={tiled ? "pbr" : "tone"}
-          color={tiled ? "#17181a" : "#0f1011"}
-          roughness={1}
-          clearcoat={0.2}
-          clearcoatRoughness={0.4}
-          normalScale={new THREE.Vector2(2.5, 2.5)}
-          {...(tiled ?? {})}
-        />
-      </mesh>
-      <mesh scale={1.04} material={rim}>
-        <sphereGeometry args={[3.5, 64, 64]} />
-      </mesh>
-    </group>
-  );
-}
-
 function Dust() {
   const ref = useRef<THREE.Points>(null);
   const geo = useMemo(() => {
@@ -287,11 +238,11 @@ function Rig({ rtl, selected, drag }: { rtl: boolean; selected: boolean; drag: S
 
 function Effects({ shared, quality }: { shared: Shared; quality: number }) {
   const dof = useRef<DepthOfFieldEffect>(null);
-  const focus = useMemo(() => new THREE.Vector3(0, 0, 6), []);
+  const focus = useMemo(() => new THREE.Vector3(0, 0, 3), []);
   useFrame((_, dt) => {
     const key = shared.selected ?? shared.hovered;
     const p = key ? shared.positions.get(key) : undefined;
-    focus.lerp(p ?? new THREE.Vector3(0, 0, 6.5), damp(dt, 3));
+    focus.lerp(p ?? new THREE.Vector3(0, 0, 3), damp(dt, 3));
     if (dof.current?.target) dof.current.target.copy(focus);
   });
   const grade = [
@@ -303,7 +254,7 @@ function Effects({ shared, quality }: { shared: Shared; quality: number }) {
   if (quality === 0) return <EffectComposer multisampling={0}>{grade}</EffectComposer>;
   return (
     <EffectComposer multisampling={4}>
-      <DepthOfField ref={dof} target={[0, 0, 6]} worldFocusRange={7} bokehScale={5} />
+      <DepthOfField ref={dof} target={[0, 0, 3]} worldFocusRange={11} bokehScale={5} />
       {grade}
     </EffectComposer>
   );
@@ -383,7 +334,9 @@ export default function OrbitScene({
         <Lightformer form="rect" intensity={1.2} position={[0, -2, 14]} rotation-y={Math.PI} scale={[16, 3, 1]} />
       </Environment>
 
-      <Core quality={quality} />
+      <Suspense fallback={null}>
+        <Earth drag={drag} />
+      </Suspense>
       <Dust />
       {items.map((it, i) => (
         <Slab key={it.key} item={it} index={i} shared={shared} quality={quality} onSelect={onSelect} onHover={onHover} />
