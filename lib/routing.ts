@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { editions, isEdition, type EditionId } from "./editions";
+import { editionIds, editions, isEdition, type EditionId } from "./editions";
 import { getDict, isLocale, locales, type Locale } from "./i18n";
-import { editionIds } from "./editions";
 
 export type Ctx = { edition: EditionId; locale: Locale };
 

@@ -27,7 +27,7 @@ export function VisitForm({ meeting }: { meeting: string | null }) {
     email: "",
     phone: "",
     country: edition === "sn" ? "SN" : "DZ",
-    consent: true,
+    consent: false,
     hp: "",
   });
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((x) => ({ ...x, [k]: v }));

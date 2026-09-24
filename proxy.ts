@@ -17,22 +17,34 @@ function preferredLocale(req: NextRequest) {
   return ranked.find((r) => locales.includes(r.lang))?.lang ?? "en";
 }
 
+/** A segment that looks like a language code (e.g. "de", "pt-BR"). No route segment is two letters. */
+const looksLikeLocale = (s: string | undefined) => !!s && /^[a-z]{2}(-[a-z]{2})?$/i.test(s);
+
 /** Every page lives under /{edition}/{locale}. Anything else is redirected there. */
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const [, first, second] = pathname.split("/");
+  const segments = pathname.split("/").slice(1).filter(Boolean);
+  const [first, second] = segments;
 
   if (editionsList.includes(first) && locales.includes(second)) return;
 
-  const url = req.nextUrl.clone();
+  let edition: string;
+  let locale: string | undefined;
+  let rest: string[];
   if (editionsList.includes(first)) {
-    // /dz or /dz/materials → /dz/{locale}/materials
-    const rest = pathname.split("/").slice(2).join("/");
-    url.pathname = `/${first}/${preferredLocale(req)}${rest ? `/${rest}` : ""}`;
+    // /dz, /dz/materials → /dz/{locale}/materials; /dz/de/materials → /dz/{locale}/materials
+    edition = first;
+    rest = segments.slice(looksLikeLocale(second) ? 2 : 1);
   } else {
-    const edition = req.cookies.get("surmat_edition")?.value;
-    url.pathname = `/${edition && editionsList.includes(edition) ? edition : "dz"}/${preferredLocale(req)}${pathname === "/" ? "" : pathname}`;
+    const saved = req.cookies.get("surmat_edition")?.value;
+    edition = saved && editionsList.includes(saved) ? saved : "dz";
+    // /fr/materials keeps French; /de/materials falls back to the preferred locale
+    if (locales.includes(first)) locale = first;
+    rest = segments.slice(looksLikeLocale(first) ? 1 : 0);
   }
+
+  const url = req.nextUrl.clone();
+  url.pathname = `/${[edition, locale ?? preferredLocale(req), ...rest].join("/")}`;
   return NextResponse.redirect(url);
 }
 

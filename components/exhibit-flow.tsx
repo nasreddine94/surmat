@@ -56,7 +56,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
     role: "",
     email: "",
     phone: "",
-    consent: true,
+    consent: false,
     hp: "",
   });
   const set = <K extends keyof State>(k: K, v: State[K]) => setS((x) => ({ ...x, [k]: v }));

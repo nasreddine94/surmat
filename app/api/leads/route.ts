@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 const emailOk = (s: unknown) => typeof s === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s) && s.length < 200;
 const str = (s: unknown, max = 500) => (typeof s === "string" ? s.slice(0, max) : null);
+const MAX_BODY = 32_000;
 
 /**
  * Exhibitor applications and visitor registrations.
@@ -10,12 +11,16 @@ const str = (s: unknown, max = 500) => (typeof s === "string" ? s.slice(0, max) 
  * flow works in development.
  */
 export async function POST(req: Request) {
+  const text = await req.text();
+  if (text.length > MAX_BODY) return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    body = JSON.parse(text);
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+  if (typeof body !== "object" || body === null || Array.isArray(body))
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 
   // Honeypot: bots fill hidden fields. Pretend success.
   if (body.hp) return NextResponse.json({ ok: true });
@@ -36,7 +41,7 @@ export async function POST(req: Request) {
     phone: str(body.phone, 50),
     country: str(body.country, 10),
     consent: body.consent === true,
-    payload: body,
+    payload: { ...body, hp: undefined },
   };
 
   const url = process.env.SUPABASE_URL;
