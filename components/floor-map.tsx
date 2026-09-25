@@ -5,20 +5,19 @@ import { useMemo, useState } from "react";
 import { useSite } from "./site-context";
 import { Swatch } from "./swatch";
 import { Arrow } from "./icons";
+import { ExhibitionPlan, HALLS, hallColor, hallName, standsIn } from "./exhibition-plan";
 import { sectors } from "@/content/sectors";
+import { familyGroups } from "@/content/families";
 import { exhibitorsFor, type Exhibitor } from "@/content/exhibitors";
 import { materialBySlug } from "@/content/materials";
 import { t } from "@/lib/i18n";
 import { track } from "@/lib/analytics";
 
-const HALLS = ["A", "B", "C", "D", "E", "F"];
-const COLS = 4, ROWS = 3;
-
 type Stand = { code: string; hall: number; exhibitor?: Exhibitor };
 
 /**
- * 2.5D exhibition floor: six material districts laid out as halls, each with a
- * grid of stands. Occupied stands carry their district's material on top.
+ * The exhibition floor plan with a stand inspector: who is on the selected stand, or how to
+ * book it if it is still open.
  */
 export function FloorMap() {
   const { dict, locale, edition, link } = useSite();
@@ -26,7 +25,7 @@ export function FloorMap() {
   const stands: Stand[] = useMemo(
     () =>
       HALLS.flatMap((h, hi) =>
-        Array.from({ length: COLS * ROWS }, (_, i) => {
+        Array.from({ length: standsIn(hi) }, (_, i) => {
           const code = `${h}-${String(i + 1).padStart(2, "0")}`;
           return { code, hall: hi, exhibitor: list.find((e) => e.stands[edition] === code) };
         }),
@@ -36,64 +35,28 @@ export function FloorMap() {
   const firstTaken = stands.find((s) => s.exhibitor)?.code ?? "A-01";
   const [focus, setFocus] = useState<string>(firstTaken);
   const cur = stands.find((s) => s.code === focus)!;
-  const sec = sectors[cur.hall];
+  const sec = cur.hall < 6 ? sectors[cur.hall] : null;
+  const pitch = sec ? sec.pitch : familyGroups[cur.hall].pitch;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <div className="relative overflow-hidden rounded-md border border-line bg-[radial-gradient(70%_60%_at_50%_40%,#17191c,#0b0c0d)] py-6 sm:py-10">
-        <div className="mx-auto w-[min(56rem,100%)] [perspective:1600px]" dir="ltr">
-          <div className="grid grid-cols-3 gap-3 px-6 [transform:rotateX(52deg)_rotateZ(-32deg)] [transform-style:preserve-3d] sm:gap-5 sm:px-12">
-            {sectors.map((s, hi) => (
-              <div key={s.id} className="rounded-lg border border-white/10 bg-white/[0.03] p-2 [transform-style:preserve-3d] sm:p-3">
-                <p className="mb-2 flex items-center gap-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-fog sm:text-[0.62rem]">
-                  <span className="font-semibold text-limestone">{HALLS[hi]}</span>
-                  <span className="truncate">{t(s.short, locale)}</span>
-                </p>
-                <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
-                  {stands
-                    .filter((x) => x.hall === hi)
-                    .map((x) => {
-                      const on = x.code === focus;
-                      const taken = !!x.exhibitor;
-                      return (
-                        <button
-                          key={x.code}
-                          type="button"
-                          aria-pressed={on}
-                          aria-label={`${dict.exhibitors.stand} ${x.code}${x.exhibitor ? ` — ${x.exhibitor.name}` : ` — ${dict.experience.available}`}`}
-                          onClick={() => setFocus(x.code)}
-                          onMouseEnter={() => setFocus(x.code)}
-                          onFocus={() => setFocus(x.code)}
-                          className="relative aspect-square rounded-[3px] transition-transform duration-300 focus-visible:outline-2"
-                          style={{
-                            transform: on ? "translateZ(14px)" : taken ? "translateZ(6px)" : "none",
-                            boxShadow: taken
-                              ? `0 ${on ? 10 : 5}px 0 -1px ${s.accent}55, 0 ${on ? 18 : 8}px 14px rgba(0,0,0,.6)`
-                              : "none",
-                          }}
-                        >
-                          {taken ? (
-                            <Swatch tex={s.tex} seed={s.seed} res={96} className={`h-full w-full rounded-[3px] ${on ? "ring-2 ring-limestone" : ""}`} />
-                          ) : (
-                            <span
-                              className={`block h-full w-full rounded-[3px] border border-dashed ${on ? "border-limestone bg-white/10" : "border-white/15"}`}
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <p className="mt-4 px-6 text-xs text-fog">{dict.experience.mapHint}</p>
+      <div className="overflow-hidden rounded-md border border-line bg-[#0d0e10] p-3 sm:p-5">
+        <ExhibitionPlan focus={focus} onFocus={setFocus} />
+        <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 px-1 text-xs text-fog">
+          <span className="flex items-center gap-2">
+            <span className="size-2.5 rounded-[2px] bg-limestone/60" /> {dict.experience.legendTaken}
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="size-2.5 rounded-[2px] border border-dashed border-limestone/50" /> {dict.experience.available}
+          </span>
+          <span>{dict.experience.mapHint}</span>
+        </p>
       </div>
 
       <aside className="rounded-md border border-line bg-graphite p-6" aria-live="polite">
         <p className="eyebrow flex items-center gap-2">
-          <span className="size-1.5 rounded-full" style={{ background: sec.accent }} />
-          {dict.exhibitors.district} {HALLS[cur.hall]} · {t(sec.short, locale)}
+          <span className="size-1.5 rounded-full" style={{ background: hallColor(cur.hall) }} />
+          {dict.exhibitors.district} {HALLS[cur.hall]} · {hallName(cur.hall, locale)}
         </p>
         <p className="mt-2 text-sm text-fog">
           {dict.exhibitors.stand} {cur.code}
@@ -129,9 +92,9 @@ export function FloorMap() {
           <>
             <h3 className="display mt-4 text-3xl">{dict.experience.available}</h3>
             <p className="mt-3 text-sm text-limestone/75">{dict.experience.availableLead}</p>
-            <p className="mt-2 text-sm text-limestone/75">{t(sec.pitch, locale)}</p>
+            <p className="mt-2 text-sm text-limestone/75">{t(pitch, locale)}</p>
             <Link
-              href={link(`exhibit?sector=${sec.id}&stand=${cur.code}`)}
+              href={link(sec ? `exhibit?sector=${sec.id}&stand=${cur.code}` : `exhibit?stand=${cur.code}`)}
               onClick={() => track("exhibit_cta_click", { from: "map", stand: cur.code })}
               className="btn btn-solid btn-sm mt-6 w-full justify-center"
             >

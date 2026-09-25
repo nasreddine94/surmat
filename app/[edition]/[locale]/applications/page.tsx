@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
+import { PageBanner } from "@/components/page-banner";
 import Link from "next/link";
 import { SpaceCover } from "@/components/space-cover";
 import { Reveal } from "@/components/reveal";
@@ -15,13 +17,14 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function ApplicationsPage({ params }: PageProps<"/[edition]/[locale]/applications">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const c = { edition, locale };
   return (
     <div className="shell pt-32">
       <p className="eyebrow">{dict.nav.applications}</p>
       <h1 className="display mt-4 text-5xl sm:text-7xl">{dict.home.spacesTitle}</h1>
       <p className="mt-5 max-w-xl text-limestone/75">{dict.apps.lead}</p>
+      <PageBanner id="lobby" alt={dict.home.spacesTitle} dict={dict} c={{ edition, locale }} ed={ed} />
       <ul className="mt-14 grid gap-x-6 gap-y-14 md:grid-cols-2">
         {applications.map((a, i) => (
           <li key={a.id}>
@@ -50,6 +53,7 @@ export default async function ApplicationsPage({ params }: PageProps<"/[edition]
           </li>
         ))}
       </ul>
+      <EventBand dict={dict} c={{ edition, locale }} ed={ed} bare />
       <ContextualCTA context="applications" />
     </div>
   );

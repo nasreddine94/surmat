@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
+import { PageBanner } from "@/components/page-banner";
 import { Catalogue } from "@/components/catalogue";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { ScopeSection } from "@/components/home/scope-section";
@@ -11,7 +13,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function MaterialsPage({ params, searchParams }: PageProps<"/[edition]/[locale]/materials">) {
-  const { dict, edition, locale } = await resolve(params);
+  const { dict, edition, locale, ed } = await resolve(params);
   const sp = await searchParams;
   const sector = typeof sp.sector === "string" && sectorById(sp.sector) ? (sp.sector as SectorId) : null;
   return (
@@ -19,10 +21,12 @@ export default async function MaterialsPage({ params, searchParams }: PageProps<
       <p className="eyebrow">{dict.nav.materials}</p>
       <h1 className="display mt-4 text-5xl sm:text-7xl">{dict.catalogue.title}</h1>
       <p className="mt-5 max-w-xl text-limestone/75">{dict.catalogue.lead}</p>
+      <PageBanner id="samples" alt={dict.catalogue.title} dict={dict} c={{ edition, locale }} ed={ed} />
       <div className="mt-12">
         <Catalogue initialSector={sector} />
       </div>
-      <ScopeSection dict={dict} c={{ edition, locale }} compact />
+      <ScopeSection compact />
+      <EventBand dict={dict} c={{ edition, locale }} ed={ed} bare />
       <ContextualCTA context="catalogue" sector={sector ?? undefined} />
     </div>
   );

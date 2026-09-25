@@ -21,7 +21,7 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
   const c = { edition, locale };
   const sp = await searchParams;
   const sector = typeof sp.sector === "string" && sectorById(sp.sector) ? (sp.sector as SectorId) : null;
-  const stand = typeof sp.stand === "string" && /^[A-F]-\d{2}$/.test(sp.stand) ? sp.stand : null;
+  const stand = typeof sp.stand === "string" && /^[A-I]-\d{2}$/.test(sp.stand) ? sp.stand : null;
   const s = sector ? sectorById(sector) : null;
 
   return (
@@ -62,7 +62,7 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
       <Markets dict={dict} c={c} />
       <Offer dict={dict} c={c} />
       <Participate dict={dict} c={c} />
-      <ScopeSection dict={dict} c={c} />
+      <ScopeSection />
     </>
   );
 }

@@ -181,7 +181,22 @@ export function Hero() {
   const sel = selected ? items.find((i) => i.key === selected) : null;
   const selMat = sel ? materialBySlug(sel.slug) : null;
   const selSector = selMat ? sectorById(selMat.sector) : null;
-  const show3D = mode === "3d";
+  // Start WebGL only once the page has loaded and the browser is idle: the static composition
+  // paints instantly and the first interaction is never blocked by shader compilation.
+  const [boot, setBoot] = useState(false);
+  useEffect(() => {
+    if (mode !== "3d") return;
+    let id = 0;
+    const go = () => (id = window.requestIdleCallback ? window.requestIdleCallback(() => setBoot(true), { timeout: 1500 }) : window.setTimeout(() => setBoot(true), 300));
+    if (document.readyState === "complete") go();
+    else window.addEventListener("load", go, { once: true });
+    return () => {
+      window.removeEventListener("load", go);
+      if (window.cancelIdleCallback) window.cancelIdleCallback(id);
+      else clearTimeout(id);
+    };
+  }, [mode]);
+  const show3D = mode === "3d" && boot;
 
   return (
     <>
@@ -197,14 +212,14 @@ export function Hero() {
       {/* Static composition: instant first paint; stays when WebGL is not used. */}
       <div
         aria-hidden
-        className="absolute inset-0 transition-opacity duration-1000 [perspective:1100px]"
-        style={{ opacity: show3D && ready ? 0 : 1 }}
+        className="absolute inset-0 transition-[opacity,visibility] duration-1000 [perspective:1100px]"
+        style={{ opacity: show3D && ready ? 0 : 1, visibility: show3D && ready ? "hidden" : "visible" }}
       >
         {staticSamples.map((s, i) => (
           <div
             key={i}
             className={`absolute ${s.cls} motion-safe:animate-[float-slow_9s_ease-in-out_infinite]`}
-            style={{ animationDelay: `${i * -0.9}s` }}
+            style={{ animationDelay: `${i * -0.9}s`, animationPlayState: show3D && ready ? "paused" : undefined }}
           >
             <Swatch
               tex={s.tex}

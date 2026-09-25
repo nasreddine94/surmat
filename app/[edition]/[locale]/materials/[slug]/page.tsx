@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Swatch } from "@/components/swatch";
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function MaterialOrSector({ params }: PageProps<"/[edition]/[locale]/materials/[slug]">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const { slug } = await params;
   const c = { edition, locale };
   const ex = exhibitorsFor(edition);
@@ -83,6 +84,7 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
           )}
         </section>
         <PitchBand sectorId={sector.id} c={c} />
+        <EventBand dict={dict} c={c} ed={ed} />
         <ContextualCTA context="sector" sector={sector.id} />
         <TrackView event="material_view" props={{ sector: sector.id }} />
       </>
@@ -204,6 +206,7 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
         </section>
       )}
 
+      <EventBand dict={dict} c={c} ed={ed} />
       <ContextualCTA context="material" sector={sec.id} />
       <TrackView event="material_view" props={{ material: m.slug, sector: sec.id }} />
     </>

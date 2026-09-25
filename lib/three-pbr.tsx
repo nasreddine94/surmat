@@ -61,7 +61,7 @@ export function useTiledMaps(maps: PBRMaps | null, tex: TexKind, w: number, h: n
 }
 
 /** Physically based parameters for `<meshPhysicalMaterial>`. */
-export function physicalProps(tex: TexKind, maps: PBRMaps | null) {
+export function physicalProps(tex: TexKind, maps: PBRMaps | null, cheapTransmission = false) {
   const p = pbr[tex];
   const base = {
     color: maps ? "#ffffff" : texTone[tex],
@@ -75,7 +75,15 @@ export function physicalProps(tex: TexKind, maps: PBRMaps | null) {
     envMapIntensity: 1,
     normalScale: new THREE.Vector2(1, 1),
   };
-  const glass = p.transmission
+  // Real transmission renders the whole scene a second time every frame. In a busy orbit the
+  // look of backlit stone or glass is kept with a soft self-glow instead, at no extra pass.
+  const glass = p.transmission && cheapTransmission
+    ? {
+        transparent: p.transmission > 0.6,
+        opacity: p.transmission > 0.6 ? 0.55 : 1,
+        ...(maps ? { emissive: p.attenuation ?? "#ffffff", emissiveMap: maps.map, emissiveIntensity: p.transmission * 0.9 } : {}),
+      }
+    : p.transmission
     ? {
         transmission: p.transmission,
         ior: p.ior ?? 1.5,

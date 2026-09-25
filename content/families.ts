@@ -1,5 +1,6 @@
 import type { L } from "@/lib/i18n";
-import type { SectorId } from "./sectors";
+import { sectorById, type SectorId } from "./sectors";
+import type { MediaKey } from "./event-media";
 
 /**
  * The exhibition's full scope: every product family SURMAT accepts, not just the materials
@@ -14,9 +15,74 @@ const l = ([en, fr, ar, es, pt, it, tr, zh, hi]: Row): L => ({ en, fr, ar, es, p
 
 export type GroupId = SectorId | "facades-envelope" | "joinery-glazing" | "bath-kitchen";
 
-export type FamilyGroup = { id: GroupId; name: L; core: boolean; families: L[] };
+export type FamilyGroup = {
+  id: GroupId;
+  name: L;
+  /** One of the six headline sectors (true) or an adjacent category the floor also accepts. */
+  core: boolean;
+  families: L[];
+  /** Event visual for the district. */
+  media: MediaKey;
+  /** The exhibitor pitch for this district. */
+  pitch: L;
+};
 
-const group = (id: GroupId, name: Row, core: boolean, rows: Row[]): FamilyGroup => ({ id, name: l(name), core, families: rows.map(l) });
+const MEDIA: Record<GroupId, MediaKey> = {
+  "ceramic-porcelain": "gCeramic",
+  "natural-engineered-stone": "gStone",
+  "paints-coatings": "gPaint",
+  "interior-finishing-systems": "gInterior",
+  "construction-chemicals": "gChemicals",
+  "surface-technologies": "gMachinery",
+  "facades-envelope": "facade",
+  "joinery-glazing": "gJoinery",
+  "bath-kitchen": "gBath",
+};
+
+const PITCH: Partial<Record<GroupId, L>> = {
+  "facades-envelope": l([
+    "Put your facade and envelope systems in front of developers, architects and facade contractors.",
+    "Présentez vos systèmes de façade et d’enveloppe aux promoteurs, architectes et façadiers.",
+    "اعرض أنظمة الواجهات وغلاف المبنى أمام المطورين والمعماريين ومقاولي الواجهات.",
+    "Presente sus sistemas de fachada y envolvente a promotores, arquitectos y fachadistas.",
+    "Apresente os seus sistemas de fachada e envolvente a promotores, arquitetos e empreiteiros de fachadas.",
+    "Presenta i tuoi sistemi di facciata e involucro a sviluppatori, architetti e facciatisti.",
+    "Cephe ve bina kabuğu sistemlerinizi geliştiricilere, mimarlara ve cephe yüklenicilerine sunun.",
+    "向开发商、建筑师和幕墙承包商展示您的幕墙与围护系统。",
+    "अपने फ़साड और एनवेलप सिस्टम डेवलपर्स, आर्किटेक्ट्स और फ़साड ठेकेदारों के सामने रखें।",
+  ]),
+  "joinery-glazing": l([
+    "Show your doors, windows and glass to the contractors and buyers who specify them.",
+    "Montrez vos menuiseries, fenêtres et vitrages aux entreprises et acheteurs qui les prescrivent.",
+    "اعرض أبوابك ونوافذك وزجاجك أمام المقاولين والمشترين الذين يحددونها.",
+    "Muestre sus puertas, ventanas y vidrios a los contratistas y compradores que los prescriben.",
+    "Mostre as suas portas, janelas e vidros aos empreiteiros e compradores que os especificam.",
+    "Mostra porte, finestre e vetri alle imprese e ai buyer che li prescrivono.",
+    "Kapı, pencere ve camlarınızı bunları belirleyen yüklenicilere ve alıcılara gösterin.",
+    "向指定门窗与玻璃的承包商和采购商展示您的产品。",
+    "अपने दरवाज़े, खिड़कियाँ और कांच उन्हें निर्दिष्ट करने वाले ठेकेदारों और खरीदारों को दिखाएँ।",
+  ]),
+  "bath-kitchen": l([
+    "Launch your bathroom, kitchen and fit-out collections to hotels, developers and distributors.",
+    "Lancez vos collections salle de bains, cuisine et agencement auprès des hôtels, promoteurs et distributeurs.",
+    "أطلق مجموعات الحمامات والمطابخ والتجهيز أمام الفنادق والمطورين والموزعين.",
+    "Lance sus colecciones de baño, cocina y equipamiento ante hoteles, promotores y distribuidores.",
+    "Lance as suas coleções de casa de banho, cozinha e equipamento junto de hotéis, promotores e distribuidores.",
+    "Lancia le tue collezioni bagno, cucina e arredo presso hotel, sviluppatori e distributori.",
+    "Banyo, mutfak ve donatı koleksiyonlarınızı otellere, geliştiricilere ve distribütörlere sunun.",
+    "向酒店、开发商和经销商推出您的卫浴、厨房与装修系列。",
+    "अपने बाथरूम, किचन और फ़िट-आउट कलेक्शन होटलों, डेवलपर्स और वितरकों के सामने लॉन्च करें।",
+  ]),
+};
+
+const group = (id: GroupId, name: Row, core: boolean, rows: Row[]): FamilyGroup => ({
+  id,
+  name: l(name),
+  core,
+  families: rows.map(l),
+  media: MEDIA[id],
+  pitch: PITCH[id] ?? sectorById(id)!.pitch,
+});
 
 export const familyGroups: FamilyGroup[] = [
   group("ceramic-porcelain", ["Ceramic & Porcelain", "Céramique & Porcelaine", "السيراميك والبورسلين", "Cerámica y porcelánico", "Cerâmica e porcelânico", "Ceramica e gres", "Seramik ve porselen", "陶瓷与瓷砖", "सिरेमिक और पोर्सिलेन"], true, [

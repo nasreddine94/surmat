@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Swatch } from "@/components/swatch";
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function ExhibitorPage({ params }: PageProps<"/[edition]/[locale]/exhibitors/[slug]">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const e = exhibitorBySlug((await params).slug);
   if (!e) notFound();
   const c = { edition, locale };
@@ -108,6 +109,7 @@ export default async function ExhibitorPage({ params }: PageProps<"/[edition]/[l
         </aside>
       </section>
 
+      <EventBand dict={dict} c={c} ed={ed} />
       <ContextualCTA context="exhibitor" sector={sec.id} />
       <TrackView event="exhibitor_view" props={{ exhibitor: e.slug }} />
     </>

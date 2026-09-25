@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MaterialTile } from "@/components/material-tile";
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function ApplicationPage({ params }: PageProps<"/[edition]/[locale]/applications/[slug]">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const a = applicationById((await params).slug);
   if (!a) notFound();
   const c = { edition, locale };
@@ -79,6 +80,7 @@ export default async function ApplicationPage({ params }: PageProps<"/[edition]/
         </section>
       )}
 
+      <EventBand dict={dict} c={c} ed={ed} />
       <ContextualCTA context="application" sector={materialBySlug(a.surfaces.feature)!.sector} />
       <TrackView event="application_view" props={{ application: a.id }} />
     </>

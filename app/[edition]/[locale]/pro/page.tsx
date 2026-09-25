@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { Arrow, Check } from "@/components/icons";
 import { Swatch } from "@/components/swatch";
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 
 /** Espace Pro (PRD §56): announced here; the gated area opens to confirmed exhibitors. */
 export default async function ProPage({ params }: PageProps<"/[edition]/[locale]/pro">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const c = { edition, locale };
   const p = dict.pro;
   return (
@@ -49,6 +50,7 @@ export default async function ProPage({ params }: PageProps<"/[edition]/[locale]
           </Link>
         ))}
       </div>
+      <EventBand dict={dict} c={c} ed={ed} bare />
     </div>
   );
 }

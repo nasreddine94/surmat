@@ -4,7 +4,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Environment, Html, Lightformer, PerformanceMonitor, RoundedBox } from "@react-three/drei";
-import { Bloom, DepthOfField, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { Bloom, DepthOfField, EffectComposer, Noise, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode, type DepthOfFieldEffect } from "postprocessing";
 import * as THREE from "three";
 import type { TexKind } from "@/lib/textures";
@@ -61,7 +61,10 @@ function Slab({
   // Near-ring samples get full-resolution relief; far ones sit in fog and bokeh.
   const maps = usePBRMaps(item.tex, item.seed, quality > 0 && index < RINGS[0].count ? 512 : 256, index < RINGS[0].count);
   const [w, h, d] = DIMS[item.shape];
-  const props = physicalProps(item.tex, maps);
+  const far = index >= RINGS[0].count + RINGS[1].count;
+  const props = physicalProps(item.tex, maps, true);
+  // Distant samples sit in fog and bokeh: clearcoat, sheen and anisotropy are invisible there.
+  if (far) Object.assign(props, { clearcoat: 0, sheen: 0, anisotropy: 0 });
 
   const orbit = useMemo(() => {
     let i = index, r = 0;
@@ -186,7 +189,7 @@ function Dust() {
   const ref = useRef<THREE.Points>(null);
   const geo = useMemo(() => {
     const g = new THREE.BufferGeometry();
-    const n = 900, p = new Float32Array(n * 3);
+    const n = 520, p = new Float32Array(n * 3);
     const r = (i: number, s: number) => {
       const x = Math.sin(i * s) * 43758.5453;
       return x - Math.floor(x) - 0.5;
@@ -236,6 +239,42 @@ function Rig({ rtl, selected, drag }: { rtl: boolean; selected: boolean; drag: S
   );
 }
 
+/**
+ * Frame pacing. The universe drifts slowly, so it renders at 30 fps when nobody is touching it
+ * and at up to 60 fps (never more, even on 120 Hz screens) for a few seconds after any input or
+ * state change. This roughly halves GPU work at rest without visible difference.
+ */
+function Ticker({ source, bump }: { source: React.RefObject<HTMLElement | null>; bump: unknown }) {
+  const { invalidate } = useThree();
+  const last = useRef(0);
+  useEffect(() => {
+    last.current = performance.now();
+  }, [bump]);
+  useEffect(() => {
+    const el = source.current;
+    const wake = () => (last.current = performance.now());
+    const evs = ["pointermove", "pointerdown", "wheel", "keydown"] as const;
+    evs.forEach((e) => el?.addEventListener(e, wake, { passive: true }));
+    window.addEventListener("scroll", wake, { passive: true });
+    let raf = 0, prev = 0;
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      const fps = now - last.current < 2500 ? 60 : 30;
+      if (now - prev >= 1000 / fps - 2) {
+        prev = now;
+        invalidate();
+      }
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      evs.forEach((e) => el?.removeEventListener(e, wake));
+      window.removeEventListener("scroll", wake);
+    };
+  }, [source, invalidate]);
+  return null;
+}
+
 function Effects({ shared, quality }: { shared: Shared; quality: number }) {
   const dof = useRef<DepthOfFieldEffect>(null);
   const focus = useMemo(() => new THREE.Vector3(0, 0, 3), []);
@@ -251,11 +290,20 @@ function Effects({ shared, quality }: { shared: Shared; quality: number }) {
     <Vignette key="v" offset={0.28} darkness={0.72} />,
     <Noise key="n" opacity={0.035} premultiply />,
   ];
-  if (quality === 0) return <EffectComposer multisampling={0}>{grade}</EffectComposer>;
+  // No MSAA: SMAA gives clean edges for a fraction of the cost, and depth of field runs at half
+  // resolution (it is a blur, so it looks the same).
+  if (quality === 0)
+    return (
+      <EffectComposer multisampling={0}>
+        {grade}
+        <SMAA />
+      </EffectComposer>
+    );
   return (
-    <EffectComposer multisampling={4}>
-      <DepthOfField ref={dof} target={[0, 0, 3]} worldFocusRange={11} bokehScale={5} />
+    <EffectComposer multisampling={0}>
+      <DepthOfField ref={dof} target={[0, 0, 3]} worldFocusRange={11} bokehScale={5} resolutionScale={0.5} />
       {grade}
+      <SMAA />
     </EffectComposer>
   );
 }
@@ -287,7 +335,7 @@ export default function OrbitScene({
 }) {
   const positions = useRef(new Map<string, THREE.Vector3>()).current;
   const shared: Shared = { selected, matchIndex, hovered, drag, rtl, positions };
-  const [dpr, setDpr] = useState(1.5);
+  const [dpr, setDpr] = useState(1.25);
   const [quality, setQuality] = useState(1);
 
   useEffect(() => {
@@ -300,20 +348,23 @@ export default function OrbitScene({
       className="!absolute inset-0"
       eventSource={eventSource as React.RefObject<HTMLElement>}
       eventPrefix="client"
-      frameloop={active ? "always" : "never"}
+      frameloop={active ? "demand" : "never"}
       dpr={dpr}
       camera={{ position: CAM.toArray(), fov: 32, near: 0.1, far: 80 }}
       gl={{ antialias: false, powerPreference: "high-performance", toneMapping: THREE.NoToneMapping, stencil: false }}
       onCreated={() => onReady()}
       onPointerMissed={() => selected && onSelect(null)}
     >
+      {active && <Ticker source={eventSource} bump={[selected, hovered, matchIndex]} />}
       <PerformanceMonitor
-        onIncline={() => setDpr(Math.min(2, window.devicePixelRatio))}
+        onIncline={() => setDpr(Math.min(1.5, window.devicePixelRatio))}
         onDecline={() => {
           setDpr(1);
           setQuality(0);
         }}
         flipflops={3}
+        // Frames are paced to 30 fps at rest, so "declining" means the GPU cannot hold even that.
+        bounds={() => [18, 26]}
         onFallback={() => setQuality(0)}
       />
       <color attach="background" args={["#0b0c0d"]} />

@@ -37,7 +37,7 @@ export function EditionsSection({ dict, c }: { dict: Dict; c: Ctx }) {
                     >
                       <div className="relative aspect-[16/9] overflow-hidden">
                         <EventImage
-                          id={id === "dz" ? "algiers" : "dakar"}
+                          id={id === "dz" ? "oran" : "dakar"}
                           alt={t(e.city, c.locale)}
                           sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 100vw"
                           label={dict.event.visual}

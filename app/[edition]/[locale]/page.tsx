@@ -76,13 +76,13 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
       <SectorGallery dict={dict} c={c} />
 
       {/* The full exhibition scope — the library is a selection, the floor is open */}
-      <ScopeSection dict={dict} c={c} />
+      <ScopeSection />
 
       {/* 05 — Applications explorer */}
       <ApplicationsExplorer />
 
       {/* 06 — The exhibition experience */}
-      <ExperienceTeaser dict={dict} c={c} />
+      <ExperienceTeaser dict={dict} c={c} ed={ed} />
 
       {/* 07 — Leading exhibitors */}
       <LeadingExhibitors dict={dict} c={c} />

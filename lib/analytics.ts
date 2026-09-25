@@ -8,6 +8,7 @@ export const analyticsEvents = [
   "material_hover",
   "material_expand",
   "material_select",
+  "scope_district",
   "material_filter",
   "application_view",
   "application_hotspot_select",

@@ -251,10 +251,10 @@ export default function Earth({ drag }: { drag: React.RefObject<{ offset: number
       <group ref={lean}>
         <group rotation={rest}>
           <mesh material={materials.earth}>
-            <sphereGeometry args={[R, 160, 160]} />
+            <sphereGeometry args={[R, 112, 112]} />
           </mesh>
           <mesh material={materials.clouds} scale={1.006}>
-            <sphereGeometry args={[R, 128, 128]} />
+            <sphereGeometry args={[R, 80, 80]} />
           </mesh>
           {africa.map((ring, i) => (
             // Mainland first (several sparks chase round it), then Madagascar.
@@ -263,7 +263,7 @@ export default function Earth({ drag }: { drag: React.RefObject<{ offset: number
         </group>
       </group>
       <mesh material={materials.halo} scale={1.12}>
-        <sphereGeometry args={[R, 96, 96]} />
+        <sphereGeometry args={[R, 64, 64]} />
       </mesh>
     </group>
   );

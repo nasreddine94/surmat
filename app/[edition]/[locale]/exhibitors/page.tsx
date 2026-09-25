@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { EventBand } from "@/components/event-band";
+import { PageBanner } from "@/components/page-banner";
 import Link from "next/link";
 import { ExhibitorCard } from "@/components/exhibitor-card";
 import { ContextualCTA } from "@/components/contextual-cta";
@@ -14,7 +16,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function ExhibitorsPage({ params, searchParams }: PageProps<"/[edition]/[locale]/exhibitors">) {
-  const { edition, locale, dict } = await resolve(params);
+  const { edition, locale, dict, ed } = await resolve(params);
   const sp = await searchParams;
   const c = { edition, locale };
   const sector = typeof sp.sector === "string" && sectorById(sp.sector) ? (sp.sector as SectorId) : null;
@@ -31,6 +33,7 @@ export default async function ExhibitorsPage({ params, searchParams }: PageProps
       <p className="eyebrow">{dict.nav.exhibitors}</p>
       <h1 className="display mt-4 text-5xl sm:text-7xl">{dict.exhibitors.title}</h1>
       <p className="mt-5 max-w-xl text-limestone/75">{dict.exhibitors.lead}</p>
+      <PageBanner id="networking" alt={dict.event.pillars[1].title} dict={dict} c={{ edition, locale }} ed={ed} />
 
       <nav className="mt-10 flex gap-2 overflow-x-auto pb-1" aria-label={dict.material.sector}>
         <Link href={href(c, "exhibitors")} className="chip shrink-0" aria-current={!sector && !mats.length ? "true" : undefined}>
@@ -61,6 +64,7 @@ export default async function ExhibitorsPage({ params, searchParams }: PageProps
         <p className="mt-16 text-fog">{dict.exhibitors.empty}</p>
       )}
       <p className="mt-10 max-w-xl text-xs text-fog">{dict.exhibitors.sampleNote}</p>
+      <EventBand dict={dict} c={{ edition, locale }} ed={ed} bare />
       <ContextualCTA context="exhibitors" sector={sector ?? undefined} />
     </div>
   );
