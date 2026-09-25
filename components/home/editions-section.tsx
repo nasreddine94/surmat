@@ -60,6 +60,18 @@ export function EditionsSection({ dict, c }: { dict: Dict; c: Ctx }) {
                   </li>
                 );
               })}
+              <li className="sm:col-span-2">
+                <Link href={href(c, "partners")} className="group flex items-center justify-between gap-4 rounded-sm border border-dashed border-line-strong p-5 transition-colors hover:border-gold/60">
+                  <span>
+                    <span className="text-[0.65rem] uppercase tracking-[0.2em] text-gold">{dict.partners.eyebrow}</span>
+                    <span className="display mt-1 block text-2xl">{dict.partners.homeTitle}</span>
+                    <span className="mt-1 block text-sm text-limestone/70">{dict.partners.homeLead}</span>
+                  </span>
+                  <span className="arrow-circle shrink-0 transition-colors group-hover:border-gold group-hover:text-gold">
+                    <Arrow size={14} />
+                  </span>
+                </Link>
+              </li>
             </ul>
           </Reveal>
           <Reveal delay={0.1} className="mx-auto w-full max-w-md">

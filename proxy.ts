@@ -17,6 +17,20 @@ function preferredLocale(req: NextRequest) {
   return ranked.find((r) => locales.includes(r.lang))?.lang ?? "en";
 }
 
+/**
+ * West African countries (ECOWAS members plus Mauritania) are sent to SURMAT Senegal; everyone
+ * else to SURMAT Algeria. The country comes from the edge (Vercel's `x-vercel-ip-country`);
+ * a visitor's own choice (the `surmat_edition` cookie) always wins.
+ */
+const WEST_AFRICA = new Set(["SN", "GM", "GN", "GW", "ML", "MR", "CI", "BF", "NE", "NG", "GH", "TG", "BJ", "LR", "SL", "CV"]);
+
+function preferredEdition(req: NextRequest) {
+  const saved = req.cookies.get("surmat_edition")?.value;
+  if (saved && editionsList.includes(saved)) return saved;
+  const country = (req.headers.get("x-vercel-ip-country") ?? req.headers.get("cf-ipcountry") ?? "").toUpperCase();
+  return WEST_AFRICA.has(country) ? "sn" : "dz";
+}
+
 /** A segment that looks like a language code (e.g. "de", "pt-BR"). No route segment is two letters. */
 const looksLikeLocale = (s: string | undefined) => !!s && /^[a-z]{2}(-[a-z]{2})?$/i.test(s);
 
@@ -36,8 +50,7 @@ export function proxy(req: NextRequest) {
     edition = first;
     rest = segments.slice(looksLikeLocale(second) ? 2 : 1);
   } else {
-    const saved = req.cookies.get("surmat_edition")?.value;
-    edition = saved && editionsList.includes(saved) ? saved : "dz";
+    edition = preferredEdition(req);
     // /fr/materials keeps French; /de/materials falls back to the preferred locale
     if (locales.includes(first)) locale = first;
     rest = segments.slice(looksLikeLocale(first) ? 1 : 0);

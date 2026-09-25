@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "visit",
     "exhibit",
     "contact",
+    "partners",
     "legal",
     "privacy",
     ...sectors.map((s) => `materials/${s.id}`),

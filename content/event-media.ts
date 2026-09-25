@@ -33,6 +33,13 @@ export const media = {
   gJoinery: img("hf_20260925_182737_2eb89554-c1b5-4ea6-8634-8a96a74e276b.png", 1168, 880),
   gBath: img("hf_20260925_182038_93134b6e-676d-4f21-9f4e-0931f0b4dafb.png", 1168, 880),
   samples: img("hf_20260925_182038_d94edcd1-4634-4b87-8056-ad6cff55eecb.png", 1344, 752),
+  // Application scenes — one per space, same camera as the explorer's hotspot layout.
+  spHospitality: img("hf_20260925_192758_55d8939f-8465-4830-be36-2e51f81798a3.png", 1344, 752),
+  spResidential: img("hf_20260925_192758_fbe37478-9c10-4d95-9720-2d7ec03a43c1.png", 1344, 752),
+  spCommercial: img("hf_20260925_192758_490e43b8-831e-48fd-9c47-c35c80d6f675.png", 1344, 752),
+  spHealthcare: img("hf_20260925_192758_9e8a72c4-14a1-4c36-9f15-3a28b8ba5e79.png", 1344, 752),
+  spPublic: img("hf_20260925_192758_7b7e5559-2ea4-451d-87ea-047e32f71a09.png", 1344, 752),
+  spOutdoor: img("hf_20260925_192758_cc7ddc98-1605-45b2-871a-ddf9f0a1f5cd.png", 1344, 752),
 } satisfies Record<string, Media>;
 
 export type MediaKey = keyof typeof media;

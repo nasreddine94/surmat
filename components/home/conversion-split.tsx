@@ -50,7 +50,7 @@ export function ConversionSplit({ dict, c }: { dict: Dict; c: Ctx }) {
               <div className={`absolute inset-0 ${i ? "bg-gradient-to-tl" : "bg-gradient-to-tr"} from-ink via-ink/75 to-ink/10`} />
               <div className="relative flex h-full min-h-[30rem] flex-col justify-end p-8 sm:min-h-[34rem] sm:p-12">
                 <p className="eyebrow text-limestone/70">{p.eyebrow}</p>
-                <h2 className="display mt-4 text-[clamp(2.5rem,4.5vw,4.5rem)]">{p.title}</h2>
+                <h2 className="display mt-4 text-[clamp(2.2rem,3.3vw,3.6rem)] leading-[1.05] lg:whitespace-nowrap">{p.title}</h2>
                 <p className="mt-3 max-w-sm text-limestone/80">{p.lead}</p>
                 <ul className="mt-5 space-y-1.5 text-sm text-limestone/85">
                   {p.points.map((pt) => (

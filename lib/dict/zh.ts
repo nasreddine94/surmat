@@ -6,6 +6,7 @@ export const zh: Dict = {
     eyebrow: "国际展览会",
   },
   nav: {
+    partners: "合作伙伴",
     materials: "材料",
     applications: "应用",
     exhibitors: "展商",
@@ -158,6 +159,7 @@ export const zh: Dict = {
     },
   },
   explorer: {
+    alternatives: "该表面的其他常用材料",
     title: "适用于每个空间的材料",
     lead: "在空间中选择一个点，查看其背后的材料——以及生产它的展商。",
     viewMaterial: "查看材料",
@@ -268,6 +270,72 @@ export const zh: Dict = {
     cta: "提交我的产品",
     count: "已收录 {m} 种材料 · 展会欢迎 {f} 个产品品类",
   },
+  partners: {
+    eyebrow: "合作机会",
+    title: "把 SURMAT 带到您的国家",
+    lead: "SURMAT 可复制推广。会展公司、行业协会和商会可以把这一展会模式带到本地市场——背后有我们的品牌、平台、展商网络和运营方法支持。",
+    cta: "申请成为合作伙伴",
+    mapLabel: "今天在阿尔及利亚和塞内加尔——明天在您的市场",
+    formatsTitle: "三种合作模式",
+    formats: [
+      {
+        title: "授权展会",
+        text: "以特许经营授权方式在您的国家举办 SURMAT。",
+        points: [
+          "完整使用 SURMAT 品牌与展会模式",
+          "九大展区平面规划与材料分类体系",
+          "在本平台以九种语言发布您的展会",
+        ],
+      },
+      {
+        title: "联合主办",
+        text: "共同推出新一届展会，共担投资、共享收益。",
+        points: [
+          "共同的商业计划与预算",
+          "共享销售团队与国际展商",
+          "SURMAT 现场运营支持",
+        ],
+      },
+      {
+        title: "代理与国家展团",
+        text: "在您的国家代表 SURMAT，组织本国企业参展。",
+        points: [
+          "按售出展位获得佣金",
+          "组织本国国家展团",
+          "组织采购团前往奥兰和达喀尔",
+        ],
+      },
+    ],
+    weBringTitle: "SURMAT 提供",
+    weBring: [
+      "成熟的品牌与展会模式",
+      "数字平台：材料库、展商展厅、观众登记",
+      "国际展商与买家邀约计划",
+      "销售方法、定价模型与培训",
+      "九种语言的营销工具包、内容与推广活动",
+      "运营手册与现场支持",
+    ],
+    youBringTitle: "您提供",
+    youBring: [
+      "对本地建筑市场的了解",
+      "与场馆、政府部门和协会的关系",
+      "本地销售与市场团队",
+      "物流与供应商网络",
+      "遵守 SURMAT 质量标准的承诺",
+    ],
+    stepsTitle: "合作流程",
+    steps: [
+      { title: "提交申请", text: "介绍您的机构和市场。" },
+      { title: "市场研究", text: "我们共同评估机会。" },
+      { title: "签订协议", text: "确定合作模式并签约。" },
+      { title: "正式启动", text: "您的 SURMAT 展会在平台上线。" },
+    ],
+    who: "面向非洲、中东及其他地区的会展组织者、展览公司、行业协会、商会和投资者。",
+    applyTitle: "开始洽谈",
+    applyLead: "请留下基本信息，SURMAT 合作团队将在五个工作日内回复。",
+    homeTitle: "下一个会是您的国家吗？",
+    homeLead: "以授权或联合主办的方式，把 SURMAT 带到您的市场。",
+  },
   sector: {
     materials: "本板块材料",
     exhibitors: "本展区展商",
@@ -294,6 +362,8 @@ export const zh: Dict = {
     count: "{n} 种材料",
   },
   apps: {
+    allSpaces: "全部空间",
+    stats: "{m} 种材料 · {e} 家展商",
     title: "应用",
     lead: "从您正在建设的空间出发，结识为其中每一个表面供货的展商。",
     materialsUsed: "该空间所用材料",

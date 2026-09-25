@@ -6,6 +6,7 @@ export const es: Dict = {
     eyebrow: "La feria internacional de",
   },
   nav: {
+    partners: "Alianzas",
     materials: "Materiales",
     applications: "Aplicaciones",
     exhibitors: "Expositores",
@@ -158,6 +159,7 @@ export const es: Dict = {
     },
   },
   explorer: {
+    alternatives: "También especificado para esta superficie",
     title: "Materiales para cada espacio",
     lead: "Seleccione un punto del espacio para ver el material — y los expositores que lo fabrican.",
     viewMaterial: "Ver el material",
@@ -307,6 +309,72 @@ export const es: Dict = {
     cta: "Proponer mi producto",
     count: "{m} materiales documentados · {f} familias de productos admitidas en la feria",
   },
+  partners: {
+    eyebrow: "Oportunidad de alianza",
+    title: "Lleve SURMAT a su país",
+    lead: "SURMAT está hecho para viajar. Agencias de eventos, asociaciones sectoriales y cámaras de comercio pueden llevar el formato a su mercado, con nuestra marca, plataforma, red de expositores y método detrás.",
+    cta: "Solicitar ser socio",
+    mapLabel: "Argelia y Senegal hoy — su mercado mañana",
+    formatsTitle: "Tres formas de asociarse",
+    formats: [
+      {
+        title: "Edición bajo licencia",
+        text: "Organice SURMAT en su país con una licencia de franquicia.",
+        points: [
+          "Uso completo de la marca y el formato SURMAT",
+          "Plano de nueve distritos y taxonomía de materiales",
+          "Su edición en esta plataforma, en nueve idiomas",
+        ],
+      },
+      {
+        title: "Edición coorganizada",
+        text: "Lancemos juntos una nueva edición, compartiendo inversión y resultados.",
+        points: [
+          "Plan de negocio y presupuesto conjuntos",
+          "Equipo comercial y expositores internacionales compartidos",
+          "Apoyo operativo de SURMAT in situ",
+        ],
+      },
+      {
+        title: "Agente y pabellón nacional",
+        text: "Represente a SURMAT en su país y lleve sus empresas a nuestras ediciones.",
+        points: [
+          "Comisión por los stands que venda",
+          "Organización del pabellón nacional de su país",
+          "Delegaciones de compradores a Orán y Dakar",
+        ],
+      },
+    ],
+    weBringTitle: "Lo que aporta SURMAT",
+    weBring: [
+      "Una marca y un formato de feria consolidados",
+      "La plataforma digital: biblioteca de materiales, showrooms de expositores, registro",
+      "Expositores internacionales y programa de compradores invitados",
+      "Método comercial, modelo de precios y formación",
+      "Kit de marketing, contenidos y campañas en nueve idiomas",
+      "Manuales operativos y apoyo in situ",
+    ],
+    youBringTitle: "Lo que aporta usted",
+    youBring: [
+      "Conocimiento de su mercado de la construcción",
+      "Relaciones con recintos, autoridades y asociaciones",
+      "Un equipo local de ventas y marketing",
+      "Red logística y de proveedores",
+      "Compromiso con los estándares de calidad SURMAT",
+    ],
+    stepsTitle: "Cómo funciona",
+    steps: [
+      { title: "Solicitud", text: "Cuéntenos sobre su organización y su mercado." },
+      { title: "Estudio de mercado", text: "Evaluamos juntos la oportunidad." },
+      { title: "Acuerdo", text: "Elegimos el modelo de alianza y firmamos." },
+      { title: "Lanzamiento", text: "Su edición SURMAT se publica en la plataforma." },
+    ],
+    who: "Para organizadores de eventos, agencias feriales, asociaciones sectoriales, cámaras de comercio e inversores de África, Oriente Medio y otros mercados.",
+    applyTitle: "Iniciemos la conversación",
+    applyLead: "Comparta algunos datos y el equipo de alianzas de SURMAT le responderá en cinco días hábiles.",
+    homeTitle: "¿Su país es el siguiente?",
+    homeLead: "Lleve SURMAT a su mercado como edición bajo licencia o coorganizada.",
+  },
   sector: {
     materials: "Materiales de este sector",
     exhibitors: "Expositores de este distrito",
@@ -333,6 +401,8 @@ export const es: Dict = {
     count: "{n} materiales",
   },
   apps: {
+    allSpaces: "Todos los espacios",
+    stats: "{m} materiales · {e} expositores",
     title: "Aplicaciones",
     lead: "Empiece por el espacio que está construyendo y conozca a los expositores que suministran cada una de sus superficies.",
     materialsUsed: "Materiales de este espacio",

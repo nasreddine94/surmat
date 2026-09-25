@@ -64,10 +64,8 @@ export function Nav() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [edOpen, setEdOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const edRef = useRef<HTMLDivElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
   const isHome = pathname === link();
 
@@ -90,7 +88,6 @@ export function Nav() {
     return () => window.removeEventListener("keydown", key);
   }, []);
 
-  useDismiss(edRef, edOpen, setEdOpen);
   useDismiss(langRef, langOpen, setLangOpen);
 
   const [menuPath, setMenuPath] = useState(pathname);
@@ -138,44 +135,28 @@ export function Nav() {
             <span className="wordmark text-[1.35rem] leading-none">SURMAT</span>
           </Link>
           <div className="hidden items-center gap-1 border-s border-line ps-4 sm:flex">
-            <div ref={edRef} className="relative">
-              <button
-                type="button"
-                aria-expanded={edOpen}
-                aria-haspopup="true"
-                onClick={() => setEdOpen((v) => !v)}
-                className="flex h-10 items-center gap-2 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
-              >
-                <Flag code={ed.country} className="h-3.5 w-[1.3rem] rounded-[2px]" />
-                <span>{countryName(ed.country, locale)}</span>
-                <Chevron size={14} />
-                <span className="sr-only">{dict.nav.edition}</span>
-              </button>
-              {edOpen && (
-                <ul className="absolute start-0 top-12 w-60 overflow-hidden rounded-md border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl">
-                  {editionIds.map((id) => {
-                    const e = editions[id];
-                    return (
-                      <li key={id}>
-                        <Link
-                          href={swapSegment(pathname, 1, id)}
-                          aria-current={id === edition ? "true" : undefined}
-                          onClick={() => {
-                            setCookie("surmat_edition", id);
-                            track("country_switch", { to: id });
-                            setEdOpen(false);
-                          }}
-                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
-                        >
-                          <Flag code={e.country} className="h-4 w-6 rounded-[2px]" />
-                          <span className="flex-1">{t(e.name, locale)}</span>
-                          <span className="text-xs text-fog">{t(e.city, locale)}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+            {/* Both editions side by side: neither country sits behind the other. */}
+            <div role="group" aria-label={dict.nav.edition} className="flex items-center rounded-full border border-line p-0.5">
+              {editionIds.map((id) => {
+                const e = editions[id];
+                const on = id === edition;
+                return (
+                  <Link
+                    key={id}
+                    href={swapSegment(pathname, 1, id)}
+                    aria-current={on ? "true" : undefined}
+                    title={`${t(e.name, locale)} — ${t(e.city, locale)}`}
+                    onClick={() => {
+                      setCookie("surmat_edition", id);
+                      if (!on) track("country_switch", { to: id });
+                    }}
+                    className={`flex h-8 items-center gap-1.5 rounded-full px-2.5 text-[0.78rem] transition-colors ${on ? "bg-limestone/[0.12] text-limestone" : "text-limestone/60 hover:text-limestone"}`}
+                  >
+                    <Flag code={e.country} className={`h-3 w-[1.1rem] rounded-[2px] transition-opacity ${on ? "" : "opacity-60"}`} />
+                    <span>{countryName(e.country, locale)}</span>
+                  </Link>
+                );
+              })}
             </div>
 
             <span aria-hidden className="text-fog">·</span>

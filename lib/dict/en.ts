@@ -5,6 +5,7 @@ export const en = {
     eyebrow: "The international exhibition for",
   },
   nav: {
+    partners: "Partnerships",
     materials: "Materials",
     applications: "Applications",
     exhibitors: "Exhibitors",
@@ -157,6 +158,7 @@ export const en = {
     },
   },
   explorer: {
+    alternatives: "Also specified for this surface",
     title: "Materials for every space",
     lead: "Select a point in the space to see the material behind it — and the exhibitors who make it.",
     viewMaterial: "View material",
@@ -297,6 +299,72 @@ export const en = {
     cta: "Propose my product",
     count: "{m} materials documented · {f} product families welcome at the exhibition",
   },
+  partners: {
+    eyebrow: "Partnership opportunity",
+    title: "Bring SURMAT to your country",
+    lead: "SURMAT is built to travel. Event agencies, trade associations and chambers of commerce can take the format to their market — with our brand, platform, exhibitor network and playbook behind them.",
+    cta: "Apply to become a partner",
+    mapLabel: "Algeria and Senegal today — your market next",
+    formatsTitle: "Three ways to partner",
+    formats: [
+      {
+        title: "Licensed edition",
+        text: "Organise SURMAT in your country under a franchise licence.",
+        points: [
+          "Full use of the SURMAT brand and format",
+          "Nine-district floor plan and material taxonomy",
+          "Your edition on this platform, in nine languages",
+        ],
+      },
+      {
+        title: "Co-organised edition",
+        text: "Launch a new edition together, sharing investment and results.",
+        points: [
+          "Joint business plan and budget",
+          "Shared sales team and international exhibitors",
+          "SURMAT operations support on site",
+        ],
+      },
+      {
+        title: "Agent & national pavilion",
+        text: "Represent SURMAT in your country and bring your companies to our editions.",
+        points: [
+          "Commission on stands you sell",
+          "Organise your country's national pavilion",
+          "Delegations of buyers to Oran and Dakar",
+        ],
+      },
+    ],
+    weBringTitle: "What SURMAT brings",
+    weBring: [
+      "An established brand and exhibition format",
+      "The digital platform: material library, exhibitor showrooms, registration",
+      "International exhibitors and a hosted-buyer programme",
+      "Sales playbook, pricing model and training",
+      "Marketing kit, content and campaigns in nine languages",
+      "Operations manuals and on-site support",
+    ],
+    youBringTitle: "What you bring",
+    youBring: [
+      "Knowledge of your construction market",
+      "Relationships with venues, authorities and associations",
+      "A local sales and marketing team",
+      "Logistics and supplier network",
+      "Commitment to SURMAT quality standards",
+    ],
+    stepsTitle: "How it works",
+    steps: [
+      { title: "Apply", text: "Tell us about your organisation and market." },
+      { title: "Market study", text: "We assess the opportunity together." },
+      { title: "Agreement", text: "We choose the partnership model and sign." },
+      { title: "Launch", text: "Your SURMAT edition goes live on the platform." },
+    ],
+    who: "For event organisers, exhibition agencies, trade associations, chambers of commerce and investors across Africa, the Middle East and beyond.",
+    applyTitle: "Start the conversation",
+    applyLead: "Share a few details and the SURMAT partnerships team will reply within five working days.",
+    homeTitle: "Your country next?",
+    homeLead: "Bring SURMAT to your market as a licensed or co-organised edition.",
+  },
   sector: {
     materials: "Materials in this sector",
     exhibitors: "Exhibitors in this district",
@@ -323,6 +391,8 @@ export const en = {
     count: "{n} materials",
   },
   apps: {
+    allSpaces: "Every space",
+    stats: "{m} materials · {e} exhibitors",
     title: "Applications",
     lead: "Start from the space you are building and meet the exhibitors who supply every surface in it.",
     materialsUsed: "Materials in this space",

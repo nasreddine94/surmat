@@ -6,6 +6,7 @@ export const fr: Dict = {
     eyebrow: "Le salon international des",
   },
   nav: {
+    partners: "Partenariats",
     materials: "Matériaux",
     applications: "Applications",
     exhibitors: "Exposants",
@@ -161,6 +162,7 @@ export const fr: Dict = {
     },
   },
   explorer: {
+    alternatives: "Aussi prescrit pour cette surface",
     title: "Des matériaux pour chaque espace",
     lead: "Sélectionnez un point dans l’espace pour découvrir le matériau — et les exposants qui le fabriquent.",
     viewMaterial: "Voir le matériau",
@@ -310,6 +312,72 @@ export const fr: Dict = {
     cta: "Proposer mon produit",
     count: "{m} matériaux documentés · {f} familles de produits accueillies au salon",
   },
+  partners: {
+    eyebrow: "Opportunité de partenariat",
+    title: "Organisez SURMAT dans votre pays",
+    lead: "SURMAT est conçu pour voyager. Agences événementielles, fédérations professionnelles et chambres de commerce peuvent déployer le format sur leur marché — avec notre marque, notre plateforme, notre réseau d’exposants et notre méthode.",
+    cta: "Devenir partenaire",
+    mapLabel: "L’Algérie et le Sénégal aujourd’hui — votre marché demain",
+    formatsTitle: "Trois façons de s’associer",
+    formats: [
+      {
+        title: "Édition sous licence",
+        text: "Organisez SURMAT dans votre pays sous licence de franchise.",
+        points: [
+          "Utilisation complète de la marque et du format SURMAT",
+          "Plan en neuf quartiers et taxonomie des matériaux",
+          "Votre édition sur cette plateforme, en neuf langues",
+        ],
+      },
+      {
+        title: "Édition co-organisée",
+        text: "Lancez ensemble une nouvelle édition, en partageant investissement et résultats.",
+        points: [
+          "Business plan et budget communs",
+          "Équipe commerciale et exposants internationaux partagés",
+          "Appui opérationnel SURMAT sur site",
+        ],
+      },
+      {
+        title: "Agent & pavillon national",
+        text: "Représentez SURMAT dans votre pays et amenez vos entreprises à nos éditions.",
+        points: [
+          "Commission sur les stands vendus",
+          "Organisation du pavillon national de votre pays",
+          "Délégations d’acheteurs à Oran et Dakar",
+        ],
+      },
+    ],
+    weBringTitle: "Ce qu’apporte SURMAT",
+    weBring: [
+      "Une marque et un format de salon établis",
+      "La plateforme digitale : matériauthèque, showrooms exposants, inscriptions",
+      "Des exposants internationaux et un programme d’acheteurs invités",
+      "Méthode commerciale, modèle tarifaire et formation",
+      "Kit marketing, contenus et campagnes en neuf langues",
+      "Manuels opérationnels et accompagnement sur site",
+    ],
+    youBringTitle: "Ce que vous apportez",
+    youBring: [
+      "La connaissance de votre marché de la construction",
+      "Vos relations avec les sites, les autorités et les fédérations",
+      "Une équipe commerciale et marketing locale",
+      "Un réseau logistique et de prestataires",
+      "L’engagement sur les standards de qualité SURMAT",
+    ],
+    stepsTitle: "Comment ça marche",
+    steps: [
+      { title: "Candidature", text: "Présentez votre organisation et votre marché." },
+      { title: "Étude de marché", text: "Nous évaluons ensemble l’opportunité." },
+      { title: "Accord", text: "Nous choisissons le modèle de partenariat et signons." },
+      { title: "Lancement", text: "Votre édition SURMAT est en ligne sur la plateforme." },
+    ],
+    who: "Pour les organisateurs d’événements, agences de salons, fédérations professionnelles, chambres de commerce et investisseurs en Afrique, au Moyen-Orient et au-delà.",
+    applyTitle: "Engager la discussion",
+    applyLead: "Donnez-nous quelques informations : l’équipe partenariats SURMAT vous répondra sous cinq jours ouvrés.",
+    homeTitle: "Votre pays, la prochaine étape ?",
+    homeLead: "Déployez SURMAT sur votre marché en édition sous licence ou co-organisée.",
+  },
   sector: {
     materials: "Matériaux de ce secteur",
     exhibitors: "Exposants de ce district",
@@ -336,6 +404,8 @@ export const fr: Dict = {
     count: "{n} matériaux",
   },
   apps: {
+    allSpaces: "Tous les espaces",
+    stats: "{m} matériaux · {e} exposants",
     title: "Applications",
     lead: "Partez de l’espace que vous construisez et rencontrez les exposants qui en fournissent chaque surface.",
     materialsUsed: "Matériaux de cet espace",

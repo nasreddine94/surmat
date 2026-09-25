@@ -40,6 +40,8 @@ const RINGS = [
 ] as const;
 
 const CAM = new THREE.Vector3(0, 1.3, 17);
+/** Centre of the globe (see `<Earth>` position) — the default focal point. */
+const EARTH = new THREE.Vector3(0, -0.4, -4);
 const damp = (dt: number, k: number) => 1 - Math.exp(-dt * k);
 
 function Slab({
@@ -106,8 +108,14 @@ function Slab({
 
     if (shared.selected) {
       if (me) {
-        v.target.set(shared.rtl ? -3.3 : 3.3, 0.35, 9.2);
-        scale = 1.45;
+        // Fit the sample inside the half of the frame opposite the text panel, whatever the
+        // screen shape: size and position come from the visible width at the sample's depth.
+        const cam = camera as THREE.PerspectiveCamera;
+        const halfH = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)) * (15.5 - 9.2);
+        const halfW = halfH * cam.aspect;
+        const room = Math.min(halfW * 0.4, halfH * 0.75);
+        scale = Math.min(1.45, room / (Math.max(w, h) / 2));
+        v.target.set((shared.rtl ? -1 : 1) * halfW * 0.5, 0.2, 9.2);
         face = true;
       } else {
         v.target.copy(v.world).multiplyScalar(1.12).add({ x: 0, y: 0, z: -3 } as THREE.Vector3);
@@ -277,11 +285,11 @@ function Ticker({ source, bump }: { source: React.RefObject<HTMLElement | null>;
 
 function Effects({ shared, quality }: { shared: Shared; quality: number }) {
   const dof = useRef<DepthOfFieldEffect>(null);
-  const focus = useMemo(() => new THREE.Vector3(0, 0, 3), []);
+  const focus = useMemo(() => EARTH.clone(), []);
   useFrame((_, dt) => {
-    const key = shared.selected ?? shared.hovered;
-    const p = key ? shared.positions.get(key) : undefined;
-    focus.lerp(p ?? new THREE.Vector3(0, 0, 3), damp(dt, 3));
+    // The globe stays sharp; focus only moves to a sample that has been brought forward.
+    const p = shared.selected ? shared.positions.get(shared.selected) : undefined;
+    focus.lerp(p ?? EARTH, damp(dt, 3));
     if (dof.current?.target) dof.current.target.copy(focus);
   });
   const grade = [
@@ -301,7 +309,7 @@ function Effects({ shared, quality }: { shared: Shared; quality: number }) {
     );
   return (
     <EffectComposer multisampling={0}>
-      <DepthOfField ref={dof} target={[0, 0, 3]} worldFocusRange={11} bokehScale={5} resolutionScale={0.5} />
+      <DepthOfField ref={dof} target={EARTH.toArray()} worldFocusRange={13} bokehScale={5} resolutionScale={0.5} />
       {grade}
       <SMAA />
     </EffectComposer>

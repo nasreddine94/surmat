@@ -54,7 +54,7 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - `content/` — sectors, materials, applications, exhibitors. Typed, localised, CMS-shaped. `supabase/migrations/0001_surmat_platform.sql` is the matching database schema.
 - `lib/editions.ts` — everything market-specific (city, venue, dates, targets, external registration URLs). Components never hard-code a country.
 - `lib/i18n.ts` + `lib/dict/*.ts` — one UI dictionary per language (`en.ts` is the reference shape; TypeScript rejects a missing key). Content strings in `content/` carry all nine languages. Arabic switches `dir="rtl"` with IBM Plex Sans Arabic + Amiri; Chinese and Hindi use the platform's CJK / Devanagari fonts (no extra download).
-- `components/home/*` — homepage sections (material universe, sector gallery, applications explorer, experience, leading exhibitors, conversion split, editions). The explorer canvas and its hotspots are data in `content/scenes.ts`: swap in real project photography by changing the image path and coordinates.
+- `components/home/*` — homepage sections (material universe, sector gallery, applications explorer, experience, leading exhibitors, conversion split, editions). The applications explorer (`components/space-explorer.tsx`, on the home, applications and application pages) shows six generated spaces — hotel lobby, villa, showroom, clinic, public hall, terrace — all generated from one reference render, so they share the hotspot layout in `content/scenes.ts`. Swap in real project photography by changing `media` and the coordinates.
 - `lib/attribution.ts` + `app/api/leads` — first-touch UTM / landing page on every lead, PRD lead types, rate limiting (`lib/rate-limit.ts`); run `supabase/migrations/0002_crm_fields.sql` for the new columns and exhibitor status.
 - `components/json-ld.tsx` — Organization, ExhibitionEvent (once `startsOn` is set) and BreadcrumbList structured data.
 - `components/why-exhibit.tsx` — the exhibitor case: four markets with outline maps (`lib/outlines.ts`), what exhibitors get, audience and ways to take part.
@@ -72,6 +72,9 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - `components/event-band.tsx` / `components/page-banner.tsx` — the event on every page: a photo banner under each page title and a band with the four event pillars, venue, dates and the two CTAs.
 - `components/contextual-cta.tsx` — the "Exhibit this product" CTA that follows the visitor with the current sector's pitch.
 
+- `proxy.ts` — every page lives under `/{edition}/{locale}`. Visitors arriving without an edition go to SURMAT Senegal from West Africa (ECOWAS + Mauritania, via Vercel's `x-vercel-ip-country`) and to SURMAT Algeria from everywhere else; the header shows both editions side by side and a visitor's choice is remembered in a cookie.
+- `app/[edition]/[locale]/partners` — the partnership / franchise offer (licensed edition, co-organised edition, agent & national pavilion) with an application form that creates a `partner` lead.
+
 ## Before launch
 
 - **Exhibitors are sample profiles** (fictional names, clearly labelled, `noindex`, excluded from the sitemap). Replace with real exhibitors.
@@ -81,5 +84,5 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - Check the market figures before publishing (Algeria ≈47 M people, Africa >1.4 bn, AfCFTA 54 countries, ECOWAS 15 / WAEMU 8, urban population nearly doubling by 2050) and set `contactEmail` per edition to show the sales-team button.
 - Fill in `lib/site.ts` (publisher details for the legal notice, social links) and `contactEmail` per edition.
 - Replace the AI event visualisations (`content/event-media.ts`) with real photography; they are hosted on the Higgsfield CDN — copy them into `public/images/event/` for full control.
-- Replace the explorer's lobby render (`public/images/applications/`) with real project photography.
+- Replace the six application scenes (`spHospitality`… in `content/event-media.ts`) with real project photography and re-check the hotspot coordinates in `content/scenes.ts`.
 - Connect Supabase (apply both migrations) or set `registrationUrl` / `exhibitionUrl` per edition to hand off to existing event systems.

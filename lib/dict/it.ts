@@ -6,6 +6,7 @@ export const it: Dict = {
     eyebrow: "La fiera internazionale dei",
   },
   nav: {
+    partners: "Partnership",
     materials: "Materiali",
     applications: "Applicazioni",
     exhibitors: "Espositori",
@@ -158,6 +159,7 @@ export const it: Dict = {
     },
   },
   explorer: {
+    alternatives: "Specificato anche per questa superficie",
     title: "Materiali per ogni spazio",
     lead: "Seleziona un punto dello spazio per vedere il materiale — e gli espositori che lo producono.",
     viewMaterial: "Vedi il materiale",
@@ -301,6 +303,72 @@ export const it: Dict = {
     cta: "Proponi il mio prodotto",
     count: "{m} materiali documentati · {f} famiglie di prodotti ammesse in fiera",
   },
+  partners: {
+    eyebrow: "Opportunità di partnership",
+    title: "Porta SURMAT nel tuo Paese",
+    lead: "SURMAT è pensato per viaggiare. Agenzie di eventi, associazioni di categoria e camere di commercio possono portare il format nel loro mercato — con il nostro marchio, la piattaforma, la rete di espositori e il metodo alle spalle.",
+    cta: "Candidati come partner",
+    mapLabel: "Algeria e Senegal oggi — il tuo mercato domani",
+    formatsTitle: "Tre modi per collaborare",
+    formats: [
+      {
+        title: "Edizione in licenza",
+        text: "Organizza SURMAT nel tuo Paese con una licenza in franchising.",
+        points: [
+          "Uso completo del marchio e del format SURMAT",
+          "Pianta in nove distretti e tassonomia dei materiali",
+          "La tua edizione su questa piattaforma, in nove lingue",
+        ],
+      },
+      {
+        title: "Edizione co-organizzata",
+        text: "Lanciamo insieme una nuova edizione, condividendo investimento e risultati.",
+        points: [
+          "Business plan e budget comuni",
+          "Team vendite ed espositori internazionali condivisi",
+          "Supporto operativo SURMAT in loco",
+        ],
+      },
+      {
+        title: "Agente e padiglione nazionale",
+        text: "Rappresenta SURMAT nel tuo Paese e porta le tue aziende alle nostre edizioni.",
+        points: [
+          "Commissione sugli stand venduti",
+          "Organizzazione del padiglione nazionale del tuo Paese",
+          "Delegazioni di buyer a Orano e Dakar",
+        ],
+      },
+    ],
+    weBringTitle: "Cosa porta SURMAT",
+    weBring: [
+      "Un marchio e un format fieristico consolidati",
+      "La piattaforma digitale: materioteca, showroom espositori, registrazioni",
+      "Espositori internazionali e programma hosted buyer",
+      "Metodo commerciale, modello di prezzi e formazione",
+      "Kit marketing, contenuti e campagne in nove lingue",
+      "Manuali operativi e supporto in loco",
+    ],
+    youBringTitle: "Cosa porti tu",
+    youBring: [
+      "Conoscenza del tuo mercato delle costruzioni",
+      "Relazioni con sedi, autorità e associazioni",
+      "Un team locale vendite e marketing",
+      "Rete logistica e di fornitori",
+      "Impegno verso gli standard di qualità SURMAT",
+    ],
+    stepsTitle: "Come funziona",
+    steps: [
+      { title: "Candidatura", text: "Raccontaci la tua organizzazione e il tuo mercato." },
+      { title: "Studio di mercato", text: "Valutiamo insieme l’opportunità." },
+      { title: "Accordo", text: "Scegliamo il modello di partnership e firmiamo." },
+      { title: "Lancio", text: "La tua edizione SURMAT va online sulla piattaforma." },
+    ],
+    who: "Per organizzatori di eventi, agenzie fieristiche, associazioni di categoria, camere di commercio e investitori in Africa, Medio Oriente e oltre.",
+    applyTitle: "Avvia il dialogo",
+    applyLead: "Condividi alcune informazioni: il team partnership di SURMAT risponderà entro cinque giorni lavorativi.",
+    homeTitle: "Il tuo Paese è il prossimo?",
+    homeLead: "Porta SURMAT nel tuo mercato come edizione in licenza o co-organizzata.",
+  },
   sector: {
     materials: "Materiali di questo settore",
     exhibitors: "Espositori di questo distretto",
@@ -327,6 +395,8 @@ export const it: Dict = {
     count: "{n} materiali",
   },
   apps: {
+    allSpaces: "Tutti gli spazi",
+    stats: "{m} materiali · {e} espositori",
     title: "Applicazioni",
     lead: "Parti dallo spazio che stai costruendo e incontra gli espositori che ne forniscono ogni superficie.",
     materialsUsed: "Materiali in questo spazio",

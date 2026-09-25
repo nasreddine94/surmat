@@ -6,6 +6,7 @@ export const tr: Dict = {
     eyebrow: "Uluslararası fuar",
   },
   nav: {
+    partners: "Ortaklıklar",
     materials: "Malzemeler",
     applications: "Uygulamalar",
     exhibitors: "Katılımcılar",
@@ -158,6 +159,7 @@ export const tr: Dict = {
     },
   },
   explorer: {
+    alternatives: "Bu yüzey için de tercih edilenler",
     title: "Her mekân için malzemeler",
     lead: "Arkasındaki malzemeyi — ve onu üreten katılımcıları — görmek için mekânda bir nokta seçin.",
     viewMaterial: "Malzemeyi gör",
@@ -295,6 +297,72 @@ export const tr: Dict = {
     cta: "Ürünümü öner",
     count: "{m} belgelenmiş malzeme · fuarda {f} ürün ailesi kabul ediliyor",
   },
+  partners: {
+    eyebrow: "Ortaklık fırsatı",
+    title: "SURMAT’ı ülkenize getirin",
+    lead: "SURMAT seyahat etmek için tasarlandı. Etkinlik ajansları, sektör dernekleri ve ticaret odaları formatı kendi pazarlarına taşıyabilir — markamız, platformumuz, katılımcı ağımız ve yöntemimiz arkalarında.",
+    cta: "Ortak olmak için başvurun",
+    mapLabel: "Bugün Cezayir ve Senegal — yarın sizin pazarınız",
+    formatsTitle: "Üç ortaklık modeli",
+    formats: [
+      {
+        title: "Lisanslı edisyon",
+        text: "SURMAT’ı ülkenizde franchise lisansıyla düzenleyin.",
+        points: [
+          "SURMAT markası ve formatının tam kullanımı",
+          "Dokuz bölgeli plan ve malzeme sınıflandırması",
+          "Bu platformda dokuz dilde kendi edisyonunuz",
+        ],
+      },
+      {
+        title: "Ortak düzenlenen edisyon",
+        text: "Yatırımı ve sonuçları paylaşarak birlikte yeni bir edisyon başlatalım.",
+        points: [
+          "Ortak iş planı ve bütçe",
+          "Paylaşılan satış ekibi ve uluslararası katılımcılar",
+          "Sahada SURMAT operasyon desteği",
+        ],
+      },
+      {
+        title: "Temsilci ve ülke pavyonu",
+        text: "SURMAT’ı ülkenizde temsil edin ve firmalarınızı edisyonlarımıza getirin.",
+        points: [
+          "Sattığınız standlar üzerinden komisyon",
+          "Ülkenizin milli pavyonunu düzenleme",
+          "Oran ve Dakar’a alıcı heyetleri",
+        ],
+      },
+    ],
+    weBringTitle: "SURMAT’ın getirdikleri",
+    weBring: [
+      "Yerleşik bir marka ve fuar formatı",
+      "Dijital platform: malzeme kütüphanesi, katılımcı showroom’ları, kayıt",
+      "Uluslararası katılımcılar ve alıcı ağırlama programı",
+      "Satış yöntemi, fiyatlandırma modeli ve eğitim",
+      "Dokuz dilde pazarlama kiti, içerik ve kampanyalar",
+      "Operasyon kılavuzları ve saha desteği",
+    ],
+    youBringTitle: "Sizin getirdikleriniz",
+    youBring: [
+      "Yerel inşaat pazarı bilgisi",
+      "Fuar alanları, kurumlar ve derneklerle ilişkiler",
+      "Yerel satış ve pazarlama ekibi",
+      "Lojistik ve tedarikçi ağı",
+      "SURMAT kalite standartlarına bağlılık",
+    ],
+    stepsTitle: "Nasıl işler",
+    steps: [
+      { title: "Başvuru", text: "Kuruluşunuzu ve pazarınızı anlatın." },
+      { title: "Pazar analizi", text: "Fırsatı birlikte değerlendiririz." },
+      { title: "Anlaşma", text: "Ortaklık modelini seçer ve imzalarız." },
+      { title: "Lansman", text: "SURMAT edisyonunuz platformda yayına girer." },
+    ],
+    who: "Afrika, Orta Doğu ve ötesindeki etkinlik organizatörleri, fuar ajansları, sektör dernekleri, ticaret odaları ve yatırımcılar için.",
+    applyTitle: "Görüşmeyi başlatın",
+    applyLead: "Birkaç bilgi paylaşın; SURMAT ortaklık ekibi beş iş günü içinde yanıt verecektir.",
+    homeTitle: "Sıradaki ülke sizinki mi?",
+    homeLead: "SURMAT’ı lisanslı ya da ortak düzenlenen bir edisyonla pazarınıza getirin.",
+  },
   sector: {
     materials: "Bu sektördeki malzemeler",
     exhibitors: "Bu bölgedeki katılımcılar",
@@ -321,6 +389,8 @@ export const tr: Dict = {
     count: "{n} malzeme",
   },
   apps: {
+    allSpaces: "Tüm mekânlar",
+    stats: "{m} malzeme · {e} katılımcı",
     title: "Uygulamalar",
     lead: "İnşa ettiğiniz mekândan başlayın ve içindeki her yüzeyi tedarik eden katılımcılarla tanışın.",
     materialsUsed: "Bu mekândaki malzemeler",

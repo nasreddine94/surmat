@@ -317,7 +317,20 @@ export function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Selected material — brought forward */}
+      {/* Selected material — brought forward, its text on a dark fade that separates it from the scene */}
+      <AnimatePresence>
+        {sel && (
+          <motion.div
+            key="fade"
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="pointer-events-none absolute inset-y-0 start-0 z-[15] w-full bg-gradient-to-r from-basalt/90 via-basalt/60 to-transparent sm:w-[62%] rtl:bg-gradient-to-l"
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {sel && selMat && selSector && (
           <motion.aside
