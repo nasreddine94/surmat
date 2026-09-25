@@ -59,7 +59,7 @@ export function Swatch({ tex, seed = 1, res = 320, tile, className = "", style, 
   }, [key, tex, seed, res, eager]);
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`} style={{ backgroundColor: texTone[tex], ...style }}>
+    <div ref={ref} className={`${/\b(absolute|fixed)\b/.test(className) ? "" : "relative "}overflow-hidden ${className}`} style={{ backgroundColor: texTone[tex], ...style }}>
       <div
         aria-hidden
         className="absolute inset-0 transition-opacity duration-700"

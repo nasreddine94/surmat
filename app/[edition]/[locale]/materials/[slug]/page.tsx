@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Swatch } from "@/components/swatch";
+import { JsonLd, breadcrumbJsonLd } from "@/components/json-ld";
 import { Arrow } from "@/components/icons";
 import { MaterialTile } from "@/components/material-tile";
 import { ContextualCTA } from "@/components/contextual-cta";
@@ -98,6 +99,13 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: dict.nav.materials, path: href(c, "materials") },
+          { name: t(sec.name, locale), path: href(c, `materials/${sec.id}`) },
+          { name, path: href(c, `materials/${m.slug}`) },
+        ])}
+      />
       <section className="shell grid gap-10 pt-28 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16 lg:pt-32">
         <div className="[perspective:1400px]">
           <Swatch
@@ -207,7 +215,7 @@ function PitchBand({ sectorId, c, question }: { sectorId: string; c: Ctx; questi
   const s = sectorById(sectorId)!;
   return (
     <section className="shell pt-24">
-      <div className="relative overflow-hidden rounded-xl border border-line">
+      <div className="relative overflow-hidden rounded-md border border-line">
         <Swatch tex={s.tex} seed={s.seed + 20} res={512} className="absolute inset-0" />
         <div className="relative flex flex-col gap-8 bg-gradient-to-r from-basalt via-basalt/90 to-basalt/50 p-8 sm:p-12 md:flex-row md:items-end md:justify-between rtl:bg-gradient-to-l">
           <div>

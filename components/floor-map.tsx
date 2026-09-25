@@ -40,7 +40,7 @@ export function FloorMap() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <div className="relative overflow-hidden rounded-xl border border-line bg-[radial-gradient(70%_60%_at_50%_40%,#17191c,#0b0c0d)] py-6 sm:py-10">
+      <div className="relative overflow-hidden rounded-md border border-line bg-[radial-gradient(70%_60%_at_50%_40%,#17191c,#0b0c0d)] py-6 sm:py-10">
         <div className="mx-auto w-[min(56rem,100%)] [perspective:1600px]" dir="ltr">
           <div className="grid grid-cols-3 gap-3 px-6 [transform:rotateX(52deg)_rotateZ(-32deg)] [transform-style:preserve-3d] sm:gap-5 sm:px-12">
             {sectors.map((s, hi) => (
@@ -90,7 +90,7 @@ export function FloorMap() {
         <p className="mt-4 px-6 text-xs text-fog">{dict.experience.mapHint}</p>
       </div>
 
-      <aside className="rounded-xl border border-line bg-graphite p-6" aria-live="polite">
+      <aside className="rounded-md border border-line bg-graphite p-6" aria-live="polite">
         <p className="eyebrow flex items-center gap-2">
           <span className="size-1.5 rounded-full" style={{ background: sec.accent }} />
           {dict.exhibitors.district} {HALLS[cur.hall]} · {t(sec.short, locale)}

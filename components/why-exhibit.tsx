@@ -48,7 +48,7 @@ export function Markets({ dict, c }: P) {
           const here = edition === c.edition;
           return (
             <li key={m.id}>
-              <Reveal delay={i * 0.07} className={`flex h-full flex-col rounded-xl border p-6 ${here ? "border-travertine/60 bg-travertine/[0.06]" : "border-line bg-graphite/40"}`}>
+              <Reveal delay={i * 0.07} className={`flex h-full flex-col rounded-md border p-6 ${here ? "border-travertine/60 bg-travertine/[0.06]" : "border-line bg-graphite/40"}`}>
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.18em] text-travertine">{m.kicker}</p>
@@ -149,7 +149,7 @@ export function Participate({ dict, c }: P) {
         <h2 className="display text-4xl sm:text-5xl">{w.participateTitle}</h2>
         <ul className="mt-8 grid gap-3 sm:grid-cols-2">
           {w.participate.map((p) => (
-            <li key={p.title} className="rounded-xl border border-line bg-graphite/40 p-6">
+            <li key={p.title} className="rounded-md border border-line bg-graphite/40 p-6">
               <h3 className="text-lg">{p.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-fog">{p.text}</p>
             </li>

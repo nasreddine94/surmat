@@ -1,6 +1,7 @@
 import { analyticsEvents } from "@/lib/analytics";
 import { isEdition } from "@/lib/editions";
 import { isLocale } from "@/lib/i18n";
+import { rateLimited } from "@/lib/rate-limit";
 
 const MAX_BODY = 4_000;
 const MAX_PROPS = 20;
@@ -21,6 +22,7 @@ function cleanProps(e: Record<string, unknown>) {
  * Forwards to Supabase `events` when configured; otherwise accepts and drops.
  */
 export async function POST(req: Request) {
+  if (rateLimited(req, "events", 240, 60_000)) return new Response(null, { status: 429 });
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return new Response(null, { status: 204 });

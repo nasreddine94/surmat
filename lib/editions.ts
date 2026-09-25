@@ -37,7 +37,7 @@ export const editions: Record<EditionId, Edition> = {
     country: "DZ",
     name: { en: "SURMAT Algeria", fr: "SURMAT Algérie", ar: "سورمات الجزائر", es: "SURMAT Argelia", pt: "SURMAT Argélia", it: "SURMAT Algeria", tr: "SURMAT Cezayir", zh: "SURMAT 阿尔及利亚", hi: "SURMAT अल्जीरिया" },
     city: { en: "Algiers", fr: "Alger", ar: "الجزائر العاصمة", es: "Argel", pt: "Argel", it: "Algeri", tr: "Cezayir", zh: "阿尔及尔", hi: "अल्जीयर्स" },
-    venue: null,
+    venue: { en: "SAFEX, Algiers", fr: "SAFEX, Alger", ar: "سافكس، الجزائر العاصمة", es: "SAFEX, Argel", pt: "SAFEX, Argel", it: "SAFEX, Algeri", tr: "SAFEX, Cezayir", zh: "SAFEX，阿尔及尔", hi: "SAFEX, अल्जीयर्स" },
     dates: null,
     startsOn: null,
     targets: { exhibitors: "500+", visitors: "20,000+" },

@@ -183,6 +183,7 @@ export function Hero() {
   const show3D = mode === "3d";
 
   return (
+    <>
     <section
       ref={section}
       aria-label="SURMAT"
@@ -423,6 +424,26 @@ export function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Editorial line and scroll cue (PRD §9) */}
+      {!sel && (
+        <div aria-hidden className="pointer-events-none absolute bottom-40 end-8 z-10 hidden max-w-[11rem] lg:block xl:end-12">
+          <p className="display text-2xl leading-tight text-limestone/85">{dict.hero.tagline}</p>
+          <span className="mt-3 block h-px w-16 bg-gold/60" />
+        </div>
+      )}
+      <a
+        href="#after-hero"
+        className="group absolute end-6 top-1/2 z-10 hidden -translate-y-1/2 flex-col items-center gap-4 text-[0.62rem] uppercase tracking-[0.3em] text-fog hover:text-limestone lg:flex xl:end-10"
+        data-overlay
+      >
+        <span className="[writing-mode:vertical-rl]">{dict.hero.scroll}</span>
+        <span className="grid size-9 place-items-center rounded-full border border-line-strong">
+          <span className="block h-3 w-px bg-limestone motion-safe:animate-[scrollcue_2.4s_ease-in-out_infinite]" />
+        </span>
+      </a>
     </section>
+    <div id="after-hero" />
+    </>
   );
 }

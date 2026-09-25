@@ -4,57 +4,48 @@ import { useState } from "react";
 import { useSite } from "./site-context";
 import { Arrow, Check } from "./icons";
 import { Field, Toggle } from "./exhibit-flow";
-import { sectors, type SectorId } from "@/content/sectors";
-import { exhibitorBySlug } from "@/content/exhibitors";
 import { countryName, formCountries } from "@/lib/editions";
-import { fmt, t } from "@/lib/i18n";
+import { fmt } from "@/lib/i18n";
 import { track } from "@/lib/analytics";
-import { NextSteps } from "./next-steps";
 import { getAttribution } from "@/lib/attribution";
 
 const emailOk = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
-const profiles = ["architect", "developer", "contractor", "distributor", "buyer", "manufacturer", "other"] as const;
+const topics = ["exhibitor", "visitor", "buyer", "partner", "media", "speaker", "other"] as const;
 
-export function VisitForm({ meeting }: { meeting: string | null }) {
+/** Contact / inquiry (PRD §5.1 conversion layer). The topic becomes the CRM lead type. */
+export function ContactForm({ initialTopic }: { initialTopic?: string | null }) {
   const { dict, locale, edition } = useSite();
-  const d = dict.visit;
-  const ex = meeting ? exhibitorBySlug(meeting) : undefined;
+  const d = dict.contact;
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [tried, setTried] = useState(false);
   const [f, setF] = useState({
-    profile: "architect" as (typeof profiles)[number],
-    interests: [] as SectorId[],
+    type: (topics as readonly string[]).includes(initialTopic ?? "") ? (initialTopic as (typeof topics)[number]) : "other",
     name: "",
     company: "",
+    role: "",
     email: "",
     phone: "",
     country: edition === "sn" ? "SN" : "DZ",
+    message: "",
     consent: false,
     hp: "",
   });
-  const [started, setStarted] = useState(false);
-  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => {
-    if (!started) {
-      setStarted(true);
-      track("registration_started", { profile: f.profile });
-    }
-    setF((x) => ({ ...x, [k]: v }));
-  };
+  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((x) => ({ ...x, [k]: v }));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTried(true);
-    if (f.name.trim().length < 2 || !emailOk(f.email)) return;
+    if (f.name.trim().length < 2 || !emailOk(f.email) || f.message.trim().length < 2) return;
     setStatus("sending");
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ type: "visitor", edition, locale, meeting: ex?.slug ?? null, ...f, attribution: getAttribution() }),
+        body: JSON.stringify({ ...f, edition, locale, attribution: getAttribution() }),
       });
       if (!res.ok) throw new Error();
       setStatus("done");
-      track("registration_completed", { profile: f.profile, meeting: ex?.slug });
+      track("contact_submitted", { topic: f.type });
     } catch {
       setStatus("error");
     }
@@ -68,60 +59,36 @@ export function VisitForm({ meeting }: { meeting: string | null }) {
         </span>
         <h2 className="display mt-8 text-5xl">{d.successTitle}</h2>
         <p className="mt-4 text-limestone/80">{fmt(d.successLead, { email: f.email })}</p>
-        <NextSteps steps={dict.success.visitSteps} />
       </div>
     );
 
   return (
     <form noValidate onSubmit={submit} className="rounded-md border border-line bg-graphite/60 p-6 sm:p-10">
-      <h2 className="display text-3xl sm:text-4xl">{d.formTitle}</h2>
-      {ex && (
-        <p className="mt-3 inline-flex rounded-full border border-travertine/40 px-3 py-1 text-sm text-travertine">
-          {fmt(d.meetingWith, { name: ex.name })}
-        </p>
-      )}
-
-      <fieldset className="mt-8">
-        <legend className="label">{d.profile}</legend>
-        <div className="flex flex-wrap gap-2" role="radiogroup">
-          {profiles.map((p) => (
-            <button key={p} type="button" role="radio" aria-checked={f.profile === p} className="chip" onClick={() => set("profile", p)}>
-              {d.profiles[p]}
-            </button>
-          ))}
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <Field label={d.topic}>
+            {(p) => (
+              <select {...p} className="field" value={f.type} onChange={(e) => set("type", e.target.value as (typeof topics)[number])}>
+                {topics.map((k) => (
+                  <option key={k} value={k}>
+                    {d.topics[k]}
+                  </option>
+                ))}
+              </select>
+            )}
+          </Field>
         </div>
-      </fieldset>
-
-      <fieldset className="mt-7">
-        <legend className="label">{d.interests}</legend>
-        <div className="flex flex-wrap gap-2">
-          {sectors.map((s) => {
-            const on = f.interests.includes(s.id);
-            return (
-              <button
-                key={s.id}
-                type="button"
-                aria-pressed={on}
-                className="chip"
-                onClick={() => set("interests", on ? f.interests.filter((x) => x !== s.id) : [...f.interests, s.id])}
-              >
-                <span className="size-2 rounded-full" style={{ background: s.accent }} />
-                {t(s.short, locale)}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <div className="mt-8 grid gap-5 sm:grid-cols-2">
         <Field label={dict.form.name} required error={tried && f.name.trim().length < 2 ? dict.form.required : undefined}>
           {(p) => <input {...p} className="field" value={f.name} onChange={(e) => set("name", e.target.value)} autoComplete="name" />}
+        </Field>
+        <Field label={dict.form.email} required error={tried && !emailOk(f.email) ? dict.form.invalidEmail : undefined}>
+          {(p) => <input {...p} className="field" type="email" dir="ltr" value={f.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" />}
         </Field>
         <Field label={dict.form.company}>
           {(p) => <input {...p} className="field" value={f.company} onChange={(e) => set("company", e.target.value)} autoComplete="organization" />}
         </Field>
-        <Field label={dict.form.email} required error={tried && !emailOk(f.email) ? dict.form.invalidEmail : undefined}>
-          {(p) => <input {...p} className="field" type="email" dir="ltr" value={f.email} onChange={(e) => set("email", e.target.value)} autoComplete="email" />}
+        <Field label={dict.form.role}>
+          {(p) => <input {...p} className="field" value={f.role} onChange={(e) => set("role", e.target.value)} autoComplete="organization-title" />}
         </Field>
         <Field label={dict.form.phone}>
           {(p) => <input {...p} className="field" type="tel" dir="ltr" value={f.phone} onChange={(e) => set("phone", e.target.value)} autoComplete="tel" />}
@@ -137,6 +104,11 @@ export function VisitForm({ meeting }: { meeting: string | null }) {
             </select>
           )}
         </Field>
+        <div className="sm:col-span-2">
+          <Field label={d.message} required error={tried && f.message.trim().length < 2 ? dict.form.required : undefined}>
+            {(p) => <textarea {...p} rows={5} className="field" value={f.message} onChange={(e) => set("message", e.target.value)} />}
+          </Field>
+        </div>
         <input tabIndex={-1} aria-hidden className="hidden" value={f.hp} onChange={(e) => set("hp", e.target.value)} autoComplete="off" />
       </div>
       <div className="mt-6">

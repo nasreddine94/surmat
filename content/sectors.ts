@@ -61,7 +61,7 @@ export const sectors: Sector[] = [
   {
     id: "natural-engineered-stone",
     order: 2,
-    name: { en: "Natural & Engineered Stone", fr: "Pierre naturelle & reconstituée", ar: "الحجر الطبيعي والمُصنّع", es: "Piedra natural y técnica", pt: "Pedra natural e técnica", it: "Pietra naturale e tecnica", tr: "Doğal ve mühendislik taşı", zh: "天然石材与人造石", hi: "प्राकृतिक और इंजीनियर्ड पत्थर" },
+    name: { en: "Natural Stone & Engineered Surfaces", fr: "Pierre naturelle & surfaces reconstituées", ar: "الحجر الطبيعي والأسطح المُصنّعة", es: "Piedra natural y superficies técnicas", pt: "Pedra natural e superfícies técnicas", it: "Pietra naturale e superfici tecniche", tr: "Doğal taş ve mühendislik yüzeyleri", zh: "天然石材与人造表面", hi: "प्राकृतिक पत्थर और इंजीनियर्ड सतहें" },
     short: { en: "Stone", fr: "Pierre", ar: "الحجر", es: "Piedra", pt: "Pedra", it: "Pietra", tr: "Taş", zh: "石材", hi: "पत्थर" },
     description: {
       en: "Marble, granite, travertine, limestone, onyx, quartz and sintered stone — from quarry block to finished slab.",
@@ -189,7 +189,7 @@ export const sectors: Sector[] = [
   {
     id: "surface-technologies",
     order: 6,
-    name: { en: "Processing Equipment & Technologies", fr: "Équipements & technologies de transformation", ar: "معدات وتقنيات المعالجة", es: "Equipos y tecnologías de transformación", pt: "Equipamentos e tecnologias de transformação", it: "Macchinari e tecnologie di lavorazione", tr: "İşleme ekipmanları ve teknolojileri", zh: "加工设备与技术", hi: "प्रसंस्करण उपकरण और प्रौद्योगिकियाँ" },
+    name: { en: "Surface Processing Equipment & Manufacturing Technologies", fr: "Équipements de traitement de surface & technologies de fabrication", ar: "معدات معالجة الأسطح وتقنيات التصنيع", es: "Equipos de tratamiento de superficies y tecnologías de fabricación", pt: "Equipamentos de tratamento de superfícies e tecnologias de fabrico", it: "Macchinari per la lavorazione delle superfici e tecnologie di produzione", tr: "Yüzey işleme ekipmanları ve üretim teknolojileri", zh: "表面加工设备与制造技术", hi: "सतह प्रसंस्करण उपकरण और विनिर्माण प्रौद्योगिकियाँ" },
     short: { en: "Technology", fr: "Technologies", ar: "التقنيات", es: "Tecnología", pt: "Tecnologia", it: "Tecnologia", tr: "Teknoloji", zh: "技术", hi: "प्रौद्योगिकी" },
     description: {
       en: "CNC and waterjet cutting, polishing, ceramic lines and kilns, digital decoration, handling and raw materials.",

@@ -70,7 +70,7 @@ export function ContextualCTA({ sector, context }: { sector?: SectorId; context:
         onClose={() => setOpen(false)}
         onClick={(e) => e.target === dlg.current && setOpen(false)}
         aria-labelledby="cta-title"
-        className="m-auto w-[min(34rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-line bg-graphite p-0 text-limestone shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+        className="m-auto w-[min(34rem,calc(100vw-2rem))] overflow-hidden rounded-md border border-line bg-graphite p-0 text-limestone shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
       >
         <Swatch tex={s?.tex ?? "calacatta"} seed={s?.seed ?? 7} res={384} className="h-36" eager>
           <div className="sample-shade absolute inset-0" />

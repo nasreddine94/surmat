@@ -31,7 +31,7 @@ using the `surmat_edition` / `surmat_locale` cookies, then `Accept-Language`.
 
 | Path | What it is |
 | --- | --- |
-| `/` | Material Universe hero (WebGL globe + orbit search), why exhibit (four markets), what exhibitors get, sectors, who you meet / ways to take part, applications, industry, editions, visit/exhibit |
+| `/` | PRD §7 order: hero (globe + material orbit), material universe, sector gallery, applications explorer (hotspots), experience, leading exhibitors, four markets, visit / exhibit split, editions |
 | `/materials` | Searchable, filterable material library |
 | `/materials/{sector}` | District page (e.g. `natural-engineered-stone`) |
 | `/materials/{material}` | Indexable material page (e.g. `marble`, `microcement`, `waterproofing`) with material → space transition |
@@ -39,13 +39,24 @@ using the `surmat_edition` / `surmat_locale` cookies, then `Accept-Language`.
 | `/exhibitors`, `/exhibitors/{slug}` | Showroom-style profiles; filter by `?sector=`, `?material=`, `?materials=a,b` |
 | `/experience` | 2.5D exhibition floor (six districts) |
 | `/visit` | Visitor registration (`?meeting={exhibitor}` pre-fills a meeting request) |
+| `/contact`, `/pro`, `/legal`, `/privacy` | Contact form (topic = CRM lead type), Professional Space announcement, legal notice (`lib/site.ts`), privacy |
 | `/exhibit` | 5-step exhibitor application with stand-size recommendation (`?sector=`, `?stand=` pre-fill), then the four markets and ways to take part |
+
+## Design system (PRD §22–35)
+
+Tokens live in `app/globals.css` (`--surmat-*` and the Tailwind theme): ink / charcoal / graphite, warm white, mist,
+gold and the mineral range; radii 2 / 4 / 8 px; 1440 px container. Cormorant Garamond for display, Plus Jakarta Sans for
+UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-solid)`, `shadow-atmos`, `fade-cinematic`,
+`overlay-image`, `gradient-mineral`.
 
 ## Where things live
 
 - `content/` — sectors, materials, applications, exhibitors. Typed, localised, CMS-shaped. `supabase/migrations/0001_surmat_platform.sql` is the matching database schema.
 - `lib/editions.ts` — everything market-specific (city, venue, dates, targets, external registration URLs). Components never hard-code a country.
 - `lib/i18n.ts` + `lib/dict/*.ts` — one UI dictionary per language (`en.ts` is the reference shape; TypeScript rejects a missing key). Content strings in `content/` carry all nine languages. Arabic switches `dir="rtl"` with IBM Plex Sans Arabic + Amiri; Chinese and Hindi use the platform's CJK / Devanagari fonts (no extra download).
+- `components/home/*` — homepage sections (material universe, sector gallery, applications explorer, experience, leading exhibitors, conversion split, editions). The explorer canvas and its hotspots are data in `content/scenes.ts`: swap in real project photography by changing the image path and coordinates.
+- `lib/attribution.ts` + `app/api/leads` — first-touch UTM / landing page on every lead, PRD lead types, rate limiting (`lib/rate-limit.ts`); run `supabase/migrations/0002_crm_fields.sql` for the new columns and exhibitor status.
+- `components/json-ld.tsx` — Organization, ExhibitionEvent (once `startsOn` is set) and BreadcrumbList structured data.
 - `components/why-exhibit.tsx` — the exhibitor case: four markets with outline maps (`lib/outlines.ts`), what exhibitors get, audience and ways to take part.
 - `lib/textures.ts` — procedural, tileable material textures (marble, travertine, zellige, terrazzo, microcement, acoustic slats…). They are the default visuals for every material; add `hero_image_path` photography per material in the CMS to replace them.
 - `lib/search.ts` — multilingual concept search ("marble hotel floor" → stone materials, hospitality, matching exhibitors).
@@ -64,4 +75,6 @@ using the `surmat_edition` / `surmat_locale` cookies, then `Accept-Language`.
 - Have native speakers review every language (Arabic, French, Spanish, Portuguese, Italian, Turkish, Chinese, Hindi).
 - Confirm the exhibitor offer matches what SURMAT will actually provide: national pavilions, pre-booked B2B meetings, conference and live-demonstration programme, sponsorship and digital showroom (`why` in `lib/dict/*.ts`).
 - Check the market figures before publishing (Algeria ≈47 M people, Africa >1.4 bn, AfCFTA 54 countries, ECOWAS 15 / WAEMU 8, urban population nearly doubling by 2050) and set `contactEmail` per edition to show the sales-team button.
-- Connect Supabase (apply the migration) or set `registrationUrl` / `exhibitionUrl` per edition to hand off to existing event systems.
+- Fill in `lib/site.ts` (publisher details for the legal notice, social links) and `contactEmail` per edition.
+- Replace the explorer's lobby render (`public/images/applications/`) with real project photography.
+- Connect Supabase (apply both migrations) or set `registrationUrl` / `exhibitionUrl` per edition to hand off to existing event systems.

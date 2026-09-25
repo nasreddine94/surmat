@@ -1,14 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Amiri, Archivo, IBM_Plex_Sans_Arabic, Newsreader } from "next/font/google";
+import { Amiri, Archivo, Cormorant_Garamond, IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans } from "next/font/google";
 import "../../globals.css";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { SiteProvider } from "@/components/site-context";
+import { AttributionCapture } from "@/components/attribution";
 import { allCtx, alternates, resolve } from "@/lib/routing";
 import { dirOf, langTag, t } from "@/lib/i18n";
 
+/** Wide grotesk, kept only for the SURMAT wordmark. */
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
-const newsreader = Newsreader({ subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"], variable: "--font-newsreader", display: "swap" });
+/** PRD §25: Cormorant Garamond for display, Plus Jakarta Sans for UI and body. */
+const cormorant = Cormorant_Garamond({ subsets: ["latin", "latin-ext"], weight: ["300", "400", "500"], style: ["normal", "italic"], variable: "--font-cormorant", display: "swap" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin", "latin-ext"], variable: "--font-jakarta", display: "swap" });
 const plexAr = IBM_Plex_Sans_Arabic({ subsets: ["arabic"], weight: ["300", "400", "500", "600"], variable: "--font-plex-ar", display: "swap" });
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-amiri", display: "swap" });
 
@@ -34,13 +38,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[ed
     <html
       lang={langTag(locale)}
       dir={dirOf(locale)}
-      className={`${archivo.variable} ${newsreader.variable} ${plexAr.variable} ${amiri.variable}`}
+      className={`${archivo.variable} ${cormorant.variable} ${jakarta.variable} ${plexAr.variable} ${amiri.variable}`}
     >
       <body>
         <SiteProvider value={{ edition, locale, dict }}>
           <Nav />
           <main id="main">{children}</main>
           <Footer edition={edition} locale={locale} />
+          <AttributionCapture />
         </SiteProvider>
       </body>
     </html>

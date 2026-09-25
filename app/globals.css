@@ -1,21 +1,50 @@
 @import "tailwindcss";
 
 /*
- * SURMAT CORE — dark spatial base, stone neutrals, warm material tones.
- * District accents live in content/sectors.ts; textures carry the colour.
+ * SURMAT design tokens (PRD §23, §49, §74). Predominantly dark: ink / charcoal + warm white +
+ * restrained gold + the colours of the materials themselves. The long-standing class names
+ * (basalt, limestone, travertine…) map onto the PRD palette so components stay unchanged.
  */
-@theme {
-  --color-basalt: #0b0c0d;
-  --color-graphite: #141618;
-  --color-ash: #1d2023;
-  --color-line: #2a2e32;
-  --color-limestone: #ebe6dc;
-  --color-travertine: #cdb999;
-  --color-fog: #8e9296;
-  --color-bronze: #c29a64;
+:root {
+  --surmat-ink: #08080a;
+  --surmat-charcoal: #111216;
+  --surmat-graphite: #1b1c20;
+  --surmat-warm-white: #f4f0e8;
+  --surmat-mist: #d7d2c9;
+  --surmat-gold: #d8a25c;
+  --surmat-lavender: #ab8db6;
+  --surmat-violet: #6e58a8;
+  --surmat-deep-mineral: #3b2a50;
+  --surmat-purple-black: #241830;
+}
 
-  --font-sans: var(--font-archivo), var(--font-plex-ar), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-newsreader), var(--font-amiri), ui-serif, Georgia, serif;
+@theme {
+  --color-ink: #08080a;
+  --color-charcoal: #111216;
+  --color-warm-white: #f4f0e8;
+  --color-mist: #d7d2c9;
+  --color-gold: #d8a25c;
+  --color-lavender: #ab8db6;
+  --color-violet: #6e58a8;
+  --color-deep-mineral: #3b2a50;
+  --color-purple-black: #241830;
+
+  --color-basalt: #08080a; /* ink: page background */
+  --color-graphite: #111216; /* charcoal: elevated surfaces */
+  --color-ash: #1b1c20; /* graphite: hover, secondary surfaces */
+  --color-line: rgb(244 240 232 / 0.12);
+  --color-line-strong: rgb(244 240 232 / 0.2);
+  --color-limestone: #f4f0e8; /* warm white: primary text */
+  --color-travertine: #d8a25c; /* gold: accents, active states */
+  --color-bronze: #d8a25c;
+  --color-fog: #8f8b84; /* mist at reading strength for metadata on ink */
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --font-sans: var(--font-jakarta), var(--font-plex-ar), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), var(--font-amiri), ui-serif, Georgia, serif;
 
   --ease-material: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -28,19 +57,19 @@
     text-rendering: optimizeLegibility;
   }
   html:lang(ar) {
-    --font-sans: var(--font-plex-ar), var(--font-archivo), ui-sans-serif, sans-serif;
-    --font-display: var(--font-amiri), var(--font-newsreader), serif;
+    --font-sans: var(--font-plex-ar), var(--font-jakarta), ui-sans-serif, sans-serif;
+    --font-display: var(--font-amiri), var(--font-cormorant), serif;
   }
   /* Chinese and Hindi use the platform's own CJK / Devanagari faces: no extra download. */
   html:lang(zh-Hans) {
     --font-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", "Noto Sans SC";
-    --font-sans: var(--font-archivo), var(--font-cjk-sans), ui-sans-serif, sans-serif;
-    --font-display: var(--font-newsreader), "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Noto Serif SC", var(--font-cjk-sans), serif;
+    --font-sans: var(--font-jakarta), var(--font-cjk-sans), ui-sans-serif, sans-serif;
+    --font-display: var(--font-cormorant), "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Noto Serif SC", var(--font-cjk-sans), serif;
   }
   html:lang(hi) {
     --font-deva: "Noto Sans Devanagari", "Kohinoor Devanagari", "Nirmala UI", "Mangal";
-    --font-sans: var(--font-archivo), var(--font-deva), ui-sans-serif, sans-serif;
-    --font-display: var(--font-newsreader), "Noto Serif Devanagari", var(--font-deva), serif;
+    --font-sans: var(--font-jakarta), var(--font-deva), ui-sans-serif, sans-serif;
+    --font-display: var(--font-cormorant), "Noto Serif Devanagari", var(--font-deva), serif;
   }
   body {
     font-family: var(--font-sans);
@@ -71,11 +100,10 @@
     letter-spacing: 0.02em;
   }
   .eyebrow {
-    font-family: var(--font-archivo), var(--font-plex-ar), sans-serif;
-    font-stretch: 112%;
-    font-size: 0.68rem;
+    font-family: var(--font-jakarta), var(--font-plex-ar), sans-serif;
+    font-size: 0.6875rem;
     font-weight: 500;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--color-fog);
   }
@@ -89,11 +117,12 @@
     letter-spacing: 0.12em;
     font-size: 0.75rem;
   }
+  /* Editorial serif (Cormorant Garamond): light and spacious, never bold. */
   .display {
     font-family: var(--font-display);
-    font-weight: 300;
-    letter-spacing: -0.015em;
-    line-height: 1.02;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1;
   }
   html:lang(ar) .display {
     font-weight: 400;
@@ -125,6 +154,20 @@
   }
   .btn-solid:hover {
     background: #fff;
+    box-shadow: 0 18px 40px rgb(0 0 0 / 0.38);
+  }
+  .btn:hover > svg:last-child {
+    translate: 3px 0;
+  }
+  .btn > svg:last-child {
+    transition: translate 0.3s var(--ease-material);
+  }
+  [dir="rtl"] .btn > svg:last-child,
+  [dir="rtl"] .arrow-circle > svg {
+    transform: scaleX(-1);
+  }
+  [dir="rtl"] .btn:hover > svg:last-child {
+    translate: -3px 0;
   }
   .btn-ghost {
     border: 1px solid color-mix(in srgb, var(--color-limestone) 38%, transparent);
@@ -161,7 +204,7 @@
     padding-inline: 1rem;
     background: var(--color-graphite);
     border: 1px solid var(--color-line);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     color: var(--color-limestone);
     font-size: 0.95rem;
     transition: border-color 0.2s;
@@ -216,19 +259,44 @@
   .rule {
     border-color: var(--color-line);
   }
+
+  /* Header glass (PRD §8): barely there over the hero, denser once scrolled. */
+  .glass-header {
+    background: rgb(8 8 10 / 0.2);
+    backdrop-filter: blur(8px);
+  }
+  .glass-header-solid {
+    background: rgb(8 8 10 / 0.78);
+    backdrop-filter: blur(18px);
+  }
+  /* Floating labels and panels (PRD §31): cinematic transparency, not glassmorphism. */
+  .glass {
+    background: rgb(15 16 20 / 0.58);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--color-line);
+  }
+  .glass-gold {
+    border-color: rgb(216 162 92 / 0.3);
+  }
+  .shadow-atmos {
+    box-shadow: 0 30px 80px rgb(0 0 0 / 0.38);
+  }
+  .fade-cinematic {
+    background: linear-gradient(180deg, rgb(8 8 10 / 0) 0%, rgb(8 8 10 / 0.65) 60%, #08080a 100%);
+  }
+  .overlay-image {
+    background: linear-gradient(180deg, rgb(8 8 10 / 0.1) 0%, rgb(8 8 10 / 0.72) 100%);
+  }
+  .gradient-mineral {
+    background: linear-gradient(135deg, #241830 0%, #6e58a8 45%, #d8a25c 100%);
+  }
 }
 
 @utility shell {
   width: 100%;
-  max-width: 88rem;
+  max-width: 1440px;
   margin-inline: auto;
-  padding-inline: 1rem;
-  @media (width >= 48rem) {
-    padding-inline: 2rem;
-  }
-  @media (width >= 80rem) {
-    padding-inline: 3rem;
-  }
+  padding-inline: clamp(1.25rem, 4vw, 5rem);
 }
 
 @utility flip-rtl {
@@ -240,6 +308,14 @@
 @keyframes float-slow {
   0%, 100% { translate: 0 0; }
   50% { translate: 0 -10px; }
+}
+@keyframes sweep {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+@keyframes scrollcue {
+  0%, 100% { transform: translateY(-3px); opacity: 0.4; }
+  50% { transform: translateY(3px); opacity: 1; }
 }
 @keyframes grain {
   0%, 100% { transform: translate(0, 0); }

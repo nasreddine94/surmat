@@ -10,6 +10,8 @@ import { countryName, formCountries } from "@/lib/editions";
 import { fmt, t } from "@/lib/i18n";
 import { recommendSpace } from "@/lib/space";
 import { track } from "@/lib/analytics";
+import { NextSteps } from "./next-steps";
+import { getAttribution } from "@/lib/attribution";
 
 const emailOk = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 
@@ -104,6 +106,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
           ...s,
           space: s.space || rec.min,
           recommended: rec,
+          attribution: getAttribution(),
         }),
       });
       if (!res.ok) throw new Error(String(res.status));
@@ -118,7 +121,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
 
   if (status === "done")
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-line">
+      <div className="relative overflow-hidden rounded-md border border-line">
         <Swatch tex={primary?.tex ?? "calacatta"} seed={primary?.seed ?? 7} res={512} className="absolute inset-0" eager />
         <div className="relative bg-gradient-to-t from-basalt via-basalt/85 to-basalt/40 px-6 py-20 sm:px-12">
           <span className="grid size-12 place-items-center rounded-full bg-limestone text-basalt">
@@ -130,6 +133,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
           <p className="mt-4 max-w-lg text-limestone/80">
             {fmt(d.successLead, { email: s.email, sector: primary ? t(primary.short, locale) : "" })}
           </p>
+          <NextSteps steps={dict.success.exhibitSteps} />
         </div>
       </div>
     );
@@ -144,7 +148,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
         if (step < 4) next();
         else submit();
       }}
-      className="rounded-2xl border border-line bg-graphite/60"
+      className="rounded-md border border-line bg-graphite/60"
     >
       <ol className="flex border-b border-line" aria-label={d.title}>
         {d.steps.map((label, i) => (
@@ -262,7 +266,7 @@ export function ExhibitFlow({ initialSector, stand }: { initialSector: SectorId 
 
             {step === 3 && (
               <div className="mt-8">
-                <div className="rounded-xl border border-line bg-basalt p-6">
+                <div className="rounded-md border border-line bg-basalt p-6">
                   <p className="text-sm text-limestone/80">{fmt(d.recommended, { min: rec.min, max: rec.max })}</p>
                   <div className="mt-6 flex items-end gap-2" aria-hidden>
                     {[rec.min, Math.round((rec.min + rec.max) / 2 / 9) * 9, rec.max].map((m, i) => (

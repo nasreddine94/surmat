@@ -109,16 +109,95 @@ export function Nav() {
       </a>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 border-b ${
-          solid ? "bg-basalt/80 backdrop-blur-xl border-line" : "bg-transparent border-transparent"
+          solid ? "glass-header-solid border-line" : "glass-header border-transparent"
         }`}
       >
-        <div className="shell flex h-16 items-center gap-6 lg:h-[4.5rem]">
-          <Link href={link()} className="flex shrink-0 items-center gap-3" aria-label="SURMAT">
+        <div className={`shell flex items-center gap-5 transition-[height] duration-500 ${scrolled ? "h-14 lg:h-16" : "h-16 lg:h-[4.75rem]"}`}>
+          <Link href={link()} className="flex shrink-0 items-center" aria-label="SURMAT">
             <span className="wordmark text-[1.35rem] leading-none">SURMAT</span>
-            <span className="hidden max-w-[9.5rem] border-s border-line ps-3 text-[0.62rem] leading-tight text-fog xl:block">
-              {dict.brand.descriptor}
-            </span>
           </Link>
+          <div className="hidden items-center gap-1 border-s border-line ps-4 sm:flex">
+            <div ref={edRef} className="relative">
+              <button
+                type="button"
+                aria-expanded={edOpen}
+                aria-haspopup="true"
+                onClick={() => setEdOpen((v) => !v)}
+                className="flex h-10 items-center gap-2 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
+              >
+                <Flag code={ed.country} className="h-3.5 w-[1.3rem] rounded-[2px]" />
+                <span>{countryName(ed.country, locale)}</span>
+                <Chevron size={14} />
+                <span className="sr-only">{dict.nav.edition}</span>
+              </button>
+              {edOpen && (
+                <ul className="absolute start-0 top-12 w-60 overflow-hidden rounded-md border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl">
+                  {editionIds.map((id) => {
+                    const e = editions[id];
+                    return (
+                      <li key={id}>
+                        <Link
+                          href={swapSegment(pathname, 1, id)}
+                          aria-current={id === edition ? "true" : undefined}
+                          onClick={() => {
+                            setCookie("surmat_edition", id);
+                            track("country_switch", { to: id });
+                            setEdOpen(false);
+                          }}
+                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
+                        >
+                          <Flag code={e.country} className="h-4 w-6 rounded-[2px]" />
+                          <span className="flex-1">{t(e.name, locale)}</span>
+                          <span className="text-xs text-fog">{t(e.city, locale)}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
+            <span aria-hidden className="text-fog">·</span>
+            <div ref={langRef} className="relative">
+              <button
+                type="button"
+                aria-expanded={langOpen}
+                aria-haspopup="true"
+                onClick={() => setLangOpen((v) => !v)}
+                className="flex h-10 items-center gap-1.5 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
+              >
+                <span lang={langTag(locale)}>{localeLabel[locale].name}</span>
+                <Chevron size={14} />
+                <span className="sr-only">{dict.nav.language}</span>
+              </button>
+              {langOpen && (
+                <ul
+                  aria-label={dict.nav.language}
+                  className="absolute start-0 top-12 grid w-72 grid-cols-2 gap-0.5 overflow-hidden rounded-md border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl"
+                >
+                  {locales.map((l) => (
+                    <li key={l}>
+                      <Link
+                        href={swapSegment(pathname, 2, l)}
+                        hrefLang={langTag(l)}
+                        lang={langTag(l)}
+                        aria-current={l === locale ? "true" : undefined}
+                        onClick={() => {
+                          setCookie("surmat_locale", l);
+                          track("language_switch", { to: l });
+                          setLangOpen(false);
+                        }}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
+                      >
+                        <span className="w-6 text-xs text-fog">{localeLabel[l].short}</span>
+                        {localeLabel[l].name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
 
           <nav aria-label="Primary" className="mx-auto hidden lg:block">
             <ul className="flex items-center gap-7">
@@ -154,92 +233,8 @@ export function Nav() {
               <SearchIcon size={18} />
             </button>
 
-            <div ref={edRef} className="relative hidden sm:block">
-              <button
-                type="button"
-                aria-expanded={edOpen}
-                aria-haspopup="true"
-                onClick={() => setEdOpen((v) => !v)}
-                className="flex h-10 items-center gap-2 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
-              >
-                <Flag code={ed.country} className="h-3.5 w-[1.3rem] rounded-[2px]" />
-                <span>{countryName(ed.country, locale)}</span>
-                <Chevron size={14} />
-                <span className="sr-only">{dict.nav.edition}</span>
-              </button>
-              {edOpen && (
-                <ul className="absolute end-0 top-12 w-60 overflow-hidden rounded-xl border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl">
-                  {editionIds.map((id) => {
-                    const e = editions[id];
-                    return (
-                      <li key={id}>
-                        <Link
-                          href={swapSegment(pathname, 1, id)}
-                          aria-current={id === edition ? "true" : undefined}
-                          onClick={() => {
-                            setCookie("surmat_edition", id);
-                            track("country_switch", { to: id });
-                            setEdOpen(false);
-                          }}
-                          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
-                        >
-                          <Flag code={e.country} className="h-4 w-6 rounded-[2px]" />
-                          <span className="flex-1">{t(e.name, locale)}</span>
-                          <span className="text-xs text-fog">{t(e.city, locale)}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
-
-            <div ref={langRef} className="relative hidden md:block">
-              <button
-                type="button"
-                aria-expanded={langOpen}
-                aria-haspopup="true"
-                onClick={() => setLangOpen((v) => !v)}
-                className="flex h-10 items-center gap-1.5 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
-              >
-                <span lang={langTag(locale)}>{localeLabel[locale].short}</span>
-                <Chevron size={14} />
-                <span className="sr-only">{dict.nav.language}</span>
-              </button>
-              {langOpen && (
-                <ul
-                  aria-label={dict.nav.language}
-                  className="absolute end-0 top-12 grid w-72 grid-cols-2 gap-0.5 overflow-hidden rounded-xl border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl"
-                >
-                  {locales.map((l) => (
-                    <li key={l}>
-                      <Link
-                        href={swapSegment(pathname, 2, l)}
-                        hrefLang={langTag(l)}
-                        lang={langTag(l)}
-                        aria-current={l === locale ? "true" : undefined}
-                        onClick={() => {
-                          setCookie("surmat_locale", l);
-                          track("language_switch", { to: l });
-                          setLangOpen(false);
-                        }}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
-                      >
-                        <span className="w-6 text-xs text-fog">{localeLabel[l].short}</span>
-                        {localeLabel[l].name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <Link
-              href={link("visit")}
-              onClick={() => track("visit_cta_click", { from: "nav" })}
-              className="btn btn-solid btn-sm hidden lg:inline-flex"
-            >
-              {dict.nav.register}
+            <Link href={link("pro")} className="btn btn-ghost btn-sm hidden lg:inline-flex">
+              {dict.nav.pro}
             </Link>
 
             <button
@@ -293,6 +288,9 @@ export function Nav() {
               </div>
               <Link href={link("visit")} className="btn btn-solid mt-8 justify-center">
                 {dict.nav.register}
+              </Link>
+              <Link href={link("pro")} className="btn btn-ghost mt-3 justify-center">
+                {dict.nav.pro}
               </Link>
             </nav>
           </div>

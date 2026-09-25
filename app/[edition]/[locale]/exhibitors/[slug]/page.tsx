@@ -88,7 +88,7 @@ export default async function ExhibitorPage({ params }: PageProps<"/[edition]/[l
           </ul>
         </div>
 
-        <aside className="h-fit rounded-xl border border-line bg-graphite p-6 lg:sticky lg:top-24">
+        <aside className="h-fit rounded-md border border-line bg-graphite p-6 lg:sticky lg:top-24">
           {stand ? (
             <p className="flex items-center gap-2 text-sm">
               <Pin size={16} className="text-travertine" />
