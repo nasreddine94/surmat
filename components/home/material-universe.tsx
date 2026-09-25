@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useSite } from "../site-context";
 import { Swatch } from "../swatch";
@@ -35,6 +35,39 @@ export function MaterialUniverse() {
     return () => clearInterval(id);
   }, [reduce, paused]);
 
+  // Wheel over the orbit steps through the materials instead of scrolling the page. At the first
+  // or last material the wheel is released, so the page never gets stuck; outside the orbit the
+  // page scrolls normally.
+  const orbit = useRef<HTMLDivElement>(null);
+  const current = useRef(i);
+  useEffect(() => {
+    current.current = i;
+  }, [i]);
+  useEffect(() => {
+    const el = orbit.current;
+    if (!el) return;
+    let acc = 0;
+    let lock = 0;
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+      const dir = Math.sign(e.deltaY);
+      const at = current.current;
+      if ((dir > 0 && at === ORBIT.length - 1) || (dir < 0 && at === 0)) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (now < lock) return;
+      acc += e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      if (Math.abs(acc) < 40) return;
+      acc = 0;
+      lock = now + 420;
+      const n = at + dir;
+      setI(n);
+      track("material_select", { material: ORBIT[n], from: "universe_wheel" });
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   const select = (n: number) => {
     setI((n + ORBIT.length) % ORBIT.length);
     track("material_select", { material: ORBIT[(n + ORBIT.length) % ORBIT.length], from: "universe" });
@@ -55,6 +88,7 @@ export function MaterialUniverse() {
       </div>
 
       <div
+        ref={orbit}
         className="relative mx-auto aspect-square w-full max-w-[36rem]"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
