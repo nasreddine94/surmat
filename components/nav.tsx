@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSite } from "./site-context";
-import { Chevron, Close, MenuIcon, SearchIcon } from "./icons";
+import { Arrow, Chevron, Close, MenuIcon, SearchIcon } from "./icons";
 import { SearchDialog } from "./search-dialog";
 import { countryName, editionIds, editions } from "@/lib/editions";
 import { langTag, localeLabel, locales, t } from "@/lib/i18n";
@@ -112,6 +112,27 @@ export function Nav() {
           solid ? "glass-header-solid border-line" : "glass-header border-transparent"
         }`}
       >
+        {/* Event bar — the site is an exhibition first: where, when, and the two ways in. */}
+        <div className={`overflow-hidden border-b border-line/60 bg-ink/70 transition-[max-height,opacity] duration-500 ${scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100"}`} aria-hidden={scrolled || undefined}>
+          <div className="shell flex h-8 items-center justify-between gap-4 text-[0.7rem] text-limestone/75">
+            <p className="flex min-w-0 items-center gap-2 truncate">
+              <span className="size-1.5 shrink-0 rounded-full bg-gold motion-safe:animate-pulse" />
+              <span className="hidden uppercase tracking-[0.16em] text-gold md:inline">{dict.event.bar}</span>
+              <span className="hidden text-fog md:inline">·</span>
+              <span className="truncate">
+                {ed.venue ? t(ed.venue, locale) : t(ed.city, locale)} · {ed.dates ? t(ed.dates, locale) : dict.edition.datesTBA}
+              </span>
+            </p>
+            <span className="flex shrink-0 items-center gap-4">
+              <Link href={link("exhibit")} tabIndex={scrolled ? -1 : undefined} onClick={() => track("exhibit_cta_click", { from: "event_bar" })} className="flex items-center gap-1 font-medium text-limestone hover:text-gold">
+                {dict.event.bookStand} <Arrow size={11} />
+              </Link>
+              <Link href={link("visit")} tabIndex={scrolled ? -1 : undefined} onClick={() => track("visit_cta_click", { from: "event_bar" })} className="hidden hover:text-limestone sm:inline">
+                {dict.event.freeVisit}
+              </Link>
+            </span>
+          </div>
+        </div>
         <div className={`shell flex items-center gap-5 transition-[height] duration-500 ${scrolled ? "h-14 lg:h-16" : "h-16 lg:h-[4.75rem]"}`}>
           <Link href={link()} className="flex shrink-0 items-center" aria-label="SURMAT">
             <span className="wordmark text-[1.35rem] leading-none">SURMAT</span>

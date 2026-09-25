@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Reveal } from "../reveal";
 import { Swatch } from "../swatch";
+import { EventImage } from "../event-image";
 import { Arrow } from "../icons";
 import { sectors } from "@/content/sectors";
 import { href, type Ctx } from "@/lib/routing";
@@ -21,7 +22,12 @@ export function ExperienceTeaser({ dict, c }: { dict: Dict; c: Ctx }) {
   return (
     <section className="shell pt-24 sm:pt-32" aria-labelledby="h-experience">
       <Reveal>
-        <div className="relative isolate overflow-hidden rounded-md border border-line bg-[radial-gradient(80%_70%_at_65%_40%,#1b1c20,#08080a)]">
+        <div className="relative isolate overflow-hidden rounded-md border border-line bg-ink">
+          {/* The show floor from above, under the district plan */}
+          <div className="absolute inset-0 -z-10 opacity-45">
+            <EventImage id="aerial" alt="" sizes="100vw" />
+          </div>
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(80%_70%_at_65%_40%,rgb(8_8_10/0.35),#08080a)]" />
           {/* The hall */}
           <div className="pointer-events-none absolute inset-y-0 end-0 w-full lg:w-[68%]" aria-hidden dir="ltr">
             <div className="absolute inset-0 [perspective:1400px]">

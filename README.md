@@ -66,6 +66,8 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - `components/hero/orbit-scene.tsx` — the Material Universe: bevelled, thick samples on three tilted rings around the globe, studio reflections (local Lightformers, no HDR download), cursor-driven key light, autofocus depth of field, bloom, AgX tone mapping, film grain. Search reorganises the rings; selection brings a sample forward and focuses on it.
 - `components/hero/earth.tsx` — the globe at the centre of the universe: NASA Blue Marble imagery, relief, clouds and an atmosphere halo (textures in `public/earth/`), graded down to a dim, desaturated backdrop (`SATURATION` / `EXPOSURE`). Africa always faces the viewer; the globe leans at most 15° towards the cursor or a drag and never spins. The outline of Africa is traced in light (`lib/africa.ts`, merged from Natural Earth 1:50m countries).
 - The hero loads WebGL only on capable desktop GPUs without reduced motion, renders only while on screen, and drops to lower quality automatically if frame rate falls. Phones and reduced-motion users get the static hero.
+- `content/event-media.ts` + `components/event-image.tsx` — the event imagery (show floor, B2B networking, conferences, demonstrations, stands, Algiers and Dakar). They are AI visualisations served through `next/image` (AVIF/WebP) and carry a small "Visualisation" label; swap each `src` for real photography of past editions and set `visual: false`.
+- `content/families.ts` — the full exhibition scope: 84 product families in nine groups (the six sectors plus facades & envelope, doors/windows/glass, bathroom/kitchen/fit-out). The material library is a documented selection; this list is what the floor accepts.
 - `components/contextual-cta.tsx` — the "Exhibit this product" CTA that follows the visitor with the current sector's pitch.
 
 ## Before launch
@@ -76,5 +78,6 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - Confirm the exhibitor offer matches what SURMAT will actually provide: national pavilions, pre-booked B2B meetings, conference and live-demonstration programme, sponsorship and digital showroom (`why` in `lib/dict/*.ts`).
 - Check the market figures before publishing (Algeria ≈47 M people, Africa >1.4 bn, AfCFTA 54 countries, ECOWAS 15 / WAEMU 8, urban population nearly doubling by 2050) and set `contactEmail` per edition to show the sales-team button.
 - Fill in `lib/site.ts` (publisher details for the legal notice, social links) and `contactEmail` per edition.
+- Replace the AI event visualisations (`content/event-media.ts`) with real photography; they are hosted on the Higgsfield CDN — copy them into `public/images/event/` for full control.
 - Replace the explorer's lobby render (`public/images/applications/`) with real project photography.
 - Connect Supabase (apply both migrations) or set `registrationUrl` / `exhibitionUrl` per edition to hand off to existing event systems.

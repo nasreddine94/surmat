@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import { ExhibitFlow } from "@/components/exhibit-flow";
+import { EventImage } from "@/components/event-image";
+import { ScopeSection } from "@/components/home/scope-section";
 import { Check } from "@/components/icons";
 import { Markets, Offer, Participate } from "@/components/why-exhibit";
 import { sectorById, type SectorId } from "@/content/sectors";
 import { alternates, resolve } from "@/lib/routing";
 import { t } from "@/lib/i18n";
+
+/** Which event pillar each image illustrates: the stand, then B2B meetings. */
+const PILLARS = [0, 1] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[edition]/[locale]/exhibit">): Promise<Metadata> {
   const { edition, locale, dict } = await resolve(params);
@@ -35,6 +40,14 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
               </li>
             ))}
           </ul>
+          <div className="mt-10 grid grid-cols-2 gap-2">
+            {(["stand", "networking"] as const).map((id, i) => (
+              <div key={id} className="relative aspect-[4/3] overflow-hidden rounded-md border border-line">
+                <EventImage id={id} alt={dict.event.pillars[PILLARS[i]].title} sizes="(min-width: 1024px) 18vw, 50vw" label={dict.event.visual} />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-3 text-xs">{dict.event.pillars[PILLARS[i]].title}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <div>
           {ed.exhibitionUrl ? (
@@ -49,6 +62,7 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
       <Markets dict={dict} c={c} />
       <Offer dict={dict} c={c} />
       <Participate dict={dict} c={c} />
+      <ScopeSection dict={dict} c={c} />
     </>
   );
 }

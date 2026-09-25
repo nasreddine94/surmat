@@ -12,7 +12,7 @@ import { materials, materialBySlug } from "@/content/materials";
 import { sectors, sectorById, type SectorId } from "@/content/sectors";
 import { applicationById } from "@/content/applications";
 import { countryName, editions } from "@/lib/editions";
-import { fmt, localeLabel, locales, t } from "@/lib/i18n";
+import { fmt, t } from "@/lib/i18n";
 import { search } from "@/lib/search";
 import { track } from "@/lib/analytics";
 import { observeActive, useCan3D } from "@/lib/capability";
@@ -60,6 +60,7 @@ export function Hero() {
   const rtl = locale === "ar";
   const section = useRef<HTMLElement>(null);
   const drag = useRef({ offset: 0, moved: 0, tilt: 0 });
+  const edInfo = editions[edition];
   const mode = useCan3D() ? "3d" : "static";
   const [ready, setReady] = useState(false);
   const [active, setActive] = useState(true);
@@ -268,29 +269,35 @@ export function Hero() {
                 </span>
               ))}
             </p>
-            <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-fog">
-              {locales.map((l) => localeLabel[l].name).join(" · ")}
+            <p className="mt-2 text-xs uppercase tracking-[0.18em] text-fog">
+              {edInfo.venue ? t(edInfo.venue, locale) : t(edInfo.city, locale)} · {edInfo.dates ? t(edInfo.dates, locale) : dict.edition.datesTBA}
             </p>
             <div className="pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" data-overlay>
-              <Link href={link("materials")} className="btn btn-solid">
-                {dict.hero.explore} <Arrow size={16} />
-              </Link>
               <Link
                 href={link("exhibit")}
-                className="btn btn-ghost"
+                className="btn btn-solid"
                 onClick={() => track("exhibit_cta_click", { from: "hero" })}
               >
-                {dict.hero.exhibit} <Arrow size={16} />
+                {dict.event.bookStand} <Arrow size={16} />
+              </Link>
+              <Link
+                href={link("visit")}
+                className="btn btn-ghost"
+                onClick={() => track("visit_cta_click", { from: "hero" })}
+              >
+                {dict.event.freeVisit} <Arrow size={16} />
               </Link>
             </div>
-            <Link
-              href={link("visit")}
-              data-overlay
-              onClick={() => track("visit_cta_click", { from: "hero" })}
-              className="pointer-events-auto mt-4 text-sm text-limestone/70 underline decoration-line underline-offset-4 hover:text-limestone"
-            >
-              {dict.hero.visit}
-            </Link>
+            <p className="mt-4 text-xs text-fog">
+              {fmt(dict.event.exhibitors, { n: edInfo.targets.exhibitors })} · {fmt(dict.event.visitors, { n: edInfo.targets.visitors })} ·{" "}
+              <Link
+                href={link("materials")}
+                data-overlay
+                className="pointer-events-auto text-limestone/75 underline decoration-line underline-offset-4 hover:text-limestone"
+              >
+                {dict.hero.explore}
+              </Link>
+            </p>
           </motion.div>
         )}
       </AnimatePresence>

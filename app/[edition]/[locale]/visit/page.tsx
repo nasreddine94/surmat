@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { VisitForm } from "@/components/visit-form";
 import { Swatch } from "@/components/swatch";
+import { EventImage } from "@/components/event-image";
 import { Calendar, Pin } from "@/components/icons";
 import { alternates, resolve } from "@/lib/routing";
 import { t } from "@/lib/i18n";
+
+/** Which event pillar each image illustrates: the talks, then the live demonstrations. */
+const PILLARS = [2, 3] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[edition]/[locale]/visit">): Promise<Metadata> {
   const { edition, locale, dict } = await resolve(params);
@@ -36,6 +40,14 @@ export default async function VisitPage({ params, searchParams }: PageProps<"/[e
             <dd>{ed.dates ? t(ed.dates, locale) : dict.edition.datesTBA}</dd>
           </div>
         </dl>
+        <div className="mt-10 grid grid-cols-2 gap-2">
+          {(["conference", "demo"] as const).map((id, i) => (
+            <div key={id} className="relative aspect-[4/3] overflow-hidden rounded-md border border-line">
+              <EventImage id={id} alt={dict.event.pillars[PILLARS[i]].title} sizes="(min-width: 1024px) 18vw, 50vw" label={dict.event.visual} />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-3 text-xs">{dict.event.pillars[PILLARS[i]].title}</span>
+            </div>
+          ))}
+        </div>
         <h2 className="eyebrow mt-14">{dict.visit.who}</h2>
         <ul className="mt-5 grid grid-cols-2 gap-2">
           {profiles.map((p, i) => (

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "../reveal";
+import { EventImage } from "../event-image";
 import { Arrow } from "../icons";
 import { outlines, editionPins } from "@/lib/outlines";
 import { editionIds, editions } from "@/lib/editions";
@@ -32,18 +33,29 @@ export function EditionsSection({ dict, c }: { dict: Dict; c: Ctx }) {
                     <Link
                       href={href({ ...c, edition: id })}
                       aria-current={here ? "true" : undefined}
-                      className={`group flex h-full flex-col rounded-sm border p-5 transition-colors ${here ? "border-gold/55 bg-gold/[0.06]" : "border-line bg-ink/40 hover:border-line-strong"}`}
+                      className={`group flex h-full flex-col overflow-hidden rounded-sm border transition-colors ${here ? "border-gold/55 bg-gold/[0.06]" : "border-line bg-ink/40 hover:border-line-strong"}`}
                     >
-                      <p className="wordmark text-xs text-limestone/70">SURMAT</p>
-                      <p className="display mt-1 text-3xl">{t(e.name, c.locale).replace(/^SURMAT\s*/, "")}</p>
-                      <p className="mt-3 text-sm text-limestone/75">{t(e.city, c.locale)}</p>
-                      <p className="text-xs text-fog">{e.dates ? t(e.dates, c.locale) : dict.edition.datesTBA}</p>
-                      <span className="mt-6 flex items-center justify-between text-sm">
-                        {here ? dict.home.current : dict.home.exploreEdition}
-                        <span className="arrow-circle size-7">
-                          <Arrow size={12} />
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <EventImage
+                          id={id === "dz" ? "algiers" : "dakar"}
+                          alt={t(e.city, c.locale)}
+                          sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 100vw"
+                          label={dict.event.visual}
+                          className="transition-transform duration-[1400ms] ease-[var(--ease-material)] group-hover:scale-[1.05]"
+                        />
+                      </div>
+                      <div className="flex flex-1 flex-col p-5">
+                        <p className="wordmark text-xs text-limestone/70">SURMAT</p>
+                        <p className="display mt-1 text-3xl">{t(e.name, c.locale).replace(/^SURMAT\s*/, "")}</p>
+                        <p className="mt-3 text-sm text-limestone/75">{t(e.city, c.locale)}</p>
+                        <p className="text-xs text-fog">{e.dates ? t(e.dates, c.locale) : dict.edition.datesTBA}</p>
+                        <span className="mt-auto flex items-center justify-between pt-6 text-sm">
+                          {here ? dict.home.current : dict.home.exploreEdition}
+                          <span className="arrow-circle size-7">
+                            <Arrow size={12} />
+                          </span>
                         </span>
-                      </span>
+                      </div>
                     </Link>
                   </li>
                 );

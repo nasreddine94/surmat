@@ -10,6 +10,8 @@ import { ExperienceTeaser } from "@/components/home/experience-teaser";
 import { LeadingExhibitors } from "@/components/home/leading-exhibitors";
 import { ConversionSplit } from "@/components/home/conversion-split";
 import { EditionsSection } from "@/components/home/editions-section";
+import { EventPillars } from "@/components/home/event-pillars";
+import { ScopeSection } from "@/components/home/scope-section";
 import { JsonLd, eventJsonLd, organizationJsonLd } from "@/components/json-ld";
 import { sectors } from "@/content/sectors";
 import { editionIds } from "@/lib/editions";
@@ -64,11 +66,17 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
         </div>
       </section>
 
+      {/* The exhibition: floor, meetings, talks, launches */}
+      <EventPillars dict={dict} c={c} ed={ed} />
+
       {/* 03 — Material universe */}
       <MaterialUniverse />
 
       {/* 04 — Material sector gallery */}
       <SectorGallery dict={dict} c={c} />
+
+      {/* The full exhibition scope — the library is a selection, the floor is open */}
+      <ScopeSection dict={dict} c={c} />
 
       {/* 05 — Applications explorer */}
       <ApplicationsExplorer />

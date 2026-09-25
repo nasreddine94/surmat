@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Catalogue } from "@/components/catalogue";
 import { ContextualCTA } from "@/components/contextual-cta";
+import { ScopeSection } from "@/components/home/scope-section";
 import { alternates, resolve } from "@/lib/routing";
 import { sectorById, type SectorId } from "@/content/sectors";
 
@@ -10,7 +11,7 @@ export async function generateMetadata({ params }: PageProps<"/[edition]/[locale
 }
 
 export default async function MaterialsPage({ params, searchParams }: PageProps<"/[edition]/[locale]/materials">) {
-  const { dict } = await resolve(params);
+  const { dict, edition, locale } = await resolve(params);
   const sp = await searchParams;
   const sector = typeof sp.sector === "string" && sectorById(sp.sector) ? (sp.sector as SectorId) : null;
   return (
@@ -21,6 +22,7 @@ export default async function MaterialsPage({ params, searchParams }: PageProps<
       <div className="mt-12">
         <Catalogue initialSector={sector} />
       </div>
+      <ScopeSection dict={dict} c={{ edition, locale }} compact />
       <ContextualCTA context="catalogue" sector={sector ?? undefined} />
     </div>
   );
