@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Swatch } from "@/components/swatch";
-import { Reveal } from "@/components/reveal";
 import { Arrow } from "@/components/icons";
 import { MaterialTile } from "@/components/material-tile";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { TrackView } from "@/components/track-view";
-import { MaterialInSpace } from "@/components/material-in-space";
 import { ExhibitorCard } from "@/components/exhibitor-card";
 import { materials, materialBySlug, materialsBySector } from "@/content/materials";
 import { sectors, sectorById } from "@/content/sectors";
@@ -163,20 +161,6 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
           </dl>
         </div>
       </section>
-
-      {sec.id !== "surface-technologies" && sec.id !== "construction-chemicals" && (
-        <section className="shell pt-24" aria-labelledby="h-space">
-          <Reveal>
-            <h2 id="h-space" className="display text-4xl">
-              {fmt(dict.material.inSpace, { material: name })}
-            </h2>
-            <p className="mt-3 text-sm text-fog">{fmt(dict.material.inSpaceLead, { material: name })}</p>
-            <div className="mt-8">
-              <MaterialInSpace slug={m.slug} />
-            </div>
-          </Reveal>
-        </section>
-      )}
 
       <section className="shell pt-24" aria-labelledby="h-ex">
         <h2 id="h-ex" className="eyebrow mb-6">

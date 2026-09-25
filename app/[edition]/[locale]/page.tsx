@@ -3,7 +3,8 @@ import { Hero } from "@/components/hero/hero";
 import { Swatch } from "@/components/swatch";
 import { Reveal } from "@/components/reveal";
 import { Arrow, Badge, Calendar, GlobeIcon, Layers, People } from "@/components/icons";
-import { MaterialsBecomeSpaces, SpaceThumb } from "@/components/materials-become-spaces";
+import { SpaceCover } from "@/components/space-cover";
+import { Markets, Offer, Participate } from "@/components/why-exhibit";
 import { EditionCard } from "@/components/edition-card";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { sectors } from "@/content/sectors";
@@ -62,6 +63,10 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
         </div>
       </section>
 
+      {/* Why exhibit: Algeria, Senegal, Africa, the world */}
+      <Markets dict={dict} c={c} />
+      <Offer dict={dict} c={c} />
+
       {/* 02 — Explore the world of materials */}
       <section className="shell pt-24 sm:pt-32" aria-labelledby="h-materials">
         <Reveal className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -97,7 +102,9 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
         </ul>
       </section>
 
-      {/* 03 — Materials become spaces */}
+      <Participate dict={dict} c={c} />
+
+      {/* Applications: the spaces exhibitors' materials end up in */}
       <section className="shell pt-24 sm:pt-32" aria-labelledby="h-spaces">
         <Reveal className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-10">
@@ -110,17 +117,12 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
             {dict.home.exploreApps} <Arrow size={14} />
           </Link>
         </Reveal>
-        <Reveal>
-          <MaterialsBecomeSpaces />
-        </Reveal>
-
-        {/* 04 — Applications */}
-        <ul className="-mx-4 mt-12 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 lg:grid-cols-6">
+        <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 lg:grid-cols-6">
           {applications.map((a) => (
             <li key={a.id} className="w-[70vw] shrink-0 snap-start md:w-auto">
               <Link href={href(c, `applications/${a.id}`)} className="group relative block overflow-hidden rounded-md">
                 <div className="transition-transform duration-700 group-hover:scale-[1.04]">
-                  <SpaceThumb id={a.id} />
+                  <SpaceCover id={a.id} className="aspect-[4/5]" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                 <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2">

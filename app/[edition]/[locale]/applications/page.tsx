@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SpaceThumb } from "@/components/materials-become-spaces";
+import { SpaceCover } from "@/components/space-cover";
 import { Reveal } from "@/components/reveal";
 import { Arrow } from "@/components/icons";
 import { ContextualCTA } from "@/components/contextual-cta";
@@ -29,7 +29,7 @@ export default async function ApplicationsPage({ params }: PageProps<"/[edition]
               <Link href={href(c, `applications/${a.id}`)} className="group block">
                 <div className="overflow-hidden rounded-lg">
                   <div className="transition-transform duration-1000 group-hover:scale-[1.03]">
-                    <SpaceThumb id={a.id} />
+                    <SpaceCover id={a.id} />
                   </div>
                 </div>
                 <div className="mt-5 flex items-start justify-between gap-6">

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { FloorMap } from "@/components/floor-map";
-import { SpaceStudio } from "@/components/space-studio";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { alternates, resolve } from "@/lib/routing";
 
@@ -24,13 +23,6 @@ export default async function ExperiencePage({ params }: PageProps<"/[edition]/[
         <FloorMap />
       </section>
 
-      <section id="build" className="scroll-mt-24 pt-28" aria-labelledby="h-build">
-        <h2 id="h-build" className="display text-3xl sm:text-4xl">
-          {dict.experience.buildTitle}
-        </h2>
-        <p className="mb-8 mt-3 max-w-xl text-sm text-fog">{dict.experience.buildLead}</p>
-        <SpaceStudio initialSpace="hospitality" allowSpaceChange showSpec />
-      </section>
       <ContextualCTA context="experience" />
     </div>
   );

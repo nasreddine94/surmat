@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SpaceStudio } from "@/components/space-studio";
 import { MaterialTile } from "@/components/material-tile";
 import { ExhibitorCard } from "@/components/exhibitor-card";
 import { ContextualCTA } from "@/components/contextual-cta";
@@ -49,9 +48,6 @@ export default async function ApplicationPage({ params }: PageProps<"/[edition]/
             </p>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-limestone/75">{t(a.description, locale)}</p>
-        </div>
-        <div className="mt-10">
-          <SpaceStudio initialSpace={a.id} />
         </div>
       </div>
 
