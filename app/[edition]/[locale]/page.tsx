@@ -12,6 +12,7 @@ import { ConversionSplit } from "@/components/home/conversion-split";
 import { EditionsSection } from "@/components/home/editions-section";
 import { EventPillars } from "@/components/home/event-pillars";
 import { ScopeSection } from "@/components/home/scope-section";
+import { SystemsExplorer } from "@/components/systems-explorer";
 import { JsonLd, eventJsonLd, organizationJsonLd } from "@/components/json-ld";
 import { sectors } from "@/content/sectors";
 import { editionIds } from "@/lib/editions";
@@ -77,6 +78,9 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
 
       {/* The full exhibition scope — the library is a selection, the floor is open */}
       <ScopeSection />
+
+      {/* How it is built: systems layer by layer, on site and in section */}
+      <SystemsExplorer />
 
       {/* 05 — Applications explorer */}
       <ApplicationsExplorer />

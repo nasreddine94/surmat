@@ -4,6 +4,7 @@ import { PageBanner } from "@/components/page-banner";
 import { Catalogue } from "@/components/catalogue";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { ScopeSection } from "@/components/home/scope-section";
+import { SystemsExplorer } from "@/components/systems-explorer";
 import { alternates, resolve } from "@/lib/routing";
 import { sectorById, type SectorId } from "@/content/sectors";
 
@@ -26,6 +27,7 @@ export default async function MaterialsPage({ params, searchParams }: PageProps<
         <Catalogue initialSector={sector} />
       </div>
       <ScopeSection compact />
+      <SystemsExplorer bare />
       <EventBand dict={dict} c={{ edition, locale }} ed={ed} bare />
       <ContextualCTA context="catalogue" sector={sector ?? undefined} />
     </div>

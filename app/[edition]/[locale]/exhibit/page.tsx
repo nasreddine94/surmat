@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ExhibitFlow } from "@/components/exhibit-flow";
 import { EventImage } from "@/components/event-image";
 import { ScopeSection } from "@/components/home/scope-section";
+import { SystemsExplorer } from "@/components/systems-explorer";
 import { Check } from "@/components/icons";
 import { Markets, Offer, Participate } from "@/components/why-exhibit";
 import { sectorById, type SectorId } from "@/content/sectors";
@@ -63,6 +64,7 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
       <Offer dict={dict} c={c} />
       <Participate dict={dict} c={c} />
       <ScopeSection />
+      <SystemsExplorer />
     </>
   );
 }

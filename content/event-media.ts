@@ -40,6 +40,15 @@ export const media = {
   spHealthcare: img("hf_20260925_192758_9e8a72c4-14a1-4c36-9f15-3a28b8ba5e79.png", 1344, 752),
   spPublic: img("hf_20260925_192758_7b7e5559-2ea4-451d-87ea-047e32f71a09.png", 1344, 752),
   spOutdoor: img("hf_20260925_192758_cc7ddc98-1605-45b2-871a-ddf9f0a1f5cd.png", 1344, 752),
+  // Building systems on site and production lines (paired with the technical sections).
+  tFacade: img("hf_20260925_200447_a6678fb3-4510-4157-8cb7-e5cbee6c78d8.png", 1168, 880),
+  tEtics: img("hf_20260925_200447_cdd915ab-b9a6-43d6-8308-df17a6f694d9.png", 1168, 880),
+  tWet: img("hf_20260925_200447_6ab94e02-3db9-4abb-8473-2980b79fd88c.png", 1168, 880),
+  tFloor: img("hf_20260925_200447_b2776728-665b-4f17-867e-dc89f953af16.png", 1168, 880),
+  tPartition: img("hf_20260925_200447_8f671ded-6ed0-41b6-8cdd-aa2a87403ace.png", 1168, 880),
+  tRoof: img("hf_20260925_200447_b9815548-7af8-4ef8-a9cf-47cc10e99bec.png", 1168, 880),
+  tCeramicLine: img("hf_20260925_200447_3162bd3b-9e0f-4f33-bf47-c4609776fbc5.png", 1168, 880),
+  tStoneLine: img("hf_20260925_200447_38386a7f-6962-47b1-abc1-125c252d12d7.png", 1168, 880),
 } satisfies Record<string, Media>;
 
 export type MediaKey = keyof typeof media;

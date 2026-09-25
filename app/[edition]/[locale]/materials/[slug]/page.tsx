@@ -7,6 +7,8 @@ import { JsonLd, breadcrumbJsonLd } from "@/components/json-ld";
 import { Arrow } from "@/components/icons";
 import { MaterialTile } from "@/components/material-tile";
 import { ContextualCTA } from "@/components/contextual-cta";
+import { SystemsExplorer } from "@/components/systems-explorer";
+import { systemsForSector } from "@/content/systems";
 import { TrackView } from "@/components/track-view";
 import { ExhibitorCard } from "@/components/exhibitor-card";
 import { materials, materialBySlug, materialsBySector } from "@/content/materials";
@@ -84,6 +86,7 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
           )}
         </section>
         <PitchBand sectorId={sector.id} c={c} />
+        <SystemsExplorer only={systemsForSector[sector.id]} />
         <EventBand dict={dict} c={c} ed={ed} />
         <ContextualCTA context="sector" sector={sector.id} />
         <TrackView event="material_view" props={{ sector: sector.id }} />
