@@ -13,6 +13,7 @@ import { EditionsSection } from "@/components/home/editions-section";
 import { EventPillars } from "@/components/home/event-pillars";
 import { ScopeSection } from "@/components/home/scope-section";
 import { SystemsExplorer } from "@/components/systems-explorer";
+import { BoardSynthesis } from "@/components/board-synthesis";
 import { JsonLd, eventJsonLd, organizationJsonLd } from "@/components/json-ld";
 import { sectors } from "@/content/sectors";
 import { editionIds } from "@/lib/editions";
@@ -81,6 +82,9 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
 
       {/* How it is built: systems layer by layer, on site and in section */}
       <SystemsExplorer />
+
+      {/* One building, every district: the palette and where each sample goes */}
+      <BoardSynthesis />
 
       {/* 05 — Applications explorer */}
       <ApplicationsExplorer />

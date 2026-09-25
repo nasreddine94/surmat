@@ -6,6 +6,7 @@ export const es: Dict = {
     eyebrow: "La feria internacional de",
   },
   nav: {
+    board: "El muestrario",
     partners: "Alianzas",
     materials: "Materiales",
     applications: "Aplicaciones",
@@ -390,6 +391,20 @@ export const es: Dict = {
     district: "Distrito",
     structure: "Estructura del edificio — no es una categoría de producto",
     note: "Especificaciones típicas a título ilustrativo. Consulte las fichas técnicas de los fabricantes y la normativa local.",
+  },
+  board: {
+    eyebrow: "Muestrario y estudio de renders",
+    title: "De la muestra al espacio",
+    lead: "Cada familia de productos de la feria, como la especifica un arquitecto: muestras reales en el panel, la familia en uso con sus puntos técnicos y el distrito donde exponen sus fabricantes.",
+    sampleBoard: "Panel de materiales",
+    exhibitedIn: "Se expone en el",
+    district: "Distrito",
+    palette: "La paleta",
+    synthTitle: "Un edificio, todos los distritos",
+    synthLead: "Doce muestras, un proyecto: señale una muestra para ver dónde se usa — fachada, terraza, oficina, vestíbulo, baño.",
+    open: "Abrir el muestrario",
+    pageTitle: "El muestrario",
+    pageLead: "Una guía de especificación de la feria a la obra: cada familia de productos con sus muestras, su uso y sus puntos técnicos.",
   },
   sector: {
     materials: "Materiales de este sector",

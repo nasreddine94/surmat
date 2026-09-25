@@ -6,6 +6,7 @@ export const it: Dict = {
     eyebrow: "La fiera internazionale dei",
   },
   nav: {
+    board: "Il campionario",
     partners: "Partnership",
     materials: "Materiali",
     applications: "Applicazioni",
@@ -384,6 +385,20 @@ export const it: Dict = {
     district: "Distretto",
     structure: "Struttura dell’edificio — non è una categoria di prodotto",
     note: "Specifiche tipiche a scopo illustrativo. Verificare le schede tecniche dei produttori e le norme locali.",
+  },
+  board: {
+    eyebrow: "Campionario e render studio",
+    title: "Dal campione allo spazio",
+    lead: "Ogni famiglia di prodotti in fiera, come la specifica un architetto: campioni reali sulla tavola, la famiglia in uso con i suoi punti tecnici e il distretto dove espongono i produttori.",
+    sampleBoard: "Tavola dei materiali",
+    exhibitedIn: "Esposto nel",
+    district: "Distretto",
+    palette: "La palette",
+    synthTitle: "Un edificio, tutti i distretti",
+    synthLead: "Dodici campioni, un progetto: indica un campione per vedere dove va — facciata, terrazza, ufficio, hall, bagno.",
+    open: "Apri il campionario",
+    pageTitle: "Il campionario",
+    pageLead: "Una guida alla specifica dalla fiera al cantiere: ogni famiglia di prodotti con campioni, impieghi e punti tecnici.",
   },
   sector: {
     materials: "Materiali di questo settore",

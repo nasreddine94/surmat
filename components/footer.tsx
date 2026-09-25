@@ -29,7 +29,7 @@ export function Footer({ edition, locale }: { edition: EditionId; locale: Locale
         <div>
           <h2 className="eyebrow mb-4">{dict.footer.platform}</h2>
           <ul className="space-y-2.5 text-sm text-limestone/80">
-            {(["applications", "exhibitors", "experience", "visit", "exhibit", "partners"] as const).map((k) => (
+            {(["board", "applications", "exhibitors", "experience", "visit", "exhibit", "partners"] as const).map((k) => (
               <li key={k}>
                 <Link className="hover:text-limestone" href={`${base}/${k}`}>
                   {dict.nav[k]}

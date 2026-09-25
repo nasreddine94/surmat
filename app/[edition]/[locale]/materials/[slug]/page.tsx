@@ -8,6 +8,7 @@ import { Arrow } from "@/components/icons";
 import { MaterialTile } from "@/components/material-tile";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { SystemsExplorer } from "@/components/systems-explorer";
+import { MaterialBoard } from "@/components/material-board";
 import { systemsForSector } from "@/content/systems";
 import { TrackView } from "@/components/track-view";
 import { ExhibitorCard } from "@/components/exhibitor-card";
@@ -86,6 +87,7 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
           )}
         </section>
         <PitchBand sectorId={sector.id} c={c} />
+        <MaterialBoard only={[sector.id]} />
         <SystemsExplorer only={systemsForSector[sector.id]} />
         <EventBand dict={dict} c={c} ed={ed} />
         <ContextualCTA context="sector" sector={sector.id} />

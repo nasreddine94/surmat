@@ -5,6 +5,7 @@ export const en = {
     eyebrow: "The international exhibition for",
   },
   nav: {
+    board: "The material board",
     partners: "Partnerships",
     materials: "Materials",
     applications: "Applications",
@@ -380,6 +381,20 @@ export const en = {
     district: "District",
     structure: "Building structure — not a product category",
     note: "Typical specifications for illustration. Check manufacturers’ technical data sheets and local codes.",
+  },
+  board: {
+    eyebrow: "Material board & render studio",
+    title: "From sample to space",
+    lead: "Every product family on the floor, as an architect would specify it: real samples on the board, the family in use with its technical points, and the district where its manufacturers exhibit.",
+    sampleBoard: "Material board",
+    exhibitedIn: "Exhibited in",
+    district: "District",
+    palette: "The palette",
+    synthTitle: "One building, every district",
+    synthLead: "Twelve samples, one project: point to a sample to see where it ends up — facade, terrace, office, lobby, bathroom.",
+    open: "Open the material board",
+    pageTitle: "The material board",
+    pageLead: "A specification guide from exhibition to application: every product family with its samples, its use and its technical points.",
   },
   sector: {
     materials: "Materials in this sector",
