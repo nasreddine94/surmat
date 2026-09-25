@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { editionIds, editions, isEdition, type EditionId } from "./editions";
-import { getDict, isLocale, locales, type Locale } from "./i18n";
+import { getDict, isLocale, langTag, locales, type Locale } from "./i18n";
 
 export type Ctx = { edition: EditionId; locale: Locale };
 
@@ -18,6 +18,7 @@ export const allCtx = () => editionIds.flatMap((edition) => locales.map((locale)
 /** hreflang alternates for a path within one edition. */
 export function alternates(c: Ctx, path = "") {
   const languages: Record<string, string> = {};
-  for (const l of locales) languages[`${l}-${editions[c.edition].country}`] = href({ ...c, locale: l }, path);
+  for (const l of locales) languages[`${langTag(l)}-${editions[c.edition].country}`] = href({ ...c, locale: l }, path);
+  languages["x-default"] = href({ ...c, locale: "en" }, path);
   return { canonical: href(c, path), languages };
 }

@@ -267,7 +267,7 @@ export function Hero() {
                 </span>
               ))}
             </p>
-            <p className="mt-1.5 text-xs text-fog">
+            <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-fog">
               {locales.map((l) => localeLabel[l].name).join(" · ")}
             </p>
             <div className="pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" data-overlay>

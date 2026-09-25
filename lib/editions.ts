@@ -35,8 +35,8 @@ export const editions: Record<EditionId, Edition> = {
   dz: {
     id: "dz",
     country: "DZ",
-    name: { en: "SURMAT Algeria", fr: "SURMAT Algérie", ar: "سورمات الجزائر" },
-    city: { en: "Algiers", fr: "Alger", ar: "الجزائر العاصمة" },
+    name: { en: "SURMAT Algeria", fr: "SURMAT Algérie", ar: "سورمات الجزائر", es: "SURMAT Argelia", pt: "SURMAT Argélia", it: "SURMAT Algeria", tr: "SURMAT Cezayir", zh: "SURMAT 阿尔及利亚", hi: "SURMAT अल्जीरिया" },
+    city: { en: "Algiers", fr: "Alger", ar: "الجزائر العاصمة", es: "Argel", pt: "Argel", it: "Algeri", tr: "Cezayir", zh: "阿尔及尔", hi: "अल्जीयर्स" },
     venue: null,
     dates: null,
     startsOn: null,
@@ -50,8 +50,8 @@ export const editions: Record<EditionId, Edition> = {
   sn: {
     id: "sn",
     country: "SN",
-    name: { en: "SURMAT Senegal", fr: "SURMAT Sénégal", ar: "سورمات السنغال" },
-    city: { en: "Dakar", fr: "Dakar", ar: "داكار" },
+    name: { en: "SURMAT Senegal", fr: "SURMAT Sénégal", ar: "سورمات السنغال", es: "SURMAT Senegal", pt: "SURMAT Senegal", it: "SURMAT Senegal", tr: "SURMAT Senegal", zh: "SURMAT 塞内加尔", hi: "SURMAT सेनेगल" },
+    city: { en: "Dakar", fr: "Dakar", ar: "داكار", es: "Dakar", pt: "Dacar", it: "Dakar", tr: "Dakar", zh: "达喀尔", hi: "डकार" },
     venue: null,
     dates: null,
     startsOn: null,

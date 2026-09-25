@@ -11,7 +11,7 @@ import { materials, materialBySlug, materialsBySector } from "@/content/material
 import { sectors, sectorById } from "@/content/sectors";
 import { applicationById } from "@/content/applications";
 import { exhibitorsFor } from "@/content/exhibitors";
-import { allCtx, alternates, href, resolve } from "@/lib/routing";
+import { allCtx, alternates, href, resolve, type Ctx } from "@/lib/routing";
 import { fmt, t } from "@/lib/i18n";
 
 export const dynamicParams = false;
@@ -203,7 +203,7 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
 }
 
 /** The key commercial loop: every material page ends with a manufacturer pitch. */
-function PitchBand({ sectorId, c, question }: { sectorId: string; c: { edition: "dz" | "sn"; locale: "en" | "fr" | "ar" }; question?: string }) {
+function PitchBand({ sectorId, c, question }: { sectorId: string; c: Ctx; question?: string }) {
   const s = sectorById(sectorId)!;
   return (
     <section className="shell pt-24">

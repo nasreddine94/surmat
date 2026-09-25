@@ -31,6 +31,17 @@
     --font-sans: var(--font-plex-ar), var(--font-archivo), ui-sans-serif, sans-serif;
     --font-display: var(--font-amiri), var(--font-newsreader), serif;
   }
+  /* Chinese and Hindi use the platform's own CJK / Devanagari faces: no extra download. */
+  html:lang(zh-Hans) {
+    --font-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", "Noto Sans SC";
+    --font-sans: var(--font-archivo), var(--font-cjk-sans), ui-sans-serif, sans-serif;
+    --font-display: var(--font-newsreader), "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Noto Serif SC", var(--font-cjk-sans), serif;
+  }
+  html:lang(hi) {
+    --font-deva: "Noto Sans Devanagari", "Kohinoor Devanagari", "Nirmala UI", "Mangal";
+    --font-sans: var(--font-archivo), var(--font-deva), ui-sans-serif, sans-serif;
+    --font-display: var(--font-newsreader), "Noto Serif Devanagari", var(--font-deva), serif;
+  }
   body {
     font-family: var(--font-sans);
     background: var(--color-basalt);
@@ -72,6 +83,12 @@
     letter-spacing: 0;
     font-size: 0.8rem;
   }
+  html:lang(zh-Hans) .eyebrow,
+  html:lang(hi) .eyebrow {
+    font-family: var(--font-sans);
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+  }
   .display {
     font-family: var(--font-display);
     font-weight: 300;
@@ -82,6 +99,12 @@
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1.3;
+  }
+  html:lang(zh-Hans) .display,
+  html:lang(hi) .display {
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.25;
   }
 
   .btn {

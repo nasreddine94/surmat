@@ -5,7 +5,7 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { SiteProvider } from "@/components/site-context";
 import { allCtx, alternates, resolve } from "@/lib/routing";
-import { dirOf, t } from "@/lib/i18n";
+import { dirOf, langTag, t } from "@/lib/i18n";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const newsreader = Newsreader({ subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"], variable: "--font-newsreader", display: "swap" });
@@ -32,7 +32,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[ed
   const { edition, locale, dict } = await resolve(params);
   return (
     <html
-      lang={locale}
+      lang={langTag(locale)}
       dir={dirOf(locale)}
       className={`${archivo.variable} ${newsreader.variable} ${plexAr.variable} ${amiri.variable}`}
     >

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { editionIds, editions, type EditionId } from "@/lib/editions";
-import { fmt, getDict, localeLabel, locales, t, type Locale } from "@/lib/i18n";
+import { fmt, getDict, langTag, localeLabel, locales, t, type Locale } from "@/lib/i18n";
 import { sectors } from "@/content/sectors";
 
 export function Footer({ edition, locale }: { edition: EditionId; locale: Locale }) {
@@ -48,10 +48,10 @@ export function Footer({ edition, locale }: { edition: EditionId; locale: Locale
               </li>
             ))}
           </ul>
-          <ul className="mt-6 flex gap-3 text-xs text-fog">
+          <ul className="mt-6 flex flex-wrap gap-x-3 gap-y-1 text-xs text-fog">
             {locales.map((l) => (
               <li key={l}>
-                <Link lang={l} hrefLang={l} href={`/${edition}/${l}`} className="hover:text-limestone">
+                <Link lang={langTag(l)} hrefLang={langTag(l)} href={`/${edition}/${l}`} className="hover:text-limestone">
                   {localeLabel[l].name}
                 </Link>
               </li>

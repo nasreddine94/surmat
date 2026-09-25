@@ -7,7 +7,7 @@ import { useSite } from "./site-context";
 import { Chevron, Close, MenuIcon, SearchIcon } from "./icons";
 import { SearchDialog } from "./search-dialog";
 import { countryName, editionIds, editions } from "@/lib/editions";
-import { localeLabel, locales, t } from "@/lib/i18n";
+import { langTag, localeLabel, locales, t } from "@/lib/i18n";
 import { track } from "@/lib/analytics";
 
 const items = ["materials", "applications", "exhibitors", "experience", "visit", "exhibit"] as const;
@@ -40,6 +40,21 @@ export function swapSegment(pathname: string, index: 1 | 2, value: string) {
   return parts.join("/") || "/";
 }
 
+/** Close a popover on outside click or Escape. */
+function useDismiss(ref: React.RefObject<HTMLElement | null>, open: boolean, setOpen: (v: boolean) => void) {
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [ref, open, setOpen]);
+}
+
 const setCookie = (k: string, v: string) => {
   document.cookie = `${k}=${v}; path=/; max-age=31536000; samesite=lax`;
 };
@@ -50,8 +65,10 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
   const [edOpen, setEdOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const edRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
   const isHome = pathname === link();
 
   useEffect(() => {
@@ -73,17 +90,8 @@ export function Nav() {
     return () => window.removeEventListener("keydown", key);
   }, []);
 
-  useEffect(() => {
-    if (!edOpen) return;
-    const close = (e: MouseEvent) => !edRef.current?.contains(e.target as Node) && setEdOpen(false);
-    const esc = (e: KeyboardEvent) => e.key === "Escape" && setEdOpen(false);
-    document.addEventListener("mousedown", close);
-    document.addEventListener("keydown", esc);
-    return () => {
-      document.removeEventListener("mousedown", close);
-      document.removeEventListener("keydown", esc);
-    };
-  }, [edOpen]);
+  useDismiss(edRef, edOpen, setEdOpen);
+  useDismiss(langRef, langOpen, setLangOpen);
 
   const [menuPath, setMenuPath] = useState(pathname);
   if (menuPath !== pathname) {
@@ -186,26 +194,45 @@ export function Nav() {
               )}
             </div>
 
-            <ul className="hidden items-center gap-0.5 md:flex" aria-label={dict.nav.language}>
-              {locales.map((l) => (
-                <li key={l}>
-                  <Link
-                    href={swapSegment(pathname, 2, l)}
-                    hrefLang={l}
-                    lang={l}
-                    aria-current={l === locale ? "true" : undefined}
-                    onClick={() => {
-                      setCookie("surmat_locale", l);
-                      track("language_switch", { to: l });
-                    }}
-                    className="grid h-8 min-w-8 place-items-center rounded-full px-1.5 text-[0.72rem] text-limestone/60 hover:text-limestone aria-[current]:text-limestone aria-[current]:ring-1 aria-[current]:ring-line"
-                    title={localeLabel[l].name}
-                  >
-                    {localeLabel[l].short}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div ref={langRef} className="relative hidden md:block">
+              <button
+                type="button"
+                aria-expanded={langOpen}
+                aria-haspopup="true"
+                onClick={() => setLangOpen((v) => !v)}
+                className="flex h-10 items-center gap-1.5 rounded-full px-2 text-[0.8rem] text-limestone/85 hover:text-limestone"
+              >
+                <span lang={langTag(locale)}>{localeLabel[locale].short}</span>
+                <Chevron size={14} />
+                <span className="sr-only">{dict.nav.language}</span>
+              </button>
+              {langOpen && (
+                <ul
+                  aria-label={dict.nav.language}
+                  className="absolute end-0 top-12 grid w-72 grid-cols-2 gap-0.5 overflow-hidden rounded-xl border border-line bg-graphite/95 p-1.5 shadow-2xl backdrop-blur-xl"
+                >
+                  {locales.map((l) => (
+                    <li key={l}>
+                      <Link
+                        href={swapSegment(pathname, 2, l)}
+                        hrefLang={langTag(l)}
+                        lang={langTag(l)}
+                        aria-current={l === locale ? "true" : undefined}
+                        onClick={() => {
+                          setCookie("surmat_locale", l);
+                          track("language_switch", { to: l });
+                          setLangOpen(false);
+                        }}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-ash aria-[current]:bg-ash"
+                      >
+                        <span className="w-6 text-xs text-fog">{localeLabel[l].short}</span>
+                        {localeLabel[l].name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
             <Link
               href={link("visit")}
@@ -250,11 +277,11 @@ export function Nav() {
                   </Link>
                 ))}
               </div>
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 {locales.map((l) => (
                   <Link
                     key={l}
-                    lang={l}
+                    lang={langTag(l)}
                     href={swapSegment(pathname, 2, l)}
                     aria-current={l === locale ? "true" : undefined}
                     onClick={() => setCookie("surmat_locale", l)}

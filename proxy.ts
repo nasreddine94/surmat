@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const locales = ["en", "fr", "ar"];
+const locales = ["en", "fr", "ar", "es", "pt", "it", "tr", "zh", "hi"];
 const editionsList = ["dz", "sn"];
 
 function preferredLocale(req: NextRequest) {
