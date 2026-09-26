@@ -37,6 +37,8 @@ export const tr: Dict = {
     usedIn: "Kullanım alanı",
     format: "Ebat",
     hint: "Evreni döndürmek için sürükleyin. Öne getirmek için bir numune seçin.",
+    viewSwitch: "Arka plan görünümü",
+    preparing3d: "3D hazırlanıyor…",
     scroll: "Keşfetmek için kaydırın",
     tagline: "Malzemeler daha iyi mekânlar yaratır",
   },

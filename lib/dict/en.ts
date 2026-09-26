@@ -36,6 +36,8 @@ export const en = {
     usedIn: "Used in",
     format: "Format",
     hint: "Drag to turn the universe. Select a sample to bring it forward.",
+    viewSwitch: "Background view",
+    preparing3d: "Preparing 3D…",
     scroll: "Scroll to explore",
     tagline: "Materials shape better spaces",
   },

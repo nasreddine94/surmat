@@ -37,6 +37,8 @@ export const fr: Dict = {
     usedIn: "Utilisé dans",
     format: "Format",
     hint: "Faites glisser pour tourner l’univers. Sélectionnez un échantillon pour l’approcher.",
+    viewSwitch: "Affichage de l’arrière-plan",
+    preparing3d: "Préparation de la 3D…",
     scroll: "Défiler pour explorer",
     tagline: "Les matériaux façonnent de meilleurs espaces",
   },

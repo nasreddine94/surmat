@@ -34,7 +34,7 @@ export function Catalogue({ initialSector }: { initialSector: SectorId | null })
 
   return (
     <div>
-      <div className="sticky top-16 z-30 -mx-4 border-b border-line bg-basalt/85 px-4 py-4 backdrop-blur-xl md:-mx-8 md:px-8 lg:top-[4.5rem] xl:-mx-12 xl:px-12">
+      <div className="sticky top-16 z-30 -mx-[clamp(1.25rem,4vw,5rem)] border-b border-line bg-basalt/85 px-[clamp(1.25rem,4vw,5rem)] py-4 backdrop-blur-xl lg:top-[4.5rem]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
           <label className="flex h-11 items-center gap-3 rounded-full border border-line px-4 focus-within:border-travertine lg:w-80">
             <SearchIcon size={16} className="text-fog" />

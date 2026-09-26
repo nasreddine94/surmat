@@ -37,6 +37,8 @@ export const it: Dict = {
     usedIn: "Utilizzato in",
     format: "Formato",
     hint: "Trascina per ruotare l’universo. Seleziona un campione per portarlo in primo piano.",
+    viewSwitch: "Vista dello sfondo",
+    preparing3d: "Preparazione del 3D…",
     scroll: "Scorri per esplorare",
     tagline: "I materiali danno forma a spazi migliori",
   },

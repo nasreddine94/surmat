@@ -13,7 +13,8 @@ import { EditionsSection } from "@/components/home/editions-section";
 import { EventPillars } from "@/components/home/event-pillars";
 import { ScopeSection } from "@/components/home/scope-section";
 import { SystemsExplorer } from "@/components/systems-explorer";
-import { JsonLd, eventJsonLd, organizationJsonLd } from "@/components/json-ld";
+import { JsonLd, absolute, eventJsonLd, organizationJsonLd, websiteJsonLd } from "@/components/json-ld";
+import { AnswersSection } from "@/components/answers-section";
 import { sectors } from "@/content/sectors";
 import { editionIds } from "@/lib/editions";
 import { href, resolve } from "@/lib/routing";
@@ -32,14 +33,14 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
 
   return (
     <>
-      <JsonLd data={[organizationJsonLd(), ...eventJsonLd(ed, locale)]} />
+      <JsonLd data={[organizationJsonLd(), websiteJsonLd(locale, absolute(href(c))), ...eventJsonLd(ed, locale)]} />
       <Hero />
 
       {/* Stats */}
       <section aria-label="SURMAT" className="shell">
-        <div className="grid grid-cols-2 border-y border-line md:grid-cols-[repeat(4,1fr)_1.3fr]">
+        <div className="grid grid-cols-2 border-y border-line lg:grid-cols-[repeat(4,1fr)_1.3fr]">
           {stats.map(({ icon: I, value, label }, i) => (
-            <div key={i} className={`flex items-center gap-4 py-6 md:py-7 ${i % 2 ? "ps-5" : ""} md:px-6 md:first:ps-0 ${i < 3 ? "md:border-e md:border-line" : ""}`}>
+            <div key={i} className={`flex items-center gap-4 py-6 lg:py-7 ${i % 2 ? "ps-5" : ""} lg:px-6 lg:first:ps-0 ${i < 3 ? "lg:border-e lg:border-line" : ""}`}>
               <I size={26} className="shrink-0 text-fog" />
               <div>
                 <p className="text-2xl font-medium tabular-nums">{value}</p>
@@ -49,7 +50,7 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
           ))}
           <Link
             href={href(c, "visit")}
-            className="group col-span-2 flex items-center justify-between gap-4 border-t border-line py-6 md:col-span-1 md:border-s md:border-t-0 md:ps-6"
+            className="group col-span-2 flex items-center justify-between gap-4 border-t border-line py-6 lg:col-span-1 lg:border-s lg:border-t-0 lg:ps-6"
           >
             <span className="flex items-center gap-4">
               <Calendar size={26} className="shrink-0 text-fog" />
@@ -80,7 +81,10 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
       <ScopeSection />
 
       {/* How it is built: systems layer by layer, on site and in section */}
-      <SystemsExplorer />
+      {/* Dense technical sections: tablets and desktops. Phones get the district overview above. */}
+      <div className="hidden md:block">
+        <SystemsExplorer />
+      </div>
 
       {/* 05 — Applications explorer */}
       <ApplicationsExplorer />
@@ -99,6 +103,9 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
 
       {/* 09 — Country editions */}
       <EditionsSection dict={dict} c={c} />
+
+      {/* 10 — Key facts and answers (AEO / GEO) */}
+      <AnswersSection ed={ed} locale={locale} dict={dict} />
 
       <ContextualCTA context="home" />
     </>

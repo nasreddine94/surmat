@@ -35,7 +35,7 @@ export function LeadingExhibitors({ dict, c }: { dict: Dict; c: Ctx }) {
           {dict.home.viewExhibitors} <Arrow size={14} className="flip-rtl" />
         </Link>
       </Reveal>
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {list.map((e, i) => {
           const hero = materialBySlug(e.materials[0])!;
           const sec = sectorById(e.sectors[0])!;
@@ -64,7 +64,7 @@ export function LeadingExhibitors({ dict, c }: { dict: Dict; c: Ctx }) {
                   </div>
                   <div className="mt-4 flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-lg">{e.name}</h3>
+                      <h3 className="text-base leading-snug sm:text-lg">{e.name}</h3>
                       <p className="mt-1 text-xs text-fog">
                         {t(sec.short, c.locale)} · {countryName(e.country, c.locale)}
                       </p>

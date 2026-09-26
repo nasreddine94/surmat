@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JsonLd, breadcrumbJsonLd } from "@/components/json-ld";
 import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -42,6 +43,12 @@ export default async function ExhibitorPage({ params }: PageProps<"/[edition]/[l
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: dict.nav.exhibitors, path: href(c, "exhibitors") },
+          { name: e.name, path: href(c, `exhibitors/${e.slug}`) },
+        ])}
+      />
       {/* Product wall */}
       <section className="relative isolate overflow-hidden pt-16">
         <div className="grid h-[52vh] min-h-[22rem] grid-cols-2 gap-px bg-line sm:grid-cols-4" aria-hidden>

@@ -75,6 +75,8 @@
     font-family: var(--font-sans);
     background: var(--color-basalt);
     min-height: 100dvh;
+    /* Never scroll sideways on phones; `clip` (unlike `hidden`) keeps sticky elements working. */
+    overflow-x: clip;
   }
   ::selection {
     background: var(--color-travertine);

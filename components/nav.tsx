@@ -114,8 +114,8 @@ export function Nav() {
           <div className="shell flex h-8 items-center justify-between gap-4 text-[0.7rem] text-limestone/75">
             <p className="flex min-w-0 items-center gap-2 truncate">
               <span className="size-1.5 shrink-0 rounded-full bg-gold motion-safe:animate-pulse" />
-              <span className="hidden uppercase tracking-[0.16em] text-gold md:inline">{dict.event.bar}</span>
-              <span className="hidden text-fog md:inline">·</span>
+              <span className="hidden shrink-0 uppercase tracking-[0.16em] text-gold lg:inline">{dict.event.bar}</span>
+              <span className="hidden text-fog lg:inline">·</span>
               <span className="truncate">
                 {ed.venue ? t(ed.venue, locale) : t(ed.city, locale)} · {ed.dates ? t(ed.dates, locale) : dict.edition.datesTBA}
               </span>
@@ -130,7 +130,7 @@ export function Nav() {
             </span>
           </div>
         </div>
-        <div className={`shell flex items-center gap-5 transition-[height] duration-500 ${scrolled ? "h-14 lg:h-16" : "h-16 lg:h-[4.75rem]"}`}>
+        <div className={`shell flex items-center gap-3 sm:gap-5 transition-[height] duration-500 ${scrolled ? "h-14 lg:h-16" : "h-16 lg:h-[4.75rem]"}`}>
           <Link href={link()} className="flex shrink-0 items-center" aria-label="SURMAT">
             <span className="wordmark text-[1.35rem] leading-none">SURMAT</span>
           </Link>
@@ -153,7 +153,8 @@ export function Nav() {
                     className={`flex h-8 items-center gap-1.5 rounded-full px-2.5 text-[0.78rem] transition-colors ${on ? "bg-limestone/[0.12] text-limestone" : "text-limestone/60 hover:text-limestone"}`}
                   >
                     <Flag code={e.country} className={`h-3 w-[1.1rem] rounded-[2px] transition-opacity ${on ? "" : "opacity-60"}`} />
-                    <span>{countryName(e.country, locale)}</span>
+                    {/* Tablets show flags only (the header is tight); names return on desktop. */}
+                    <span className="sr-only lg:not-sr-only">{countryName(e.country, locale)}</span>
                   </Link>
                 );
               })}

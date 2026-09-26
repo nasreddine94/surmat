@@ -37,6 +37,8 @@ export const es: Dict = {
     usedIn: "Se usa en",
     format: "Formato",
     hint: "Arrastre para girar el universo. Seleccione una muestra para acercarla.",
+    viewSwitch: "Vista del fondo",
+    preparing3d: "Preparando el 3D…",
     scroll: "Desplácese para explorar",
     tagline: "Los materiales dan forma a mejores espacios",
   },

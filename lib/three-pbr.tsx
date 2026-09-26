@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
 import { pbr, reliefMaps, texTone, type TexKind } from "./textures";
 import { enqueue } from "./idle";
+import { requestBitmaps, type Bitmaps } from "./texture-client";
 
 export type PBRMaps = { map: THREE.Texture; normalMap: THREE.Texture; roughnessMap: THREE.Texture };
 
@@ -28,6 +29,56 @@ function build(tex: TexKind, seed: number, size: number): PBRMaps {
   return maps;
 }
 
+/* ---------- textures are generated in parallel in workers (lib/texture-client.ts) ---------- */
+
+const inflight = new Map<string, Promise<PBRMaps>>();
+
+function fromBitmaps(b: Bitmaps): PBRMaps {
+  const mk = (img: ImageBitmap, srgb: boolean) => {
+    const t = new THREE.Texture(img);
+    t.flipY = false; // already flipped in the worker
+    t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.anisotropy = 8;
+    t.generateMipmaps = true;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.needsUpdate = true;
+    return t;
+  };
+  return { map: mk(b.color, true), normalMap: mk(b.normal, false), roughnessMap: mk(b.rough, false) };
+}
+
+const onMainThread = (tex: TexKind, seed: number, size: number, priority: boolean) =>
+  new Promise<PBRMaps>((resolve) => enqueue(() => resolve(build(tex, seed, size)), priority));
+
+/** Maps for a material: cached, de-duplicated, and generated in a worker when possible. */
+export function requestMaps(tex: TexKind, seed: number, size: number, priority = false): Promise<PBRMaps> {
+  const key = `${tex}:${seed}:${size}`;
+  const hit = cache.get(key);
+  if (hit) return Promise.resolve(hit);
+  const busy = inflight.get(key);
+  if (busy) return busy;
+  const job = requestBitmaps(tex, seed, size)
+        .then(fromBitmaps)
+        .catch(() => onMainThread(tex, seed, size, priority));
+  const done = job.then((maps) => {
+    cache.set(key, maps);
+    inflight.delete(key);
+    return maps;
+  });
+  inflight.set(key, done);
+  return done;
+}
+
+/**
+ * Generate a set of maps ahead of time so a scene can mount with every surface
+ * final instead of popping in texture by texture.
+ */
+export function preloadPBR(specs: { tex: TexKind; seed: number; size: number }[]) {
+  const done = Promise.all(specs.map((s) => requestMaps(s.tex, s.seed, s.size, true))).then(() => undefined);
+  return { done, cancel: () => undefined };
+}
+
 /** Colour, normal and roughness maps for a material, generated off the critical path. */
 export function usePBRMaps(tex: TexKind, seed: number, size = 384, priority = false) {
   const key = `${tex}:${seed}:${size}`;
@@ -35,11 +86,7 @@ export function usePBRMaps(tex: TexKind, seed: number, size = 384, priority = fa
   useEffect(() => {
     if (cache.has(key)) return;
     let live = true;
-    enqueue(() => {
-      if (!live) return;
-      const maps = build(tex, seed, size);
-      setLoaded({ key, maps });
-    }, priority);
+    requestMaps(tex, seed, size, priority).then((maps) => live && setLoaded({ key, maps }));
     return () => void (live = false);
   }, [key, tex, seed, size, priority]);
   return cache.get(key) ?? (loaded?.key === key ? loaded.maps : null);

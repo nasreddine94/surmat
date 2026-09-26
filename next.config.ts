@@ -2,9 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Event imagery generated with Higgsfield (content/event-media.ts). Only this account's folder is allowed.
-    remotePatterns: [new URL("https://d8j0ntlcm91z4.cloudfront.net/user_39GebVBNf0LF9ZNbDOYTMnx1vfO/**")],
     formats: ["image/avif", "image/webp"],
+    // 75 is the default; the hero backdrop is served at 85 to keep its fine material detail.
+    qualities: [75, 85],
     // Generated images never change at a given URL.
     minimumCacheTTL: 31_536_000,
   },

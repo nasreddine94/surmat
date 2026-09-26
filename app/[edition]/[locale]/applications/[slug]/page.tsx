@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JsonLd, breadcrumbJsonLd } from "@/components/json-ld";
 import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -36,6 +37,12 @@ export default async function ApplicationPage({ params }: PageProps<"/[edition]/
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: dict.nav.applications, path: href(c, "applications") },
+          { name: t(a.name, locale), path: href(c, `applications/${a.id}`) },
+        ])}
+      />
       <div className="shell pt-28 lg:pt-32">
         <nav aria-label="Breadcrumb" className="text-xs text-fog">
           <Link href={href(c, "applications")} className="hover:text-limestone">

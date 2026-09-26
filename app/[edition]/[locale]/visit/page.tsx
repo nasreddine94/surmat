@@ -5,6 +5,7 @@ import { EventImage } from "@/components/event-image";
 import { Calendar, Pin } from "@/components/icons";
 import { alternates, resolve } from "@/lib/routing";
 import { t } from "@/lib/i18n";
+import { AnswersSection } from "@/components/answers-section";
 
 /** Which event pillar each image illustrates: the talks, then the live demonstrations. */
 const PILLARS = [2, 3] as const;
@@ -21,6 +22,7 @@ export default async function VisitPage({ params, searchParams }: PageProps<"/[e
   const profiles = Object.values(dict.visit.profiles).slice(0, 6);
 
   return (
+    <>
     <div className="shell grid gap-12 pt-32 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
       <div>
         <p className="eyebrow">{t(ed.name, locale)}</p>
@@ -75,5 +77,7 @@ export default async function VisitPage({ params, searchParams }: PageProps<"/[e
         )}
       </div>
     </div>
+    <AnswersSection ed={ed} locale={locale} dict={dict} only={["visit", "when", "scope", "scale"]} facts={false} />
+    </>
   );
 }

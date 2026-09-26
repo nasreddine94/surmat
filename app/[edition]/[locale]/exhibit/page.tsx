@@ -8,6 +8,7 @@ import { Markets, Offer, Participate } from "@/components/why-exhibit";
 import { sectorById, type SectorId } from "@/content/sectors";
 import { alternates, resolve } from "@/lib/routing";
 import { t } from "@/lib/i18n";
+import { AnswersSection } from "@/components/answers-section";
 
 /** Which event pillar each image illustrates: the stand, then B2B meetings. */
 const PILLARS = [0, 1] as const;
@@ -64,7 +65,11 @@ export default async function ExhibitPage({ params, searchParams }: PageProps<"/
       <Offer dict={dict} c={c} />
       <Participate dict={dict} c={c} />
       <ScopeSection />
-      <SystemsExplorer />
+      <AnswersSection ed={ed} locale={locale} dict={dict} only={["exhibit", "scope", "scale", "when"]} facts={false} />
+      {/* Dense technical sections: tablets and desktops. Phones get the district overview above. */}
+      <div className="hidden md:block">
+        <SystemsExplorer />
+      </div>
     </>
   );
 }

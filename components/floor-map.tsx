@@ -41,7 +41,12 @@ export function FloorMap() {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <div className="overflow-hidden rounded-md border border-line bg-[#0d0e10] p-3 sm:p-5">
-        <ExhibitionPlan focus={focus} onFocus={setFocus} />
+        {/* Phones: the plan keeps a legible size and scrolls sideways, so stands stay tappable. */}
+        <div className="-mx-3 overflow-x-auto overscroll-x-contain px-3 pb-2 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+          <div className="min-w-[720px] sm:min-w-0">
+            <ExhibitionPlan focus={focus} onFocus={setFocus} />
+          </div>
+        </div>
         <p className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 px-1 text-xs text-fog">
           <span className="flex items-center gap-2">
             <span className="size-2.5 rounded-[2px] bg-limestone/60" /> {dict.experience.legendTaken}

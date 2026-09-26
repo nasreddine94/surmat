@@ -1,54 +1,53 @@
 /**
- * Event imagery (visualisations generated with Higgsfield). Served through next/image, which
- * resizes and converts them (AVIF / WebP) per screen. Replace `src` with real photography of the
+ * Event imagery (visualisations generated with Higgsfield), self-hosted in /public/media as WebP
+ * so the site never depends on an external CDN. Served through next/image, which resizes and
+ * converts them (AVIF / WebP) per screen. Replace `src` with real photography of the
  * editions as it becomes available; `visual: true` shows a small "Visualisation" label so these
  * are never mistaken for photos of a past edition.
  */
-const HF = "https://d8j0ntlcm91z4.cloudfront.net/user_39GebVBNf0LF9ZNbDOYTMnx1vfO";
-
 export type Media = { src: string; width: number; height: number; visual: boolean };
 
-const img = (file: string, width: number, height: number): Media => ({ src: `${HF}/${file}`, width, height, visual: true });
+const img = (name: string, width: number, height: number): Media => ({ src: `/media/${name}.webp`, width, height, visual: true });
 
 export const media = {
-  hall: img("hf_20260925_173036_1805952d-6711-498c-9a6b-04ca21b92b7b.png", 1344, 752),
-  networking: img("hf_20260925_173036_8b928d35-2fc9-4a6d-96a1-f05834102183.png", 1168, 880),
-  conference: img("hf_20260925_173105_58534f17-5a51-486d-9c79-89745c737d5f.png", 1344, 752),
-  demo: img("hf_20260925_173037_0d68618a-f3bc-454f-8df6-16d32b77e93f.png", 1168, 880),
-  stand: img("hf_20260925_173104_1f146f0f-d42c-49cb-96e0-db339bdd6752.png", 896, 1120),
-  entrance: img("hf_20260925_173036_976da124-14a2-4491-9227-49c9026e3859.png", 1344, 752),
-  oran: img("hf_20260925_182038_db9abda1-a80f-4af1-93ac-f713293b5eb9.png", 1344, 752),
-  dakar: img("hf_20260925_173036_2d6be3ba-4939-4c1f-91fe-dea711b98a1c.png", 1344, 752),
-  lobby: img("hf_20260925_173036_0b08e9ba-cf4f-44b4-ad13-24a946382809.png", 1344, 752),
-  facade: img("hf_20260925_173036_2683f2ac-1675-4175-8e66-9d28aaa30eee.png", 1168, 880),
-  library: img("hf_20260925_173104_efb395a5-0597-4e97-9041-097aa067078a.png", 1344, 752),
-  aerial: img("hf_20260925_173036_5ae86a23-926a-4f95-b2a0-68b5201bdc81.png", 1344, 752),
+  hall: img("hall", 1344, 752),
+  networking: img("networking", 1168, 880),
+  conference: img("conference", 1344, 752),
+  demo: img("demo", 1168, 880),
+  stand: img("stand", 896, 1120),
+  entrance: img("entrance", 1344, 752),
+  oran: img("oran", 1344, 752),
+  dakar: img("dakar", 1344, 752),
+  lobby: img("lobby", 1344, 752),
+  facade: img("facade", 1168, 880),
+  library: img("library", 1344, 752),
+  aerial: img("aerial", 1344, 752),
   // Exhibition scope — one per product group.
-  gCeramic: img("hf_20260925_182038_e4c735c1-3093-48e1-b2fd-1284570a8fa9.png", 1168, 880),
-  gStone: img("hf_20260925_182038_cb1678ec-ba4c-4f37-b201-053619cbbd9e.png", 1168, 880),
-  gPaint: img("hf_20260925_182038_ac66010a-ac7a-43c5-ab58-1ccc9bb0e13d.png", 1168, 880),
-  gInterior: img("hf_20260925_182038_c48ecf84-ad3c-4b19-89f8-1e6e9879c940.png", 1168, 880),
-  gChemicals: img("hf_20260925_182038_c1947ccf-001a-4411-942a-065e828586fd.png", 1168, 880),
-  gMachinery: img("hf_20260925_182038_e78d0540-e211-4ace-8b12-2467d4fa7f90.png", 1168, 880),
-  gJoinery: img("hf_20260925_182737_2eb89554-c1b5-4ea6-8634-8a96a74e276b.png", 1168, 880),
-  gBath: img("hf_20260925_182038_93134b6e-676d-4f21-9f4e-0931f0b4dafb.png", 1168, 880),
-  samples: img("hf_20260925_182038_d94edcd1-4634-4b87-8056-ad6cff55eecb.png", 1344, 752),
+  gCeramic: img("gCeramic", 1168, 880),
+  gStone: img("gStone", 1168, 880),
+  gPaint: img("gPaint", 1168, 880),
+  gInterior: img("gInterior", 1168, 880),
+  gChemicals: img("gChemicals", 1168, 880),
+  gMachinery: img("gMachinery", 1168, 880),
+  gJoinery: img("gJoinery", 1168, 880),
+  gBath: img("gBath", 1168, 880),
+  samples: img("samples", 1344, 752),
   // Application scenes — one per space, same camera as the explorer's hotspot layout.
-  spHospitality: img("hf_20260925_192758_55d8939f-8465-4830-be36-2e51f81798a3.png", 1344, 752),
-  spResidential: img("hf_20260925_192758_fbe37478-9c10-4d95-9720-2d7ec03a43c1.png", 1344, 752),
-  spCommercial: img("hf_20260925_192758_490e43b8-831e-48fd-9c47-c35c80d6f675.png", 1344, 752),
-  spHealthcare: img("hf_20260925_192758_9e8a72c4-14a1-4c36-9f15-3a28b8ba5e79.png", 1344, 752),
-  spPublic: img("hf_20260925_192758_7b7e5559-2ea4-451d-87ea-047e32f71a09.png", 1344, 752),
-  spOutdoor: img("hf_20260925_192758_cc7ddc98-1605-45b2-871a-ddf9f0a1f5cd.png", 1344, 752),
+  spHospitality: img("spHospitality", 1344, 752),
+  spResidential: img("spResidential", 1344, 752),
+  spCommercial: img("spCommercial", 1344, 752),
+  spHealthcare: img("spHealthcare", 1344, 752),
+  spPublic: img("spPublic", 1344, 752),
+  spOutdoor: img("spOutdoor", 1344, 752),
   // Building systems on site and production lines (paired with the technical sections).
-  tFacade: img("hf_20260925_200447_a6678fb3-4510-4157-8cb7-e5cbee6c78d8.png", 1168, 880),
-  tEtics: img("hf_20260925_200447_cdd915ab-b9a6-43d6-8308-df17a6f694d9.png", 1168, 880),
-  tWet: img("hf_20260925_200447_6ab94e02-3db9-4abb-8473-2980b79fd88c.png", 1168, 880),
-  tFloor: img("hf_20260925_200447_b2776728-665b-4f17-867e-dc89f953af16.png", 1168, 880),
-  tPartition: img("hf_20260925_200447_8f671ded-6ed0-41b6-8cdd-aa2a87403ace.png", 1168, 880),
-  tRoof: img("hf_20260925_200447_b9815548-7af8-4ef8-a9cf-47cc10e99bec.png", 1168, 880),
-  tCeramicLine: img("hf_20260925_200447_3162bd3b-9e0f-4f33-bf47-c4609776fbc5.png", 1168, 880),
-  tStoneLine: img("hf_20260925_200447_38386a7f-6962-47b1-abc1-125c252d12d7.png", 1168, 880),
+  tFacade: img("tFacade", 1168, 880),
+  tEtics: img("tEtics", 1168, 880),
+  tWet: img("tWet", 1168, 880),
+  tFloor: img("tFloor", 1168, 880),
+  tPartition: img("tPartition", 1168, 880),
+  tRoof: img("tRoof", 1168, 880),
+  tCeramicLine: img("tCeramicLine", 1168, 880),
+  tStoneLine: img("tStoneLine", 1168, 880),
 } satisfies Record<string, Media>;
 
 export type MediaKey = keyof typeof media;

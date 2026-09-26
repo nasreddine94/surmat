@@ -695,6 +695,22 @@ export function reliefMaps(kind: TexKind, size: number, seed = 1) {
   if (hit) return hit;
   const src = textureCanvas(kind, size, seed);
   const data = src.getContext("2d", { willReadFrequently: true })!.getImageData(0, 0, size, size).data;
+  const { normal: nImg, rough: rImg } = reliefData(kind, size, data);
+  const normal = document.createElement("canvas");
+  const rough = document.createElement("canvas");
+  normal.width = normal.height = rough.width = rough.height = size;
+  normal.getContext("2d")!.putImageData(nImg, 0, 0);
+  rough.getContext("2d")!.putImageData(rImg, 0, 0);
+  const out = { color: src, normal, rough };
+  reliefCache.set(key, out);
+  return out;
+}
+
+/**
+ * Pure pixel work behind `reliefMaps`: normal and roughness from the colour's
+ * luminance. No DOM, so it also runs inside the texture worker.
+ */
+export function reliefData(kind: TexKind, size: number, data: Uint8ClampedArray) {
   const h = new Float32Array(size * size);
   let lo = 1, hi = 0;
   for (let i = 0; i < h.length; i++) {
@@ -707,9 +723,6 @@ export function reliefMaps(kind: TexKind, size: number, seed = 1) {
   for (let i = 0; i < h.length; i++) h[i] = (h[i] - lo) / span;
 
   const p = pbr[kind];
-  const normal = document.createElement("canvas");
-  const rough = document.createElement("canvas");
-  normal.width = normal.height = rough.width = rough.height = size;
   const nImg = new ImageData(size, size);
   const rImg = new ImageData(size, size);
   const at = (x: number, y: number) => h[((y + size) % size) * size + ((x + size) % size)];
@@ -737,10 +750,6 @@ export function reliefMaps(kind: TexKind, size: number, seed = 1) {
       rImg.data[i + 2] = 0;
       rImg.data[i + 3] = 255;
     }
-  normal.getContext("2d")!.putImageData(nImg, 0, 0);
-  rough.getContext("2d")!.putImageData(rImg, 0, 0);
-  const out = { color: src, normal, rough };
-  reliefCache.set(key, out);
-  return out;
+  return { normal: nImg, rough: rImg };
 }
 const reliefCache = new Map<string, { color: HTMLCanvasElement; normal: HTMLCanvasElement; rough: HTMLCanvasElement }>();

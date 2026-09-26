@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cachedTextureURL, texTone, textureURL, type TexKind } from "@/lib/textures";
 import { enqueue } from "@/lib/idle";
+import { cachedSwatchURL, requestSwatchURL } from "@/lib/texture-client";
 
 type Props = {
   tex: TexKind;
@@ -28,14 +29,19 @@ export function Swatch({ tex, seed = 1, res = 320, tile, className = "", style, 
   const [loaded, setLoaded] = useState<{ key: string; url: string } | null>(null);
   const [mounted, setMounted] = useState(false);
   // Cache lookups only after mount so server and first client render match.
-  const url = mounted ? (cachedTextureURL(tex, res, seed) ?? (loaded?.key === key ? loaded.url : undefined)) : undefined;
+  const cached = () => cachedSwatchURL(tex, res, seed) ?? cachedTextureURL(tex, res, seed);
+  const url = mounted ? (cached() ?? (loaded?.key === key ? loaded.url : undefined)) : undefined;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe mount flag
     setMounted(true);
-    if (cachedTextureURL(tex, res, seed)) return;
+    if (cachedSwatchURL(tex, res, seed) ?? cachedTextureURL(tex, res, seed)) return;
     let cancelled = false;
-    const run = () => enqueue(() => !cancelled && setLoaded({ key, url: textureURL(tex, res, seed) }), eager);
+    // Drawn in a worker; the main thread only fills in if workers are unavailable.
+    const run = () =>
+      requestSwatchURL(tex, res, seed, !!eager)
+        .then((u) => !cancelled && setLoaded({ key, url: u }))
+        .catch(() => enqueue(() => !cancelled && setLoaded({ key, url: textureURL(tex, res, seed) }), eager));
     if (eager) {
       run();
       return () => void (cancelled = true);

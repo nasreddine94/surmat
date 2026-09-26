@@ -1,11 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import universe from "@/assets/hero/material-universe.webp";
+import { useDeferredValue, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSite } from "../site-context";
-import { Swatch } from "../swatch";
 import { Arrow, Close, SearchIcon } from "../icons";
 import type { OrbitItem, Shape } from "./orbit-scene";
 import { materials, materialBySlug } from "@/content/materials";
@@ -15,7 +16,9 @@ import { countryName, editions } from "@/lib/editions";
 import { fmt, t } from "@/lib/i18n";
 import { search } from "@/lib/search";
 import { track } from "@/lib/analytics";
-import { observeActive, useCan3D } from "@/lib/capability";
+import { observeActive, useDeviceTier } from "@/lib/capability";
+import { requestBitmaps } from "@/lib/texture-client";
+import { mapSize } from "./orbit-config";
 import type { TexKind } from "@/lib/textures";
 
 const OrbitScene = dynamic(() => import("./orbit-scene"), { ssr: false });
@@ -39,21 +42,33 @@ const variants: { slug: string; tex: TexKind; seed: number }[] = [
   { slug: "terrazzo", tex: "terrazzo", seed: 12 },
 ];
 
-/** Static composition — the first paint, the reduced-motion hero and the mobile hero. */
-const staticSamples: { tex: TexKind; seed: number; cls: string; tr: string; slug: string }[] = [
-  { tex: "calacatta", seed: 7, slug: "marble", cls: "start-[6%] top-[12%] w-[17vw] max-w-64 aspect-[3/4] hidden sm:block", tr: "rotateY(24deg) rotateZ(-6deg)" },
-  { tex: "woodSlats", seed: 2, slug: "wall-panels", cls: "start-[22%] top-[8%] w-[6vw] aspect-[1/2] hidden md:block", tr: "rotateY(-18deg) rotateX(8deg)" },
-  { tex: "granite", seed: 3, slug: "granite", cls: "start-[25%] top-[30%] w-[9vw] aspect-square hidden sm:block", tr: "rotateY(-30deg) rotateZ(4deg)" },
-  { tex: "verde", seed: 2, slug: "marble", cls: "start-[20%] top-[58%] w-[9vw] aspect-[3/4] hidden sm:block", tr: "rotateY(30deg) rotateX(-8deg)" },
-  { tex: "nero", seed: 3, slug: "marble", cls: "start-[2%] top-[66%] w-[10vw] aspect-square hidden md:block", tr: "rotateY(40deg) rotateZ(10deg)" },
-  { tex: "travertine", seed: 2, slug: "travertine", cls: "end-[18%] top-[16%] w-[15vw] max-w-56 aspect-[3/4] hidden sm:block", tr: "rotateY(-26deg) rotateZ(5deg)" },
-  { tex: "graniteBlack", seed: 4, slug: "granite", cls: "end-[4%] top-[10%] w-[11vw] aspect-[4/3] hidden sm:block", tr: "rotateY(-34deg) rotateX(10deg)" },
-  { tex: "porcelain", seed: 3, slug: "porcelain", cls: "end-[3%] top-[44%] w-[12vw] aspect-[3/4] hidden md:block", tr: "rotateY(-40deg) rotateZ(-4deg)" },
-  { tex: "quartz", seed: 6, slug: "quartz", cls: "end-[22%] top-[62%] w-[7vw] aspect-[3/4] hidden md:block", tr: "rotateY(22deg) rotateZ(-10deg)" },
-  { tex: "zellige", seed: 4, slug: "zellige", cls: "end-[8%] top-[74%] w-[9vw] aspect-square hidden sm:block", tr: "rotateY(-20deg) rotateX(-14deg)" },
-];
 
 
+
+/* ---------- 2D / 3D preference, remembered across visits ---------- */
+type View = "2d" | "3d";
+const VIEW_KEY = "surmat:hero-view";
+const viewListeners = new Set<() => void>();
+let memoryView: View | null = null; // used when storage is unavailable (private mode)
+/** The visitor's saved choice, or "auto" to follow the device tier. */
+function readView(): View | "auto" {
+  try {
+    const v = localStorage.getItem(VIEW_KEY);
+    if (v === "2d" || v === "3d") return v;
+  } catch {}
+  return memoryView ?? "auto";
+}
+function writeView(v: View) {
+  memoryView = v;
+  try {
+    localStorage.setItem(VIEW_KEY, v);
+  } catch {}
+  viewListeners.forEach((l) => l());
+}
+const subscribeView = (cb: () => void) => {
+  viewListeners.add(cb);
+  return () => void viewListeners.delete(cb);
+};
 
 export function Hero() {
   const { dict, locale, edition, link } = useSite();
@@ -61,8 +76,15 @@ export function Hero() {
   const section = useRef<HTMLElement>(null);
   const drag = useRef({ offset: 0, moved: 0, tilt: 0 });
   const edInfo = editions[edition];
-  const mode = useCan3D() ? "3d" : "static";
+  // Phones and tablets get the 2D hero only; weak desktops start in 2D; strong ones in 3D.
+  const tier = useDeviceTier();
+  const mode = tier === "none" ? "static" : "3d";
+  const saved = useSyncExternalStore<View | "auto">(subscribeView, readView, () => "auto");
+  const view: View = saved === "auto" ? (tier === "strong" ? "3d" : "2d") : saved;
+  // `ready` flips only when the WebGL scene reports smooth, fully textured frames.
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [mountedAt] = useState(() => (typeof performance === "undefined" ? 0 : performance.now()));
   const [active, setActive] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -136,10 +158,13 @@ export function Hero() {
     });
   }, [locale]);
 
-  const deck = useMemo(() => {
-    const seen = new Set<string>();
-    return items.filter((it) => !seen.has(it.slug) && seen.add(it.slug)).slice(0, 12);
-  }, [items]);
+  // Start the 3D scene's texture work in workers now, while the three.js bundle is still
+  // downloading; the scene later picks up the same jobs instead of starting its own.
+  useEffect(() => {
+    if (mode !== "3d" || view !== "3d") return;
+    items.forEach((it, i) => void requestBitmaps(it.tex, it.seed, mapSize(i)).catch(() => undefined));
+  }, [mode, view, items]);
+
 
   const results = useMemo(() => (dq.trim().length > 1 ? search(dq, edition) : null), [dq, edition]);
   const matchIndex = useMemo(() => {
@@ -159,6 +184,7 @@ export function Hero() {
 
   const hoverSeen = useRef(new Set<string>());
   const onHover = (k: string | null) => {
+    if (!ready || view !== "3d") return; // the scene is warming up, or the visitor chose 2D
     setHovered(k);
     const slug = k && items.find((i) => i.key === k)?.slug;
     if (slug && !hoverSeen.current.has(slug)) {
@@ -167,6 +193,7 @@ export function Hero() {
     }
   };
   const onSelect = (k: string | null) => {
+    if (!ready || view !== "3d") return;
     setSelected(k);
     const slug = k && items.find((i) => i.key === k)?.slug;
     if (slug) track("material_expand", { material: slug, from: "orbit" });
@@ -187,7 +214,11 @@ export function Hero() {
   useEffect(() => {
     if (mode !== "3d") return;
     let id = 0;
-    const go = () => (id = window.requestIdleCallback ? window.requestIdleCallback(() => setBoot(true), { timeout: 1500 }) : window.setTimeout(() => setBoot(true), 300));
+    const start = () => {
+      performance.mark("surmat:hero-boot");
+      setBoot(true);
+    };
+    const go = () => (id = window.requestIdleCallback ? window.requestIdleCallback(start, { timeout: 1500 }) : window.setTimeout(start, 300));
     if (document.readyState === "complete") go();
     else window.addEventListener("load", go, { once: true });
     return () => {
@@ -196,7 +227,36 @@ export function Hero() {
       else clearTimeout(id);
     };
   }, [mode]);
-  const show3D = mode === "3d" && boot;
+  // The scene mounts the first time 3D is wanted and then stays mounted (paused while 2D is
+  // shown), so switching back is instant. Choosing 2D first means it never loads at all.
+  const [kept, setKept] = useState(false);
+  const can3D = mode === "3d" && !failed;
+  if (can3D && boot && view === "3d" && !kept) setKept(true);
+  const show3D = can3D && boot && kept;
+  const live3D = show3D && ready && view === "3d";
+  const preparing = can3D && view === "3d" && !ready;
+  // A lost WebGL context renders as a dead (white) canvas. Drop back to the image at once,
+  // then rebuild the scene on a fresh canvas; it fades in again only once it is ready.
+  const [sceneKey, setSceneKey] = useState(0);
+  const onLost = () => {
+    setReady(false);
+    setSelected(null);
+    setHovered(null);
+    if (sceneKey >= 3) setFailed(true);
+    else setSceneKey((k) => k + 1);
+  };
+  const switchView = (v: View) => {
+    if (v === "2d") {
+      setSelected(null);
+      setHovered(null);
+    }
+    writeView(v);
+  };
+  // Keep the static composition up for a moment even on fast machines, so it never flashes.
+  const reveal = () => {
+    const wait = Math.max(0, 1400 - (performance.now() - mountedAt));
+    window.setTimeout(() => setReady(true), wait);
+  };
 
   return (
     <>
@@ -212,32 +272,35 @@ export function Hero() {
       {/* Static composition: instant first paint; stays when WebGL is not used. */}
       <div
         aria-hidden
-        className="absolute inset-0 transition-[opacity,visibility] duration-1000 [perspective:1100px]"
-        style={{ opacity: show3D && ready ? 0 : 1, visibility: show3D && ready ? "hidden" : "visible" }}
+        className="absolute inset-0 transition-[opacity,visibility] delay-300 duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ opacity: live3D ? 0 : 1, visibility: live3D ? "hidden" : "visible" }}
       >
-        {staticSamples.map((s, i) => (
-          <div
-            key={i}
-            className={`absolute ${s.cls} motion-safe:animate-[float-slow_9s_ease-in-out_infinite]`}
-            style={{ animationDelay: `${i * -0.9}s`, animationPlayState: show3D && ready ? "paused" : undefined }}
-          >
-            <Swatch
-              tex={s.tex}
-              seed={s.seed}
-              res={384}
-              eager={i < 6}
-              className="h-full w-full rounded-[3px] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)]"
-              style={{ transform: s.tr }}
-            >
-              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),transparent_45%,rgba(0,0,0,0.35))]" />
-            </Swatch>
-          </div>
-        ))}
+        {/* The picture starts below the header bar, so none of it hides behind the navigation. */}
+        <div className="absolute inset-x-0 bottom-0 top-24 lg:top-[6.75rem]">
+          <Image
+            src={universe}
+            alt=""
+            fill
+            preload
+            quality={85}
+            sizes="100vw"
+            placeholder="blur"
+            className="object-cover object-top"
+          />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-basalt to-transparent" />
+        </div>
+        {/* The photograph is busier than the 3D scene: settle the area behind the text. */}
+        <div className="absolute inset-0 bg-[radial-gradient(36%_40%_at_50%_46%,rgba(11,12,13,0.72),rgba(11,12,13,0.35)_65%,transparent_100%)]" />
       </div>
 
       {show3D && (
-        <div className="absolute inset-0 transition-opacity duration-1000" style={{ opacity: ready ? 1 : 0 }}>
+        <div
+          aria-hidden={!live3D}
+          className="absolute inset-0 transition-opacity duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{ opacity: live3D ? 1 : 0 }}
+        >
           <OrbitScene
+            key={sceneKey}
             items={items}
             selected={selected}
             matchIndex={matchIndex}
@@ -245,10 +308,12 @@ export function Hero() {
             onHover={onHover}
             hovered={hovered}
             drag={drag}
-            active={active}
+            active={active && view === "3d"}
             rtl={rtl}
             eventSource={section}
-            onReady={() => setTimeout(() => setReady(true), 250)}
+            onReady={reveal}
+            onFail={() => setFailed(true)}
+            onLost={onLost}
           />
         </div>
       )}
@@ -267,7 +332,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10, transition: { duration: 0.35 } }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            className="pointer-events-none absolute inset-x-0 top-[13%] z-10 flex flex-col items-center px-4 text-center sm:top-[20%]"
+            className="pointer-events-none absolute inset-x-0 top-28 z-10 flex flex-col items-center px-4 text-center sm:top-[20%]"
           >
             <p className="eyebrow">{dict.brand.eyebrow}</p>
             <h1 className="wordmark mt-5 text-[clamp(3.6rem,11vw,9.5rem)] leading-[0.85] tracking-[0.01em]">SURMAT</h1>
@@ -284,7 +349,7 @@ export function Hero() {
                 </span>
               ))}
             </p>
-            <p className="mt-2 text-xs uppercase tracking-[0.18em] text-fog">
+            <p className="mt-2 max-w-[34rem] text-[0.68rem] uppercase tracking-[0.1em] text-fog sm:text-xs sm:tracking-[0.18em]">
               {edInfo.venue ? t(edInfo.venue, locale) : t(edInfo.city, locale)} · {edInfo.dates ? t(edInfo.dates, locale) : dict.edition.datesTBA}
             </p>
             <div className="pointer-events-auto mt-9 flex flex-wrap justify-center gap-3" data-overlay>
@@ -389,34 +454,42 @@ export function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Mobile: a swipeable deck of samples instead of the orbit */}
-      {!sel && (
-        <div className="absolute inset-x-0 bottom-[7.75rem] z-10 sm:hidden" data-overlay>
-          <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [perspective:800px] [scrollbar-width:none]">
-            {deck.map((it, i) => (
-              <li key={it.key} className="shrink-0 snap-center">
-                <Link href={link(`materials/${it.slug}`)} className="block w-[5.5rem]">
-                  <Swatch
-                    tex={it.tex}
-                    seed={it.seed}
-                    res={200}
-                    eager={i < 4}
-                    className="aspect-[3/4] rounded-[3px] shadow-[0_20px_30px_-12px_rgba(0,0,0,0.9)]"
-                    style={{ transform: `rotateY(${i % 2 ? -14 : 14}deg)` }}
-                  >
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.18),transparent_45%,rgba(0,0,0,0.3))]" />
-                  </Swatch>
-                  <span className="mt-2 block truncate text-[0.68rem] text-limestone/75">{it.label}</span>
-                </Link>
-              </li>
+
+      {/* 2D / 3D view switch — only where the 3D scene can run */}
+      {can3D && (
+        <div className="absolute bottom-12 start-6 z-20 flex items-center gap-3 lg:start-10" data-overlay>
+          <div
+            role="radiogroup"
+            aria-label={dict.hero.viewSwitch}
+            className="flex rounded-full border border-white/15 bg-black/45 p-0.5 text-[0.68rem] font-medium tracking-[0.14em] backdrop-blur-md"
+          >
+            {(["2d", "3d"] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                role="radio"
+                aria-checked={view === v}
+                onClick={() => switchView(v)}
+                className={`relative flex h-7 min-w-10 items-center justify-center gap-1.5 rounded-full px-3 transition-colors duration-300 ${
+                  view === v ? "bg-limestone text-basalt" : "text-limestone/70 hover:text-limestone"
+                }`}
+              >
+                {v === "3d" && preparing && (
+                  <span aria-hidden className="size-1.5 rounded-full bg-current motion-safe:animate-pulse" />
+                )}
+                {v.toUpperCase()}
+              </button>
             ))}
-          </ul>
+          </div>
+          <span aria-live="polite" className={`text-[0.7rem] text-fog transition-opacity duration-500 ${preparing ? "opacity-100" : "opacity-0"}`}>
+            {preparing ? dict.hero.preparing3d : ""}
+          </span>
         </div>
       )}
 
       {/* Material Galaxy search */}
-      <div className="absolute inset-x-0 bottom-6 z-20 px-4 sm:bottom-10" data-overlay>
-        <div className="mx-auto w-full max-w-xl">
+      <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 px-4 sm:bottom-10" data-overlay>
+        <div className="pointer-events-auto mx-auto w-full max-w-xl">
           <label className="group flex h-12 items-center gap-3 rounded-full border border-line bg-black/40 px-4 backdrop-blur-md focus-within:border-travertine">
             <SearchIcon size={16} className="shrink-0 text-fog" />
             <span className="sr-only">{dict.hero.searchLabel}</span>
@@ -454,7 +527,7 @@ export function Hero() {
                 <span className="text-xs text-fog">{fmt(dict.hero.noMatch, { q: dq })}</span>
               )
             ) : (
-              show3D && <span className="text-xs text-fog/80">{dict.hero.hint}</span>
+              live3D && <span className="text-xs text-fog/80">{dict.hero.hint}</span>
             )}
           </div>
         </div>

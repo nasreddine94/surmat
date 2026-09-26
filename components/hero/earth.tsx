@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/immutability -- shader uniforms are mutated in the frame loop, which is the intended react-three-fiber pattern. */
 
 import { useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import { Line, useTexture } from "@react-three/drei";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { Line } from "@react-three/drei";
 import * as THREE from "three";
 import type { Line2 } from "three-stdlib";
 import { africa } from "@/lib/africa";
@@ -31,15 +31,24 @@ const TEXTURES = {
   water: "/earth/water.webp",
   clouds: "/earth/clouds.webp",
 };
-/** Runs before upload. drei types this as the keyed object but passes an array in TEXTURES order; accept both. */
-function prepare(loaded: Record<keyof typeof TEXTURES, THREE.Texture> | THREE.Texture[]) {
-  const all = Array.isArray(loaded) ? loaded : Object.values(loaded);
-  for (const t of all) {
+const KEYS = Object.keys(TEXTURES) as (keyof typeof TEXTURES)[];
+
+/**
+ * Images are decoded off the main thread (createImageBitmap) and arrive already flipped,
+ * so the first frame never stalls decoding 4K WebPs inside the GPU upload.
+ */
+function toTextures(bitmaps: ImageBitmap[]) {
+  const out = {} as Record<keyof typeof TEXTURES, THREE.Texture>;
+  KEYS.forEach((k, i) => {
+    const t = new THREE.Texture(bitmaps[i]);
+    t.flipY = false; // flipped at decode
     t.anisotropy = 8; // three clamps to what the GPU supports
     t.wrapS = THREE.RepeatWrapping;
-  }
-  all[0].colorSpace = all[1].colorSpace = THREE.SRGBColorSpace; // day, night
-  for (const t of all) t.needsUpdate = true;
+    t.colorSpace = k === "day" || k === "night" ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+    t.needsUpdate = true;
+    out[k] = t;
+  });
+  return out;
 }
 
 const damp = (dt: number, k: number) => 1 - Math.exp(-dt * k);
@@ -184,7 +193,10 @@ function Border({ ring, sparks, phase }: { ring: number[]; sparks: number; phase
  * The outline of Africa is traced in light.
  */
 export default function Earth({ drag }: { drag: React.RefObject<{ offset: number; moved: number; tilt: number }> }) {
-  const tex = useTexture(TEXTURES, prepare);
+  const bitmaps = useLoader(THREE.ImageBitmapLoader, KEYS.map((k) => TEXTURES[k]), (loader) =>
+    loader.setOptions({ imageOrientation: "flipY", premultiplyAlpha: "none" }),
+  );
+  const tex = useMemo(() => toTextures(bitmaps), [bitmaps]);
 
   const uniforms = useMemo(
     () => ({

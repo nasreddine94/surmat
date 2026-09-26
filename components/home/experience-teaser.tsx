@@ -40,7 +40,8 @@ export function ExperienceTeaser({ dict, c, ed }: { dict: Dict; c: Ctx; ed: Edit
               </Link>
             </div>
           </div>
-          <Link href={href(c, "experience")} aria-label={e.mapTitle} className="group block border-t border-line p-3 sm:p-6 lg:border-s lg:border-t-0">
+          {/* The plan thumbnail is unreadable at phone width; the text and buttons carry the section there. */}
+          <Link href={href(c, "experience")} aria-label={e.mapTitle} className="group hidden border-t border-line p-3 sm:p-6 md:block lg:border-s lg:border-t-0">
             <ExhibitionPlan className="transition-opacity duration-500 group-hover:opacity-90" />
           </Link>
         </div>

@@ -1,15 +1,17 @@
 "use client";
 /* eslint-disable react-hooks/refs -- a map of three.js vectors (autofocus targets) are mutated imperatively in the frame loop, which is the intended react-three-fiber pattern. */
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import { Environment, Html, Lightformer, PerformanceMonitor, RoundedBox } from "@react-three/drei";
+import { Environment, Html, Lightformer, PerformanceMonitor } from "@react-three/drei";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Bloom, DepthOfField, EffectComposer, Noise, SMAA, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { ToneMappingMode, type DepthOfFieldEffect } from "postprocessing";
 import * as THREE from "three";
 import type { TexKind } from "@/lib/textures";
-import { matKey, physicalProps, usePBRMaps } from "@/lib/three-pbr";
+import { matKey, physicalProps, preloadPBR, usePBRMaps } from "@/lib/three-pbr";
 import Earth from "./earth";
+import { NEAR_COUNT, mapSize } from "./orbit-config";
 
 export type Shape = "tile" | "slab" | "panel" | "plank";
 export type OrbitItem = { key: string; slug: string; tex: TexKind; seed: number; shape: Shape; label: string; sub: string };
@@ -34,10 +36,22 @@ const DIMS: Record<Shape, [number, number, number]> = {
 
 /** Three tilted rings around the core. Fronts pass low and close, backs pass high and behind. */
 const RINGS = [
-  { r: 7.4, count: 15, center: [0, 0, 0], tilt: [0.32, 0, 0.1], speed: 0.07, jr: 0.6, jy: 0.5 },
+  { r: 7.4, count: NEAR_COUNT, center: [0, 0, 0], tilt: [0.32, 0, 0.1], speed: 0.07, jr: 0.6, jy: 0.5 },
   { r: 10.6, count: 17, center: [0, 0.6, -2], tilt: [0.22, 0, -0.16], speed: -0.04, jr: 1.1, jy: 1.2 },
   { r: 15, count: 99, center: [0, 1.5, -9], tilt: [0.12, 0, 0.06], speed: 0.022, jr: 2.2, jy: 2.6 },
 ] as const;
+
+/** One bevelled geometry per shape, shared by every sample (building 50 was a 1 s stall). */
+const geometries = new Map<Shape, THREE.BufferGeometry>();
+function slabGeometry(shape: Shape) {
+  let g = geometries.get(shape);
+  if (!g) {
+    const [w, h, d] = DIMS[shape];
+    g = new RoundedBoxGeometry(w, h, d, 3, Math.min(0.025, d / 3));
+    geometries.set(shape, g);
+  }
+  return g;
+}
 
 const CAM = new THREE.Vector3(0, 1.3, 17);
 /** Centre of the globe (see `<Earth>` position) — the default focal point. */
@@ -48,21 +62,19 @@ function Slab({
   item,
   index,
   shared,
-  quality,
   onSelect,
   onHover,
 }: {
   item: OrbitItem;
   index: number;
   shared: Shared;
-  quality: number;
   onSelect: (k: string | null) => void;
   onHover: (k: string | null) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
   // Near-ring samples get full-resolution relief; far ones sit in fog and bokeh.
-  const maps = usePBRMaps(item.tex, item.seed, quality > 0 && index < RINGS[0].count ? 512 : 256, index < RINGS[0].count);
-  const [w, h, d] = DIMS[item.shape];
+  const maps = usePBRMaps(item.tex, item.seed, mapSize(index), index < RINGS[0].count);
+  const [w, h] = DIMS[item.shape];
   const far = index >= RINGS[0].count + RINGS[1].count;
   const props = physicalProps(item.tex, maps, true);
   // Distant samples sit in fog and bokeh: clearcoat, sheen and anisotropy are invisible there.
@@ -163,10 +175,8 @@ function Slab({
 
   return (
     <group ref={ref}>
-      <RoundedBox
-        args={[w, h, d]}
-        radius={Math.min(0.025, d / 3)}
-        smoothness={3}
+      <mesh
+        geometry={slabGeometry(item.shape)}
         onPointerOver={(e) => {
           if (!interactive(e)) return;
           e.stopPropagation();
@@ -180,7 +190,7 @@ function Slab({
         }}
       >
         <meshPhysicalMaterial key={matKey(item.tex, maps)} {...props} />
-      </RoundedBox>
+      </mesh>
       {shared.hovered === item.key && !shared.selected && (
         <Html position={[0, -h / 2 - 0.22, 0]} center style={{ pointerEvents: "none" }} zIndexRange={[20, 0]}>
           <div className="whitespace-nowrap rounded-md border border-white/10 bg-black/70 px-3 py-2 text-center backdrop-blur-md">
@@ -316,6 +326,97 @@ function Effects({ shared, quality }: { shared: Shared; quality: number }) {
   );
 }
 
+
+/**
+ * Reports ready only when the scene will look and move right: shaders compiled,
+ * then a run of smooth frames. If the GPU never gets there, it reports failure
+ * and the page keeps its static composition.
+ */
+/** Kept alive so its compiled programs stay cached for the renderer's own prefiltering. */
+let pmrem: THREE.PMREMGenerator | null = null;
+
+function ReadyGate({ onPrepared, onReady, onFail }: { onPrepared: () => void; onReady: () => void; onFail: () => void }) {
+  const { gl, scene, camera } = useThree();
+  const gate = useRef({ phase: "compile" as "compile" | "warm" | "done", smooth: 0, rendered: 0 });
+  useEffect(() => {
+    let live = true;
+    const g = gate.current;
+    const breathe = () => new Promise((r) => setTimeout(r, 0));
+    (async () => {
+      // 1. Compile every shader in parallel (KHR_parallel_shader_compile) without blocking input.
+      performance.mark("surmat:hero-compile-start");
+      // The scene is always drawn into the post-processing buffer, never straight to the
+      // screen, and three.js builds a different shader variant for render targets. Compile
+      // against a render target so the first frame reuses these programs.
+      const target = new THREE.WebGLRenderTarget(1, 1);
+      const previous = gl.getRenderTarget();
+      gl.setRenderTarget(target);
+      const compiling = gl.compileAsync(scene, camera);
+      gl.setRenderTarget(previous);
+      await compiling.catch(() => undefined);
+      target.dispose();
+      performance.mark("surmat:hero-compiled");
+      // 2. Upload textures to the GPU a few at a time, yielding between batches, instead of
+      //    all at once inside the first frame.
+      const textures = new Set<THREE.Texture>();
+      scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+        for (const mat of Array.isArray(m) ? m : m ? [m] : []) {
+          for (const v of Object.values(mat)) if (v instanceof THREE.Texture) textures.add(v);
+          // Shader materials (the globe) keep their textures in uniforms.
+          for (const u of Object.values((mat as THREE.ShaderMaterial).uniforms ?? {}))
+            if (u?.value instanceof THREE.Texture) textures.add(u.value);
+        }
+      });
+      // Small textures go in batches; each large one (the globe's 4K maps) gets its own task.
+      let batch = 0;
+      for (const t of textures) {
+        if (!live) break;
+        gl.initTexture(t);
+        const img = t.image as { width?: number } | undefined;
+        batch += (img?.width ?? 0) > 1024 ? 6 : 1;
+        if (batch >= 6) {
+          batch = 0;
+          await breathe();
+        }
+      }
+      // 3. The reflection environment is prefiltered on the first frame; compile those
+      //    shaders now, in their own task, instead of inside that frame.
+      pmrem ??= new THREE.PMREMGenerator(gl);
+      pmrem.compileCubemapShader();
+      await breathe();
+      performance.mark("surmat:hero-uploaded");
+      if (!live) return;
+      // 4. Only now start rendering frames; the warm-up below decides when it is smooth.
+      if (g.phase === "compile") g.phase = "warm";
+      onPrepared();
+    })();
+    return () => void (live = false);
+  }, [gl, scene, camera, onPrepared]);
+  useFrame((_, dt) => {
+    const g = gate.current;
+    if (g.phase === "done") return;
+    if (g.rendered === 0) performance.mark("surmat:hero-first-frame");
+    // Count only time spent actually rendering, so a background tab is never judged too slow.
+    g.rendered += Math.min(dt, 0.1);
+    if (g.rendered > 15) {
+      g.phase = "done";
+      onFail();
+      return;
+    }
+    if (g.phase !== "warm") return;
+    // ~24 consecutive frames at 24 fps or better: first-render hitches (environment,
+    // post-processing targets, texture uploads) have passed.
+    g.smooth = dt > 0 && dt < 0.042 ? g.smooth + 1 : 0;
+    if (g.smooth >= 24) {
+      g.phase = "done";
+      performance.mark("surmat:hero-ready");
+      onReady();
+    }
+  });
+  return null;
+}
+
 export default function OrbitScene({
   items,
   selected,
@@ -328,6 +429,8 @@ export default function OrbitScene({
   rtl,
   eventSource,
   onReady,
+  onFail,
+  onLost,
 }: {
   items: OrbitItem[];
   selected: string | null;
@@ -340,11 +443,36 @@ export default function OrbitScene({
   rtl: boolean;
   eventSource: React.RefObject<HTMLElement | null>;
   onReady: () => void;
+  onFail: () => void;
+  /** The WebGL context died (GPU reset, memory pressure, dev hot reload): never show it. */
+  onLost: () => void;
 }) {
+  const lostRef = useRef(onLost);
+  useEffect(() => {
+    lostRef.current = onLost;
+  }, [onLost]);
   const positions = useRef(new Map<string, THREE.Vector3>()).current;
   const shared: Shared = { selected, matchIndex, hovered, drag, rtl, positions };
   const [dpr, setDpr] = useState(1.25);
   const [quality, setQuality] = useState(1);
+
+  // Every sample's maps exist before any sample mounts, so each material compiles once, final.
+  const [assets, setAssets] = useState(false);
+  // No frame is rendered until shaders are compiled and textures uploaded (see ReadyGate).
+  const [prepared, setPrepared] = useState(false);
+  const markPrepared = useCallback(() => setPrepared(true), []);
+  useEffect(() => {
+    const job = preloadPBR(items.map((it, i) => ({ tex: it.tex, seed: it.seed, size: mapSize(i) })));
+    let live = true;
+    job.done.then(() => {
+      performance.mark("surmat:hero-textures");
+      if (live) setAssets(true);
+    });
+    return () => {
+      live = false;
+      job.cancel();
+    };
+  }, [items]);
 
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "";
@@ -356,14 +484,21 @@ export default function OrbitScene({
       className="!absolute inset-0"
       eventSource={eventSource as React.RefObject<HTMLElement>}
       eventPrefix="client"
-      frameloop={active ? "demand" : "never"}
+      frameloop={active && prepared ? "demand" : "never"}
       dpr={dpr}
       camera={{ position: CAM.toArray(), fov: 32, near: 0.1, far: 80 }}
       gl={{ antialias: false, powerPreference: "high-performance", toneMapping: THREE.NoToneMapping, stencil: false }}
-      onCreated={() => onReady()}
+      onCreated={({ gl }) => {
+        const report = (e: Event) => {
+          e.preventDefault();
+          lostRef.current();
+        };
+        gl.domElement.addEventListener("webglcontextlost", report, { once: true });
+        if (gl.getContext().isContextLost()) lostRef.current();
+      }}
       onPointerMissed={() => selected && onSelect(null)}
     >
-      {active && <Ticker source={eventSource} bump={[selected, hovered, matchIndex]} />}
+      {active && prepared && <Ticker source={eventSource} bump={[selected, hovered, matchIndex]} />}
       <PerformanceMonitor
         onIncline={() => setDpr(Math.min(1.5, window.devicePixelRatio))}
         onDecline={() => {
@@ -393,13 +528,17 @@ export default function OrbitScene({
         <Lightformer form="rect" intensity={1.2} position={[0, -2, 14]} rotation-y={Math.PI} scale={[16, 3, 1]} />
       </Environment>
 
-      <Suspense fallback={null}>
-        <Earth drag={drag} />
-      </Suspense>
       <Dust />
-      {items.map((it, i) => (
-        <Slab key={it.key} item={it} index={i} shared={shared} quality={quality} onSelect={onSelect} onHover={onHover} />
-      ))}
+      {assets && (
+        // One boundary: the globe, the samples and the readiness gate appear together.
+        <Suspense fallback={null}>
+          <Earth drag={drag} />
+          {items.map((it, i) => (
+            <Slab key={it.key} item={it} index={i} shared={shared} onSelect={onSelect} onHover={onHover} />
+          ))}
+          <ReadyGate onPrepared={markPrepared} onReady={onReady} onFail={onFail} />
+        </Suspense>
+      )}
       <Effects shared={shared} quality={quality} />
     </Canvas>
   );

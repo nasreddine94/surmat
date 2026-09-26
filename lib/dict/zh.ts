@@ -37,6 +37,8 @@ export const zh: Dict = {
     usedIn: "应用于",
     format: "规格",
     hint: "拖动以旋转宇宙。选择一个样品将其拉近。",
+    viewSwitch: "背景视图",
+    preparing3d: "正在准备 3D…",
     scroll: "向下滚动探索",
     tagline: "材料成就更好的空间",
   },

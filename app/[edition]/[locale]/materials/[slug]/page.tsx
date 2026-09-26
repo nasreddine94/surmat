@@ -3,7 +3,7 @@ import { EventBand } from "@/components/event-band";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Swatch } from "@/components/swatch";
-import { JsonLd, breadcrumbJsonLd } from "@/components/json-ld";
+import { JsonLd, breadcrumbJsonLd, materialJsonLd } from "@/components/json-ld";
 import { Arrow } from "@/components/icons";
 import { MaterialTile } from "@/components/material-tile";
 import { ContextualCTA } from "@/components/contextual-cta";
@@ -46,6 +46,12 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
     const sectorEx = ex.filter((e) => e.sectors.includes(sector.id));
     return (
       <>
+        <JsonLd
+          data={breadcrumbJsonLd([
+            { name: dict.nav.materials, path: href(c, "materials") },
+            { name: t(sector.name, locale), path: href(c, `materials/${sector.id}`) },
+          ])}
+        />
         <section className="relative isolate min-h-[70vh] overflow-hidden">
           <Swatch tex={sector.tex} seed={sector.seed} res={768} tile="640px" className="absolute inset-0 -z-10" eager />
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-basalt via-basalt/70 to-basalt/20" />
@@ -105,11 +111,14 @@ export default async function MaterialOrSector({ params }: PageProps<"/[edition]
   return (
     <>
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: dict.nav.materials, path: href(c, "materials") },
-          { name: t(sec.name, locale), path: href(c, `materials/${sec.id}`) },
-          { name, path: href(c, `materials/${m.slug}`) },
-        ])}
+        data={[
+          breadcrumbJsonLd([
+            { name: dict.nav.materials, path: href(c, "materials") },
+            { name: t(sec.name, locale), path: href(c, `materials/${sec.id}`) },
+            { name, path: href(c, `materials/${m.slug}`) },
+          ]),
+          materialJsonLd({ name, description: t(m.summary, locale), path: href(c, `materials/${m.slug}`), sector: t(sec.name, locale) }, locale),
+        ]}
       />
       <section className="shell grid gap-10 pt-28 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16 lg:pt-32">
         <div className="[perspective:1400px]">
