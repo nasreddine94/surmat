@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useSite } from "./site-context";
 import { Arrow } from "./icons";
+import { ScrollRow } from "./scroll-row";
 import { boards, pos, swatchSrc, type Board } from "@/content/board";
 import { familyGroups } from "@/content/families";
 import { t } from "@/lib/i18n";
@@ -51,7 +52,7 @@ export function MaterialBoard({ only, bare = false }: { only?: string[]; bare?: 
       </div>
 
       {list.length > 1 && (
-        <div role="tablist" aria-label={d.eyebrow} className="-mx-1 mt-8 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+        <ScrollRow role="tablist" label={d.eyebrow} wrapClassName="mt-8" className="gap-1.5 px-1 py-1" prevLabel={dict.universe.prev} nextLabel={dict.universe.next}>
           {list.map((x) => {
             const on = x.id === board.id;
             return (
@@ -72,7 +73,7 @@ export function MaterialBoard({ only, bare = false }: { only?: string[]; bare?: 
               </button>
             );
           })}
-        </div>
+        </ScrollRow>
       )}
 
       <div className="mt-4 grid overflow-hidden rounded-md border border-line lg:grid-cols-[0.8fr_1.2fr]">

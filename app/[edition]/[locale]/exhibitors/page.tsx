@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EventBand } from "@/components/event-band";
 import { PageBanner } from "@/components/page-banner";
 import Link from "next/link";
+import { ScrollRow } from "@/components/scroll-row";
 import { ExhibitorCard } from "@/components/exhibitor-card";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { sectors, sectorById, type SectorId } from "@/content/sectors";
@@ -35,7 +36,8 @@ export default async function ExhibitorsPage({ params, searchParams }: PageProps
       <p className="mt-5 max-w-xl text-limestone/75">{dict.exhibitors.lead}</p>
       <PageBanner id="networking" alt={dict.event.pillars[1].title} dict={dict} c={{ edition, locale }} ed={ed} />
 
-      <nav className="mt-10 flex gap-2 overflow-x-auto pb-1" aria-label={dict.material.sector}>
+      <nav className="mt-10" aria-label={dict.material.sector}>
+        <ScrollRow className="gap-2 px-1 py-1" prevLabel={dict.universe.prev} nextLabel={dict.universe.next}>
         <Link href={href(c, "exhibitors")} className="chip shrink-0" aria-current={!sector && !mats.length ? "true" : undefined}>
           {dict.exhibitors.all}
         </Link>
@@ -45,6 +47,7 @@ export default async function ExhibitorsPage({ params, searchParams }: PageProps
             {t(s.short, locale)}
           </Link>
         ))}
+        </ScrollRow>
       </nav>
       {mats.length > 0 && (
         <p className="mt-4 text-sm text-fog">
