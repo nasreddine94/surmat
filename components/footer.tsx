@@ -73,6 +73,11 @@ export function Footer({ edition, locale }: { edition: EditionId; locale: Locale
               </Link>
             </li>
           ))}
+          <li>
+            <Link href={`${base}/pro`} className="hover:text-limestone">
+              {dict.nav.pro}
+            </Link>
+          </li>
           {(Object.entries(site.social) as [keyof typeof site.social, string | null][])
             .filter(([, url]) => url)
             .map(([k, url]) => (

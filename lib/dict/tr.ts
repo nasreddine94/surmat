@@ -6,7 +6,7 @@ export const tr: Dict = {
     eyebrow: "Uluslararası fuar",
   },
   nav: {
-    board: "Malzeme panosu",
+    board: "Numuneler",
     partners: "Ortaklıklar",
     materials: "Malzemeler",
     applications: "Uygulamalar",

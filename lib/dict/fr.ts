@@ -6,7 +6,7 @@ export const fr: Dict = {
     eyebrow: "Le salon international des",
   },
   nav: {
-    board: "La matériauthèque",
+    board: "Matériauthèque",
     partners: "Partenariats",
     materials: "Matériaux",
     applications: "Applications",

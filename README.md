@@ -77,6 +77,22 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - `proxy.ts` — every page lives under `/{edition}/{locale}`. Visitors arriving without an edition go to SURMAT Senegal from West Africa (ECOWAS + Mauritania, via Vercel's `x-vercel-ip-country`) and to SURMAT Algeria from everywhere else; the header shows both editions side by side and a visitor's choice is remembered in a cookie.
 - `app/[edition]/[locale]/partners` — the partnership / franchise offer (licensed edition, co-organised edition, agent & national pavilion) with an application form that creates a `partner` lead.
 
+## Information architecture
+
+One goal — sell the event — and one job per page, so each section has a single home:
+
+| Page | Job | Sections |
+|---|---|---|
+| Home | Tell the event's story and convert | Hero · key numbers · the exhibition (pillars) · nine districts (scope) · one building, every district (board synthesis) · floor plan teaser · leading exhibitors · visit / exhibit · editions (+ partnerships) |
+| Materials | The library | Featured materials · sectors · searchable catalogue · full scope |
+| Board | Technical depth | Board synthesis · 18 material boards · building systems (sections) |
+| Applications | Materials in spaces | Space explorer · the six spaces |
+| Experience | The show itself | Pillars (floor, B2B, talks, demos) · floor plan with stand inspector |
+| Exhibit | Convert exhibitors | Application flow · markets · offer · ways to take part · where you fit (districts) |
+| Sector / material / exhibitor / application pages | Detail | Filtered boards and systems for the sector, event band |
+
+`EventBand` (the event, where, when, two CTAs) closes most inner pages on purpose.
+
 ## Before launch
 
 - **Exhibitors are sample profiles** (fictional names, clearly labelled, `noindex`, excluded from the sitemap). Replace with real exhibitors.

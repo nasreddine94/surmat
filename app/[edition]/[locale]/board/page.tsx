@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MaterialBoard } from "@/components/material-board";
 import { BoardSynthesis } from "@/components/board-synthesis";
+import { SystemsExplorer } from "@/components/systems-explorer";
 import { EventBand } from "@/components/event-band";
 import { ContextualCTA } from "@/components/contextual-cta";
 import { alternates, resolve } from "@/lib/routing";
@@ -21,6 +22,7 @@ export default async function BoardPage({ params }: PageProps<"/[edition]/[local
       <p className="mt-5 max-w-2xl text-limestone/75">{dict.board.pageLead}</p>
       <BoardSynthesis bare />
       <MaterialBoard bare />
+      <SystemsExplorer bare />
       <EventBand dict={dict} c={c} ed={ed} bare />
       <ContextualCTA context="catalogue" />
     </div>

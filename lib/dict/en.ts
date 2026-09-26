@@ -5,7 +5,7 @@ export const en = {
     eyebrow: "The international exhibition for",
   },
   nav: {
-    board: "The material board",
+    board: "Board",
     partners: "Partnerships",
     materials: "Materials",
     applications: "Applications",

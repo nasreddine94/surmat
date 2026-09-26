@@ -6,7 +6,7 @@ export const it: Dict = {
     eyebrow: "La fiera internazionale dei",
   },
   nav: {
-    board: "Il campionario",
+    board: "Campionario",
     partners: "Partnership",
     materials: "Materiali",
     applications: "Applicazioni",

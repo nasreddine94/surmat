@@ -10,7 +10,7 @@ import { countryName, editionIds, editions } from "@/lib/editions";
 import { langTag, localeLabel, locales, t } from "@/lib/i18n";
 import { track } from "@/lib/analytics";
 
-const items = ["materials", "applications", "exhibitors", "experience", "visit", "exhibit"] as const;
+const items = ["materials", "board", "applications", "exhibitors", "experience", "visit", "exhibit"] as const;
 
 export function Flag({ code, className = "" }: { code: string; className?: string }) {
   // Simplified flags drawn inline — no external assets.
@@ -201,8 +201,8 @@ export function Nav() {
             </div>
           </div>
 
-          <nav aria-label="Primary" className="mx-auto hidden lg:block">
-            <ul className="flex items-center gap-7">
+          <nav aria-label="Primary" className="mx-auto hidden xl:block">
+            <ul className="flex items-center gap-6 2xl:gap-7">
               {items.map((k) => {
                 const href = link(k);
                 const active = pathname.startsWith(href);
@@ -211,7 +211,7 @@ export function Nav() {
                     <Link
                       href={href}
                       aria-current={active ? "page" : undefined}
-                      className={`relative text-[0.82rem] transition-colors hover:text-limestone ${
+                      className={`relative whitespace-nowrap text-[0.82rem] transition-colors hover:text-limestone ${
                         active ? "text-limestone" : "text-limestone/70"
                       } after:absolute after:-bottom-1.5 after:start-0 after:h-px after:bg-travertine after:transition-all ${
                         active ? "after:w-full" : "after:w-0"
@@ -225,7 +225,7 @@ export function Nav() {
             </ul>
           </nav>
 
-          <div className="ms-auto flex items-center gap-2 lg:ms-0 lg:gap-4">
+          <div className="ms-auto flex items-center gap-2 xl:ms-0 xl:gap-4">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -235,13 +235,13 @@ export function Nav() {
               <SearchIcon size={18} />
             </button>
 
-            <Link href={link("pro")} className="btn btn-ghost btn-sm hidden lg:inline-flex">
+            <Link href={link("pro")} className="btn btn-ghost btn-sm hidden whitespace-nowrap 2xl:inline-flex">
               {dict.nav.pro}
             </Link>
 
             <button
               type="button"
-              className="grid size-10 place-items-center lg:hidden"
+              className="grid size-10 place-items-center xl:hidden"
               aria-expanded={menu}
               aria-controls="mobile-menu"
               onClick={() => setMenu((v) => !v)}
@@ -253,7 +253,7 @@ export function Nav() {
         </div>
 
         {menu && (
-          <div id="mobile-menu" className="h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-basalt lg:hidden">
+          <div id="mobile-menu" className="h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-basalt xl:hidden">
             <nav className="shell flex flex-col py-6" aria-label="Mobile">
               {items.map((k) => (
                 <Link key={k} href={link(k)} className="display border-b border-line py-4 text-3xl">
