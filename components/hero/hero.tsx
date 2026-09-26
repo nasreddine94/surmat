@@ -334,11 +334,23 @@ export function Hero() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             className="pointer-events-none absolute inset-x-0 top-28 z-10 flex flex-col items-center px-4 text-center sm:top-[20%]"
           >
-            <p className="eyebrow">{dict.brand.eyebrow}</p>
-            <h1 className="wordmark mt-5 text-[clamp(3.6rem,11vw,9.5rem)] leading-[0.85] tracking-[0.01em]">SURMAT</h1>
-            <p className="display mt-5 max-w-[22ch] text-[clamp(1.25rem,2.2vw,1.9rem)] text-limestone/90">
-              {dict.brand.descriptor}
-            </p>
+            {/* The full event name is one heading, read as one sentence: eyebrow, wordmark, name. */}
+            <h1 className="flex flex-col items-center">
+              <span className="eyebrow flex items-center gap-3 whitespace-nowrap !text-gold sm:gap-4 ltr:text-[0.6rem] ltr:tracking-[0.2em] ltr:sm:text-[0.68rem] ltr:sm:tracking-[0.32em]">
+                <span aria-hidden className="h-px w-6 bg-gold/60 sm:w-10" />
+                {dict.brand.eyebrow}
+                <span aria-hidden className="h-px w-6 bg-gold/60 sm:w-10" />
+              </span>{" "}
+              <span className="wordmark mt-5 block text-[clamp(3.6rem,11vw,9.5rem)] leading-[0.85] tracking-[0.01em]">SURMAT</span>{" "}
+              <span className="display mt-5 block max-w-[min(92vw,64rem)] text-balance text-[clamp(1.4rem,2.7vw,2.5rem)] leading-[1.12] text-limestone">
+                {dict.brand.descriptor.split(" & ").map((part, i) => (
+                  <span key={i}>
+                    {i > 0 && <span className="italic text-gold"> &amp; </span>}
+                    {part}
+                  </span>
+                ))}
+              </span>
+            </h1>
             <p className="mt-6 flex items-center gap-3 text-sm text-limestone/80">
               {(["dz", "sn"] as const).map((id, i) => (
                 <span key={id} className="flex items-center gap-3">

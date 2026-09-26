@@ -29,14 +29,16 @@ export type Board = {
   callouts: Callout[];
 };
 
-const HF = "https://d8j0ntlcm91z4.cloudfront.net/user_39GebVBNf0LF9ZNbDOYTMnx1vfO";
+/** Renders are self-hosted as WebP (public/media/board), so the page never depends on an external CDN. */
+const HF = "/media/board";
+const local = (file: string) => `${HF}/${file.replace(/\.png$/, ".webp")}`;
 
 const b = (n: number, id: string, group: GroupId, crop: Board["crop"], render: string, title: Row, swatches: Row[], callouts: [number, number, Row][]): Board => ({
   id,
   n,
   group,
   crop,
-  render: render.startsWith("http") ? render : `${HF}/${render}`,
+  render: render.startsWith("http") || render.startsWith("/") ? render : local(render),
   title: l(title),
   swatches: swatches.map(l),
   callouts: callouts.map(([x, y, t]) => ({ at: [x, y], text: l(t) })),
@@ -289,7 +291,7 @@ export const boards: Board[] = [
 /** Slide 20: the palette and where each sample ends up in one building. */
 export const synthesis = {
   crop: [917, 68, 917, 956] as [number, number, number, number],
-  render: `${HF}/hf_20260925_232539_97311a9b-84df-4d8f-8641-8b3fa605bb31.png`,
+  render: local("hf_20260925_232539_97311a9b-84df-4d8f-8641-8b3fa605bb31.png"),
   /** Swatch index (0–11, s20-{i+1}.webp) → point on the render (slide coordinates). */
   links: [
     { swatch: 0, at: [1170, 845] as [number, number], text: l(["Marble lobby floor and reception", "Sol et accueil en marbre", "أرضية واستقبال من الرخام", "Suelo y recepción de mármol", "Pavimento e receção em mármore", "Pavimento e reception in marmo", "Mermer lobi zemini ve resepsiyon", "大理石大堂地面与前台", "संगमरमर लॉबी फ़र्श और रिसेप्शन"]) },
