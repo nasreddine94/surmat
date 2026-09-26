@@ -1,18 +1,14 @@
 import Link from "next/link";
 import { Hero } from "@/components/hero/hero";
 import { Arrow, Badge, Calendar, GlobeIcon, Layers, People } from "@/components/icons";
-import { Markets } from "@/components/why-exhibit";
 import { ContextualCTA } from "@/components/contextual-cta";
-import { MaterialUniverse } from "@/components/home/material-universe";
-import { SectorGallery } from "@/components/home/sector-gallery";
-import { ApplicationsExplorer } from "@/components/home/applications-explorer";
 import { ExperienceTeaser } from "@/components/home/experience-teaser";
 import { LeadingExhibitors } from "@/components/home/leading-exhibitors";
 import { ConversionSplit } from "@/components/home/conversion-split";
 import { EditionsSection } from "@/components/home/editions-section";
 import { EventPillars } from "@/components/home/event-pillars";
 import { ScopeSection } from "@/components/home/scope-section";
-import { SystemsExplorer } from "@/components/systems-explorer";
+import { BoardSynthesis } from "@/components/board-synthesis";
 import { JsonLd, absolute, eventJsonLd, organizationJsonLd, websiteJsonLd } from "@/components/json-ld";
 import { AnswersSection } from "@/components/answers-section";
 import { sectors } from "@/content/sectors";
@@ -71,23 +67,13 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
       {/* The exhibition: floor, meetings, talks, launches */}
       <EventPillars dict={dict} c={c} ed={ed} />
 
-      {/* 03 — Material universe */}
-      <MaterialUniverse />
-
-      {/* 04 — Material sector gallery */}
-      <SectorGallery dict={dict} c={c} />
-
       {/* The full exhibition scope — the library is a selection, the floor is open */}
       <ScopeSection />
 
-      {/* How it is built: systems layer by layer, on site and in section */}
-      {/* Dense technical sections: tablets and desktops. Phones get the district overview above. */}
-      <div className="hidden md:block">
-        <SystemsExplorer />
-      </div>
 
-      {/* 05 — Applications explorer */}
-      <ApplicationsExplorer />
+      {/* One building, every district: the palette and where each sample goes */}
+      <BoardSynthesis />
+
 
       {/* 06 — The exhibition experience */}
       <ExperienceTeaser dict={dict} c={c} ed={ed} />
@@ -95,8 +81,6 @@ export default async function Home({ params }: PageProps<"/[edition]/[locale]">)
       {/* 07 — Leading exhibitors */}
       <LeadingExhibitors dict={dict} c={c} />
 
-      {/* Why exhibit: one stand, four markets */}
-      <Markets dict={dict} c={c} />
 
       {/* 08 — Visit / Exhibit */}
       <ConversionSplit dict={dict} c={c} />

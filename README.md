@@ -69,12 +69,29 @@ UI (Archivo only for the SURMAT wordmark). Utilities: `glass`, `glass-header(-so
 - `content/event-media.ts` + `components/event-image.tsx` — the event imagery (show floor, B2B networking, conferences, demonstrations, stands, Oran and Dakar, one image per exhibition district). They are AI visualisations served through `next/image` (AVIF/WebP) and carry a small "Visualisation" label; swap each `src` for real photography of past editions and set `visual: false`.
 - `content/families.ts` — the full exhibition scope: 84 product families in nine districts (the six sectors plus facades & envelope, doors/windows/glass, bathroom/kitchen/fit-out), each with its image and exhibitor pitch. `components/home/scope-section.tsx` presents them as an interactive district explorer (home, materials, exhibit and experience pages).
 - `content/systems.ts` + `components/systems-explorer.tsx` / `system-section.tsx` — "How it's built": eight systems (ventilated facade, ETICS, wet areas, floors, drywall, flat roofs, ceramic line, stone processing), each an on-site render beside a technical section drawn in SVG from data (hatched layers, numbered leaders, thickness / class / EN standard, and the exhibition district for each product). Shown on the home, materials, exhibit and sector pages (`systemsForSector`). Specifications are typical values — have them checked by the technical team.
+- `content/board.ts` + `components/material-board.tsx` / `board-synthesis.tsx` — the material board & render studio, rebuilt natively from `docs/Global_Architectural_Material_Board`: 18 product-family boards (samples cropped from the board into `public/images/board/`, the scene with its baked-in labels removed, numbered callouts placed at the original annotation points and translated) plus the synthesis (12 samples linked to where they are used in one building). Page `/board`, the synthesis on the home page, all boards on the materials page and per-sector boards on sector pages. Each board names its SURMAT district instead of the external fairs cited on the source slides.
 - `components/exhibition-plan.tsx` — the top-down floor plan (entrance, registration, conference hall, B2B lounge, demo stage, national pavilions, districts A–I with numbered stands). Used on the home page and, with the stand inspector (`components/floor-map.tsx`), on the experience page. Adjust `blocks` when the real hall layout is confirmed.
 - `components/event-band.tsx` / `components/page-banner.tsx` — the event on every page: a photo banner under each page title and a band with the four event pillars, venue, dates and the two CTAs.
 - `components/contextual-cta.tsx` — the "Exhibit this product" CTA that follows the visitor with the current sector's pitch.
 
 - `proxy.ts` — every page lives under `/{edition}/{locale}`. Visitors arriving without an edition go to SURMAT Senegal from West Africa (ECOWAS + Mauritania, via Vercel's `x-vercel-ip-country`) and to SURMAT Algeria from everywhere else; the header shows both editions side by side and a visitor's choice is remembered in a cookie.
 - `app/[edition]/[locale]/partners` — the partnership / franchise offer (licensed edition, co-organised edition, agent & national pavilion) with an application form that creates a `partner` lead.
+
+## Information architecture
+
+One goal — sell the event — and one job per page, so each section has a single home:
+
+| Page | Job | Sections |
+|---|---|---|
+| Home | Tell the event's story and convert | Hero · key numbers · the exhibition (pillars) · nine districts (scope) · one building, every district (board synthesis) · floor plan teaser · leading exhibitors · visit / exhibit · editions (+ partnerships) |
+| Materials | The library | Featured materials · sectors · searchable catalogue · full scope |
+| Board | Technical depth | Board synthesis · 18 material boards · building systems (sections) |
+| Applications | Materials in spaces | Space explorer · the six spaces |
+| Experience | The show itself | Pillars (floor, B2B, talks, demos) · floor plan with stand inspector |
+| Exhibit | Convert exhibitors | Application flow · markets · offer · ways to take part · where you fit (districts) |
+| Sector / material / exhibitor / application pages | Detail | Filtered boards and systems for the sector, event band |
+
+`EventBand` (the event, where, when, two CTAs) closes most inner pages on purpose.
 
 ## Before launch
 

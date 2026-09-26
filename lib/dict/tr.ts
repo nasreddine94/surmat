@@ -6,6 +6,7 @@ export const tr: Dict = {
     eyebrow: "Uluslararası fuar",
   },
   nav: {
+    board: "Numuneler",
     partners: "Ortaklıklar",
     materials: "Malzemeler",
     applications: "Uygulamalar",
@@ -380,6 +381,20 @@ export const tr: Dict = {
     district: "Bölge",
     structure: "Bina taşıyıcı sistemi — ürün kategorisi değil",
     note: "Tipik değerler örnek amaçlıdır. Üretici teknik föylerini ve yerel yönetmelikleri kontrol edin.",
+  },
+  board: {
+    eyebrow: "Malzeme panosu ve render stüdyosu",
+    title: "Numuneden mekâna",
+    lead: "Fuardaki her ürün ailesi, bir mimarın belirleyeceği şekilde: panoda gerçek numuneler, ailenin teknik noktalarıyla kullanımı ve üreticilerinin sergilediği bölge.",
+    sampleBoard: "Malzeme panosu",
+    exhibitedIn: "Sergilendiği yer:",
+    district: "Bölge",
+    palette: "Palet",
+    synthTitle: "Tek bina, tüm bölgeler",
+    synthLead: "On iki numune, tek proje: bir numuneye gelin ve nerede kullanıldığını görün — cephe, teras, ofis, lobi, banyo.",
+    open: "Malzeme panosunu aç",
+    pageTitle: "Malzeme panosu",
+    pageLead: "Fuardan uygulamaya bir şartname rehberi: her ürün ailesi numuneleri, kullanımı ve teknik noktalarıyla.",
   },
   sector: {
     materials: "Bu sektördeki malzemeler",

@@ -6,6 +6,7 @@ export const fr: Dict = {
     eyebrow: "Le salon international des",
   },
   nav: {
+    board: "Matériauthèque",
     partners: "Partenariats",
     materials: "Matériaux",
     applications: "Applications",
@@ -395,6 +396,20 @@ export const fr: Dict = {
     district: "Quartier",
     structure: "Structure du bâtiment — hors catégorie de produits",
     note: "Spécifications types à titre indicatif. Consultez les fiches techniques des fabricants et les normes locales.",
+  },
+  board: {
+    eyebrow: "Matériauthèque & studio de rendu",
+    title: "De l’échantillon à l’espace",
+    lead: "Chaque famille de produits du salon, comme un architecte la prescrit : les échantillons sur la planche, la famille en situation avec ses points techniques, et le quartier où exposent ses fabricants.",
+    sampleBoard: "Planche de matériaux",
+    exhibitedIn: "Exposé dans le",
+    district: "Quartier",
+    palette: "La palette",
+    synthTitle: "Un bâtiment, tous les quartiers",
+    synthLead: "Douze échantillons, un projet : pointez un échantillon pour voir où il se place — façade, terrasse, bureaux, hall, salle de bains.",
+    open: "Ouvrir la matériauthèque",
+    pageTitle: "La matériauthèque",
+    pageLead: "Un guide de prescription du salon au chantier : chaque famille de produits avec ses échantillons, son usage et ses points techniques.",
   },
   sector: {
     materials: "Matériaux de ce secteur",

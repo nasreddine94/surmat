@@ -13,10 +13,10 @@ const pillarMedia: MediaKey[] = ["stand", "networking", "conference", "demo"];
  * "The exhibition": what actually happens at SURMAT — the floor, the meetings, the talks and
  * the launches — so the material library never reads as one company's showroom.
  */
-export function EventPillars({ dict, c, ed }: { dict: Dict; c: Ctx; ed: Edition }) {
+export function EventPillars({ dict, c, ed, bare = false }: { dict: Dict; c: Ctx; ed: Edition; bare?: boolean }) {
   const e = dict.event;
   return (
-    <section className="shell pt-24 sm:pt-32" aria-labelledby="h-event">
+    <section className={bare ? "pt-20" : "shell pt-24 sm:pt-32"} aria-labelledby="h-event">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.35fr] lg:items-end lg:gap-16">
         <Reveal>
           <p className="eyebrow">{e.eyebrow}</p>

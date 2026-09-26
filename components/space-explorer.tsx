@@ -7,6 +7,7 @@ import { useSite } from "./site-context";
 import { EventImage } from "./event-image";
 import { Swatch } from "./swatch";
 import { Arrow } from "./icons";
+import { ScrollRow } from "./scroll-row";
 import { scenes, sceneFor, type Hotspot } from "@/content/scenes";
 import { applicationById, type ApplicationId } from "@/content/applications";
 import { materialBySlug } from "@/content/materials";
@@ -42,7 +43,7 @@ export function SpaceExplorer({ initial = "hospitality", tabs = true, priority =
   return (
     <div>
       {tabs && (
-        <div role="tablist" aria-label={dict.nav.applications} className="-mx-1 mb-4 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+        <ScrollRow role="tablist" label={dict.nav.applications} wrapClassName="mb-4" className="gap-1 px-1 py-1" prevLabel={dict.universe.prev} nextLabel={dict.universe.next}>
           {scenes.map((s) => {
             const a = applicationById(s.application)!;
             const on = s.application === appId;
@@ -62,7 +63,7 @@ export function SpaceExplorer({ initial = "hospitality", tabs = true, priority =
               </button>
             );
           })}
-        </div>
+        </ScrollRow>
       )}
 
       <div className="relative aspect-[16/9] overflow-hidden rounded-md border border-line bg-graphite shadow-atmos">

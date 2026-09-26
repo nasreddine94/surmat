@@ -6,6 +6,7 @@ export const zh: Dict = {
     eyebrow: "国际展览会",
   },
   nav: {
+    board: "材料板",
     partners: "合作伙伴",
     materials: "材料",
     applications: "应用",
@@ -353,6 +354,20 @@ export const zh: Dict = {
     district: "展区",
     structure: "建筑结构——不属于产品类别",
     note: "典型参数仅供说明，请以制造商技术资料和当地规范为准。",
+  },
+  board: {
+    eyebrow: "材料板与效果图工作室",
+    title: "从样品到空间",
+    lead: "以建筑师选材的方式呈现展会上的每个产品品类：材料板上的真实样品、带技术要点的应用场景，以及其制造商参展的展区。",
+    sampleBoard: "材料板",
+    exhibitedIn: "参展展区：",
+    district: "展区",
+    palette: "材料组合",
+    synthTitle: "一栋建筑，汇聚所有展区",
+    synthLead: "十二个样品，一个项目：指向样品，看看它用在哪里——外立面、露台、办公室、大堂、卫生间。",
+    open: "打开材料板",
+    pageTitle: "材料板",
+    pageLead: "从展会到应用的选材指南：每个产品品类的样品、应用与技术要点。",
   },
   sector: {
     materials: "本板块材料",

@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollRow } from "./scroll-row";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 import { useSite } from "./site-context";
@@ -46,7 +47,7 @@ export function Catalogue({ initialSector }: { initialSector: SectorId | null })
               className="h-full w-full bg-transparent text-sm outline-none placeholder:text-fog"
             />
           </label>
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:pb-0" role="group">
+          <ScrollRow role="group" wrapClassName="min-w-0 lg:flex-1" className="gap-2 px-1 py-1" prevLabel={dict.universe.prev} nextLabel={dict.universe.next}>
             <button type="button" className="chip shrink-0" aria-pressed={!sector} onClick={() => choose(null)}>
               {dict.catalogue.all}
             </button>
@@ -56,8 +57,8 @@ export function Catalogue({ initialSector }: { initialSector: SectorId | null })
                 {t(s.short, locale)}
               </button>
             ))}
-          </div>
-          <p className="text-xs text-fog lg:ms-auto" aria-live="polite">
+          </ScrollRow>
+          <p className="shrink-0 text-xs text-fog lg:ms-auto" aria-live="polite">
             {fmt(dict.catalogue.count, { n: list.length })}
           </p>
         </div>

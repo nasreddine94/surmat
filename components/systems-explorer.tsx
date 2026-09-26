@@ -7,6 +7,7 @@ import { useSite } from "./site-context";
 import { EventImage } from "./event-image";
 import { SystemSection } from "./system-section";
 import { Arrow } from "./icons";
+import { ScrollRow } from "./scroll-row";
 import { systems, type BuildingSystem } from "@/content/systems";
 import { familyGroups } from "@/content/families";
 import { t } from "@/lib/i18n";
@@ -52,7 +53,7 @@ export function SystemsExplorer({ only, bare = false }: { only?: string[]; bare?
       </div>
 
       {list.length > 1 && (
-        <div role="tablist" aria-label={s.eyebrow} className="-mx-1 mt-8 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+        <ScrollRow role="tablist" label={s.eyebrow} wrapClassName="mt-8" className="gap-1.5 px-1 py-1" prevLabel={dict.universe.prev} nextLabel={dict.universe.next}>
           {list.map((x) => {
             const on = x.id === sys.id;
             return (
@@ -71,7 +72,7 @@ export function SystemsExplorer({ only, bare = false }: { only?: string[]; bare?
               </button>
             );
           })}
-        </div>
+        </ScrollRow>
       )}
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
