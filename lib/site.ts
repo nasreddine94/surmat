@@ -16,3 +16,6 @@ export const site = {
     email: null as string | null,
   },
 };
+
+/** Canonical origin for canonicals, hreflang, sitemap and JSON-LD. NEXT_PUBLIC_SITE_URL overrides it (e.g. a preview). */
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.surmatexpo.com").replace(/\/$/, "");

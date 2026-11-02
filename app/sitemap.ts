@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { alternates, allCtx, href } from "@/lib/routing";
+import { siteUrl } from "@/lib/site";
 import { sectors } from "@/content/sectors";
 import { materials } from "@/content/materials";
 import { applications } from "@/content/applications";
 import { exhibitors } from "@/content/exhibitors";
 
-const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const base = siteUrl;
 /** Set at build time, so crawlers see when the content last changed. */
 const lastModified = new Date();
 

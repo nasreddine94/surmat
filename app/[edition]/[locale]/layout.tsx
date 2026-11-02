@@ -7,6 +7,7 @@ import { SiteProvider } from "@/components/site-context";
 import { AttributionCapture } from "@/components/attribution";
 import { allCtx, alternates, resolve } from "@/lib/routing";
 import { dirOf, langTag, t } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site";
 
 /** Wide grotesk, kept only for the SURMAT wordmark. */
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
@@ -24,7 +25,7 @@ export const viewport: Viewport = { themeColor: "#0b0c0d", colorScheme: "dark" }
 export async function generateMetadata({ params }: LayoutProps<"/[edition]/[locale]">): Promise<Metadata> {
   const { edition, locale, dict, ed } = await resolve(params);
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    metadataBase: new URL(siteUrl),
     title: { default: `${t(ed.name, locale)} — ${dict.brand.descriptor}`, template: `%s · ${t(ed.name, locale)}` },
     description: dict.footer.tagline,
     alternates: alternates({ edition, locale }),

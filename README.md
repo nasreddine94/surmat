@@ -17,7 +17,7 @@ npm run build        # ~1,200 statically generated pages
 Optional environment (`.env.local`):
 
 ```
-NEXT_PUBLIC_SITE_URL=https://surmat.example   # canonical URLs, sitemap, hreflang
+NEXT_PUBLIC_SITE_URL=https://www.surmatexpo.com   # canonical URLs, sitemap, hreflang (this is the default)
 SUPABASE_URL=...                               # leads + analytics storage
 SUPABASE_SERVICE_ROLE_KEY=...                  # server-only; never expose to the client
 ```

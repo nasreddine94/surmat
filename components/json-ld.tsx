@@ -1,5 +1,6 @@
 import type { Edition } from "@/lib/editions";
 import { t, type Locale } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site";
 
 /** Structured data (PRD §53). Rendered server-side as JSON-LD. */
 export function JsonLd({ data }: { data: object | object[] }) {
@@ -14,7 +15,7 @@ export function JsonLd({ data }: { data: object | object[] }) {
   );
 }
 
-const base = () => (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const base = () => siteUrl;
 export const absolute = (path: string) => `${base()}${path}`;
 
 export const organizationJsonLd = () => ({
