@@ -7,7 +7,7 @@ import { exhibitorsFor } from "@/content/exhibitors";
 import { t } from "@/lib/i18n";
 
 /** Hall letters: A–F are the six core districts, G–I the adjacent ones (facades, joinery, bath & kitchen). */
-export const HALLS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+export const HALLS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"].slice(0, familyGroups.length);
 export const standsIn = (hall: number) => (hall < 6 ? 12 : 6);
 const NEUTRAL = "#9a9489";
 
@@ -19,7 +19,7 @@ const blocks: Block[] = [
   ...[0, 1, 2].map((c) => ({ x: 40 + c * 320, y: 158, w: 280, h: 142, cols: 6, rows: 2 })),
   ...[0, 1, 2].map((c) => ({ x: 40 + c * 320, y: 336, w: 280, h: 142, cols: 6, rows: 2 })),
   ...[0, 1, 2].map((c) => ({ x: 40 + c * 320, y: 512, w: 280, h: 78, cols: 6, rows: 1 })),
-];
+].slice(0, HALLS.length);
 
 export const hallColor = (hall: number) => (hall < 6 ? sectors[hall].accent : NEUTRAL);
 export const hallName = (hall: number, locale: Parameters<typeof t>[1]) =>

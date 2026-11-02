@@ -1,5 +1,6 @@
 import type { L } from "@/lib/i18n";
 import type { GroupId } from "./families";
+import { hiddenGroups } from "@/lib/site";
 
 /**
  * The material board & render studio: one board per product family — four real samples on the
@@ -52,7 +53,7 @@ export const pos = (board: Board, c: Callout) => ({
 
 export const swatchSrc = (board: Board, i: number) => `/images/board/s${board.n}-${i + 1}.webp`;
 
-export const boards: Board[] = [
+const allBoards: Board[] = [
   b(2, "heavy-clay", "ceramic-porcelain", [917, 267, 917, 545], "hf_20260925_232333_0144a712-f589-4df1-ab17-6967ebb4b333.png",
     ["Heavy clay & technical ceramics", "Terre cuite & céramiques techniques", "الطين المشوي والسيراميك التقني", "Cerámica estructural y técnica", "Cerâmica estrutural e técnica", "Laterizi e ceramiche tecniche", "Pişmiş toprak ve teknik seramik", "黏土制品与技术陶瓷", "हेवी क्ले और तकनीकी सिरेमिक"],
     [
@@ -287,6 +288,8 @@ export const boards: Board[] = [
       [1480, 762, ["Counts towards LEED / BREEAM", "Contribue aux points LEED / BREEAM", "تساهم في نقاط LEED / BREEAM", "Suma puntos LEED / BREEAM", "Contribui para LEED / BREEAM", "Contribuisce a LEED / BREEAM", "LEED / BREEAM puanına katkı", "助力 LEED / BREEAM 认证", "LEED / BREEAM अंकों में योगदान"]],
     ]),
 ];
+
+export const boards = allBoards.filter((x) => !hiddenGroups.includes(x.group));
 
 /** Slide 20: the palette and where each sample ends up in one building. */
 export const synthesis = {

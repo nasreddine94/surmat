@@ -1,6 +1,7 @@
 import type { L } from "@/lib/i18n";
 import { sectorById, type SectorId } from "./sectors";
 import type { MediaKey } from "./event-media";
+import { hiddenGroups } from "@/lib/site";
 
 /**
  * The exhibition's full scope: every product family SURMAT accepts, not just the materials
@@ -84,7 +85,7 @@ const group = (id: GroupId, name: Row, core: boolean, rows: Row[]): FamilyGroup 
   pitch: PITCH[id] ?? sectorById(id)!.pitch,
 });
 
-export const familyGroups: FamilyGroup[] = [
+const allFamilyGroups: FamilyGroup[] = [
   group("ceramic-porcelain", ["Ceramic & Porcelain", "Céramique & Porcelaine", "السيراميك والبورسلين", "Cerámica y porcelánico", "Cerâmica e porcelânico", "Ceramica e gres", "Seramik ve porselen", "陶瓷与瓷砖", "सिरेमिक और पोर्सिलेन"], true, [
     ["Porcelain stoneware", "Grès cérame", "البورسلين الحجري", "Gres porcelánico", "Grés porcelânico", "Gres porcellanato", "Porselen karo", "通体瓷砖", "पोर्सिलेन स्टोनवेयर"],
     ["Large-format slabs", "Grandes dalles", "البلاطات الكبيرة", "Placas de gran formato", "Placas de grande formato", "Lastre di grande formato", "Büyük format levhalar", "大板", "बड़े फ़ॉर्मेट स्लैब"],
@@ -188,5 +189,8 @@ export const familyGroups: FamilyGroup[] = [
     ["Outdoor living & pool finishes", "Aménagements extérieurs & piscines", "المساحات الخارجية وتشطيبات المسابح", "Exterior y acabados de piscina", "Exterior e acabamentos de piscina", "Outdoor e finiture per piscine", "Dış mekân ve havuz kaplamaları", "户外与泳池饰面", "आउटडोर और पूल फ़िनिश"],
   ]),
 ];
+
+/** What the site shows: every group except those hidden in lib/site.ts. */
+export const familyGroups = allFamilyGroups.filter((g) => !hiddenGroups.includes(g.id));
 
 export const familyCount = familyGroups.reduce((n, g) => n + g.families.length, 0);

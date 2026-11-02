@@ -1,5 +1,6 @@
 import type { L } from "@/lib/i18n";
 import type { GroupId } from "./families";
+import { hiddenGroups } from "@/lib/site";
 import type { MediaKey } from "./event-media";
 import type { SectorId } from "./sectors";
 
@@ -42,7 +43,7 @@ const layer = (name: Row, spec: string, group: GroupId | null, w: number, patter
 const STRUCT: Row = ["Load-bearing structure", "Structure porteuse", "الهيكل الحامل", "Estructura portante", "Estrutura resistente", "Struttura portante", "Taşıyıcı yapı", "承重结构", "भार-वहन संरचना"];
 const SLAB: Row = ["Concrete slab", "Dalle béton", "بلاطة خرسانية", "Losa de hormigón", "Laje de betão", "Solaio in calcestruzzo", "Betonarme döşeme", "混凝土楼板", "कंक्रीट स्लैब"];
 
-export const systems: BuildingSystem[] = [
+const allSystems: BuildingSystem[] = [
   {
     id: "ventilated-facade",
     kind: "wall",
@@ -243,6 +244,11 @@ export const systems: BuildingSystem[] = [
     ],
   },
 ];
+
+/** The ventilated facade is a facade-district system; layers pointing at a hidden district stay but link nowhere. */
+export const systems: BuildingSystem[] = allSystems
+  .filter((s) => !(s.id === "ventilated-facade" && hiddenGroups.includes("facades-envelope")))
+  .map((s) => ({ ...s, layers: s.layers.map((x) => (x.group && hiddenGroups.includes(x.group) ? { ...x, group: null } : x)) }));
 
 /** Which systems each sector's page shows. */
 export const systemsForSector: Record<SectorId, string[]> = {
