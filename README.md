@@ -22,6 +22,8 @@ SUPABASE_URL=...                               # leads + analytics storage
 SUPABASE_SERVICE_ROLE_KEY=...                  # server-only; never expose to the client
 ```
 
+Optional: `NEXT_PUBLIC_HIDDEN_GROUPS` hides the adjacent districts that overlap a partner event (default: `facades-envelope,joinery-glazing,bath-kitchen`, plus two single families and the glazed-partitions wording). Set it empty to show everything again.
+
 Without Supabase, form submissions are validated and logged to the server console so the flows can be tested.
 
 ## Routes

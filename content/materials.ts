@@ -2,6 +2,7 @@ import type { L, VocabKey } from "@/lib/i18n";
 import type { TexKind } from "@/lib/textures";
 import type { SectorId } from "./sectors";
 import type { ApplicationId } from "./applications";
+import { hiddenGroups } from "@/lib/site";
 
 export type Material = {
   slug: string;
@@ -19,7 +20,7 @@ export type Material = {
   keywords?: string[];
 };
 
-export const materials: Material[] = [
+const allMaterials: Material[] = [
   /* ---------- 01 Ceramic & Porcelain ---------- */
   {
     slug: "porcelain", sector: "ceramic-porcelain", tex: "porcelain", seed: 3,
@@ -752,6 +753,27 @@ export const materials: Material[] = [
     keywords: ["clay", "argile", "pigment", "glaze", "émail", "طين"],
   },
 ];
+
+/** "Glazed" partitions read as glass/joinery; the neutral wording is used while overlap districts are hidden. */
+const PARTITIONS_NEUTRAL: L = {
+  en: "Demountable partitions for offices, clinics and flexible floor plates.",
+  fr: "Cloisons démontables pour bureaux, cliniques et plateaux flexibles.",
+  ar: "فواصل قابلة للفك للمكاتب والعيادات والمساحات المرنة.",
+  es: "Mamparas desmontables para oficinas, clínicas y plantas flexibles.",
+  pt: "Divisórias amovíveis para escritórios, clínicas e pisos flexíveis.",
+  it: "Pareti mobili per uffici, cliniche e piani flessibili.",
+  tr: "Ofisler, klinikler ve esnek kat planları için demonte bölmeler.",
+  zh: "用于办公室、诊所和灵活楼层的可拆卸隔断。",
+  hi: "कार्यालयों, क्लिनिकों और लचीले फ़्लोर प्लान के लिए हटाने योग्य पार्टिशन।",
+};
+
+export const materials: Material[] = hiddenGroups.length
+  ? allMaterials.map((m) =>
+      m.slug === "partitions"
+        ? { ...m, summary: PARTITIONS_NEUTRAL, keywords: m.keywords?.filter((k) => !["glass", "verre", "زجاج"].includes(k)) }
+        : m,
+    )
+  : allMaterials;
 
 export const materialBySlug = (slug: string) => materials.find((m) => m.slug === slug);
 export const materialsBySector = (id: SectorId) => materials.filter((m) => m.sector === id);

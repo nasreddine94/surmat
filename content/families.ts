@@ -85,6 +85,9 @@ const group = (id: GroupId, name: Row, core: boolean, rows: Row[]): FamilyGroup 
   pitch: PITCH[id] ?? sectorById(id)!.pitch,
 });
 
+/** Single product families (English names) that overlap the partner event; hidden with the groups. */
+const OVERLAP_FAMILIES = ["BIM, design & visualisation software", "Stairs, railings & balustrades"];
+
 const allFamilyGroups: FamilyGroup[] = [
   group("ceramic-porcelain", ["Ceramic & Porcelain", "Céramique & Porcelaine", "السيراميك والبورسلين", "Cerámica y porcelánico", "Cerâmica e porcelânico", "Ceramica e gres", "Seramik ve porselen", "陶瓷与瓷砖", "सिरेमिक और पोर्सिलेन"], true, [
     ["Porcelain stoneware", "Grès cérame", "البورسلين الحجري", "Gres porcelánico", "Grés porcelânico", "Gres porcellanato", "Porselen karo", "通体瓷砖", "पोर्सिलेन स्टोनवेयर"],
@@ -191,6 +194,8 @@ const allFamilyGroups: FamilyGroup[] = [
 ];
 
 /** What the site shows: every group except those hidden in lib/site.ts. */
-export const familyGroups = allFamilyGroups.filter((g) => !hiddenGroups.includes(g.id));
+export const familyGroups = allFamilyGroups
+  .filter((g) => !hiddenGroups.includes(g.id))
+  .map((g) => (hiddenGroups.length ? { ...g, families: g.families.filter((f) => !OVERLAP_FAMILIES.includes(f.en)) } : g));
 
 export const familyCount = familyGroups.reduce((n, g) => n + g.families.length, 0);
